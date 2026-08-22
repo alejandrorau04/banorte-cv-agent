@@ -20,8 +20,11 @@ curl -s "$BASE_URL/health"
 
 Respuesta sana: `status: ok`, `facts: 46`, `vectors_loaded: true`.
 
-Si `vectors_loaded` es `false`, el índice no se incluyó en la imagen: la recuperación
-degrada a solo léxico. **El servicio sigue respondiendo**, pero peor. Reconstruir imagen.
+`vectors_loaded` siempre debe ser `true`. Si el índice falta, **el contenedor no arranca**:
+sin él no puede calibrarse la compuerta de abstención, y degradar en silencio comprometería
+la garantía anti-alucinación. Se midió que la señal léxica no separa dominio de no-dominio
+(una pregunta legítima puede puntuar 0.00 y una fuera de dominio 3.85), por lo que no existe
+umbral léxico defendible. Acción: `python scripts/build_index.py` y reconstruir la imagen.
 
 ## Prueba funcional
 

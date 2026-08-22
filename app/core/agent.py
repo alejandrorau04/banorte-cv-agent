@@ -22,9 +22,16 @@ from app import config
 _CITE_BLOCK = re.compile(r"\[([a-z0-9_.\-]+(?:\s*,\s*[a-z0-9_.\-]+)*)\]", re.I)
 
 # Preguntas de contacto: se atienden con respuesta fija, sin LLM (ADR-006).
+# Patron deliberadamente estrecho. Una version previa capturaba `number`,
+# `contact` y `contacto` sueltos, de modo que "What number of years did he work
+# at Vinte?" recibia la respuesta de privacidad. La compuerta precede a la
+# recuperacion, asi que un falso positivo aqui no tiene via de recuperacion.
 _CONTACT = re.compile(
-    r"\b(tel[eé]fono|celular|whatsapp|correo|e-?mail|contacto|contactar|"
-    r"phone|number|reach him|contact)\b", re.I)
+    r"\b(tel[eé]fono|celular|whatsapp|"
+    r"correo\s+(electr[oó]nico|personal)?|e-?mail|"
+    r"datos?\s+de\s+contacto|c[oó]mo\s+(lo\s+)?(puedo\s+)?contact|"
+    r"phone\s+number|email\s+address|contact\s+(details?|info)|"
+    r"reach\s+(him|out)|get\s+in\s+touch)", re.I)
 
 
 class CVAgent:
@@ -53,11 +60,19 @@ class CVAgent:
 
         # Compuerta de evidencia: sin base suficiente no se llama al modelo.
         # La compuerta usa el coseno CRUDO maximo, no la puntuacion combinada.
+        #
+        # Sin indice de embeddings NO se aplica: se midio que la senal lexica no
+        # separa dominio de no-dominio (una pregunta legitima puede puntuar 0.00
+        # y una absurda 3.85), asi que cualquier umbral lexico seria arbitrario.
+        # Ese modo degradado existe solo para pruebas unitarias: en produccion el
+        # arranque falla si falta el indice (ver app/main.py). La red de seguridad
+        # restante es el prompt, que redirige con elegancia.
         best = max((r.semantic for r in retrieved), default=0.0)
-        if not retrieved or best < config.MIN_SCORE:
+        floor = config.MIN_SCORE
+        if self._r.has_vectors and (not retrieved or best < floor):
             return done(Answer(text=prompts.ABSTAIN[lang], lang=lang,
                                retrieved=retrieved, abstained=True,
-                               reason=f"low_evidence(sim={best:.3f}<{config.MIN_SCORE})"))
+                               reason=f"low_evidence(sim={best:.3f}<{floor})"))
 
         user = _build_user_prompt(q, retrieved, lang)
         try:

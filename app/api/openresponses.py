@@ -145,7 +145,7 @@ def build_response(
         "top_p": _num(body.get("top_p"), 1.0),
         "presence_penalty": _num(body.get("presence_penalty"), 0.0),
         "frequency_penalty": _num(body.get("frequency_penalty"), 0.0),
-        "top_logprobs": int(body.get("top_logprobs") or 0),
+        "top_logprobs": _int(body.get("top_logprobs"), 0),
         "temperature": _num(body.get("temperature"), 0.2),
         "reasoning": None,
         "usage": usage,
@@ -163,6 +163,15 @@ def build_response(
 def _num(v: Any, default: float) -> float:
     try:
         return float(v) if v is not None else default
+    except (TypeError, ValueError):
+        return default
+
+
+def _int(v: Any, default: int) -> int:
+    """El contrato no declara ningun campo obligatorio ni valida tipos, asi que
+    un valor no numerico debe aplicar el default, nunca provocar un 500."""
+    try:
+        return int(v) if v is not None else default
     except (TypeError, ValueError):
         return default
 

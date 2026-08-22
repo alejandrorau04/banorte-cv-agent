@@ -41,16 +41,38 @@ def _cosine(a: list[float], b: list[float]) -> float:
     return num / (na * nb) if na and nb else 0.0
 
 
+def _raw_tokens(text: str) -> set[str]:
+    """Tokeniza SIN eliminar stopwords.
+
+    La deteccion de idioma se apoya precisamente en interrogativos y auxiliares
+    (`what`, `where`, `does`, `que`, `cual`), que son stopwords para la
+    recuperacion. Filtrarlos antes de detectar vaciaba la senal: 10 de los 21
+    marcadores ingleses estaban en `_STOP` y el detector devolvia siempre `es`.
+    """
+    t = unicodedata.normalize("NFKD", text.lower())
+    t = "".join(c for c in t if not unicodedata.combining(c))
+    return set(_WORD.findall(t))
+
+
 def detect_lang(text: str) -> Lang:
-    """Detección por marcadores de alta frecuencia. Determinista y sin coste:
-    delegarla al LLM añadiría una llamada por petición (ver ADR-005)."""
-    toks = set(_norm(text))
-    es = len(toks & {"que","cual","como","donde","cuando","quien","cuales","su","tiene",
-                     "experiencia","trabajo","habla","dime","cuentame","anos","estudios",
-                     "sabe","conoce","hizo","proyectos","empresa","puesto","actualmente"})
-    en = len(toks & {"what","which","how","where","when","who","does","did","his","tell",
-                     "experience","work","skills","years","about","company","role",
-                     "currently","projects","know","has"})
+    """Deteccion por marcadores de alta frecuencia. Determinista y sin coste:
+    delegarla al LLM anadiria una llamada por peticion (ver ADR-005)."""
+    toks = _raw_tokens(text)
+    es = len(toks & {
+        "que", "cual", "cuales", "como", "donde", "cuando", "quien", "quienes",
+        "cuanto", "cuantos", "su", "sus", "tiene", "tienes", "es", "fue", "ha",
+        "experiencia", "trabajo", "trabaja", "habla", "dime", "cuentame",
+        "anos", "estudios", "estudio", "sabe", "conoce", "hizo", "proyectos",
+        "empresa", "empresas", "puesto", "actualmente", "del", "los", "las",
+        "una", "por", "para", "con", "sobre", "cuentanos", "dame",
+    })
+    en = len(toks & {
+        "what", "which", "how", "where", "when", "who", "whose", "does", "did",
+        "do", "is", "are", "was", "were", "has", "have", "his", "him", "he",
+        "tell", "experience", "work", "worked", "skills", "years", "about",
+        "company", "companies", "role", "currently", "projects", "know",
+        "the", "of", "for", "with", "me", "you", "your", "and",
+    })
     return "en" if en > es else "es"
 
 

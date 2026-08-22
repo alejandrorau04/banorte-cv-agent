@@ -39,6 +39,15 @@ async def lifespan(_: FastAPI):
     STATE["client"] = client
     STATE["agent"] = CVAgent(retriever, GeminiLLM(client))
     STATE["facts"] = len(facts)
+    if not retriever.has_vectors:
+        # El indice se versiona en git y se copia en la imagen: su ausencia es un
+        # error de construccion, no una condicion de ejecucion. Sin el no se puede
+        # calibrar la compuerta de abstencion, de modo que fallar ruidosamente es
+        # preferible a degradar en silencio la garantia anti-alucinacion.
+        raise RuntimeError(
+            "indice de embeddings ausente (data/corpus.index.json). "
+            "Ejecutar scripts/build_index.py y reconstruir la imagen."
+        )
     STATE["vectors"] = retriever.has_vectors
     STATE["started"] = time.time()
     log.info('"arranque: %d hechos, vectores=%s"', len(facts), retriever.has_vectors)

@@ -13,6 +13,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import httpx, yaml
+from app.adapters.base import ProviderError
 from app.adapters.gemini import GeminiEmbedder, GeminiLLM
 from app.core.agent import CVAgent
 from app.core.corpus import load_facts
@@ -74,7 +75,17 @@ async def main() -> int:
         agent = CVAgent(HybridRetriever.from_index(facts, embedder=GeminiEmbedder(c)),
                         GeminiLLM(c))
         for case in cases:
-            a = await agent.answer(case["q"])
+            try:
+                a = await agent.answer(case["q"])
+            except ProviderError as e:
+                # Un fallo del proveedor no debe abortar la corrida: se registra
+                # como error de infraestructura, distinto de un fallo del agente.
+                rows.append({"q": case["q"], "expect": case["expect"], "ok": False,
+                             "why": f"ERROR PROVEEDOR: {e}", "lang": "-",
+                             "abstained": False, "tokens": 0, "ms": 0,
+                             "citations": [], "text": ""})
+                print(f"  ERROR  [{case['expect']:7}] {case['q'][:58]}  <- {e}")
+                continue
             ok, why = judge(case, a)
             rows.append({"q": case["q"], "expect": case["expect"], "ok": ok, "why": why,
                          "lang": a.lang, "abstained": a.abstained,

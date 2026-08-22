@@ -15,8 +15,15 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
 
 # Cadena de respaldo. El nivel gratuito devuelve 503 con frecuencia (medido
-# 2026-08-22), por lo que un modelo único es un punto de fallo. Ver ADR-004.
-GEN_MODELS = ("gemini-3.1-flash-lite", "gemini-3.6-flash")
+# 2026-08-22), por lo que un modelo unico es un punto de fallo.
+#
+# Ambos modelos deben ser RAPIDOS: un respaldo mas lento que el timeout nunca
+# llega a completarse. Medicion 2026-08-22 (mediana / maximo de 3 ejecuciones):
+#   gemini-3.1-flash-lite   1.12s / 1.18s   <- primario
+#   gemini-3.5-flash-lite   1.01s / 1.01s   <- respaldo
+#   gemini-3.6-flash       15.46s / 35.67s  <- DESCARTADO, excede el presupuesto
+# Ver ADR-005.
+GEN_MODELS = ("gemini-3.1-flash-lite", "gemini-3.5-flash-lite")
 EMBED_MODEL = "gemini-embedding-001"
 # 768 en lugar de 3072: indice 4x menor y coseno 4x mas rapido en Python puro,
 # con perdida de calidad marginal (embeddings truncables). Ver ADR-004.
@@ -34,6 +41,8 @@ LLM_TIMEOUT_S = 12.0
 # Cota superior del tiempo total dedicado al proveedor, incluidos reintentos y
 # respaldos. Protege frente al timeout (no documentado) de la plataforma.
 LLM_BUDGET_S = 25.0
+# Presupuesto del embedding de la consulta, que tambien esta en la ruta critica.
+EMBED_BUDGET_S = 8.0
 
 # --- Recuperación ------------------------------------------------------------
 TOP_K = 6

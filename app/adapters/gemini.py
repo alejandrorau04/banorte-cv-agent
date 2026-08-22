@@ -40,24 +40,43 @@ class GeminiLLM:
                 if time.monotonic() >= deadline:
                     raise last or ProviderError("presupuesto de tiempo agotado")
                 try:
+                    # El timeout se acota al presupuesto restante: sin esto, el
+                    # tiempo total podia superar LLM_BUDGET_S sumando intentos.
+                    timeout = max(1.0, min(config.LLM_TIMEOUT_S,
+                                           deadline - time.monotonic()))
                     r = await self._c.post(
                         f"{config.GEMINI_BASE}/{model}:generateContent",
                         params={"key": config.GEMINI_API_KEY},
-                        json=body, timeout=config.LLM_TIMEOUT_S,
+                        json=body, timeout=timeout,
                     )
                     if r.status_code in _RETRYABLE:
                         last = ProviderError(f"{model}: HTTP {r.status_code}", status=r.status_code)
-                        await asyncio.sleep(0.4 * (2 ** attempt))
+                        await self._backoff(attempt, deadline)
                         continue
                     if r.status_code != 200:
                         last = ProviderError(
                             f"{model}: HTTP {r.status_code} {r.text[:160]}", status=r.status_code)
                         break  # error no reintentable: pasar al siguiente modelo
                     return _parse(r.json(), model)
+                except ProviderError as e:
+                    # Respuesta 200 pero vacia o truncada. Debe agotar reintentos
+                    # y respaldos igual que un fallo de red, no abortar la cadena.
+                    last = e
+                    await self._backoff(attempt, deadline)
                 except httpx.HTTPError as e:
                     last = ProviderError(f"{model}: {type(e).__name__}")
-                    await asyncio.sleep(0.4 * (2 ** attempt))
+                    await self._backoff(attempt, deadline)
         raise last or ProviderError("sin modelos disponibles")
+
+    @staticmethod
+    async def _backoff(attempt: int, deadline: float) -> None:
+        """Espera exponencial, nunca despues del ultimo intento ni mas alla del
+        presupuesto: dormir sin reintentar despues solo anade latencia."""
+        if attempt >= 2:
+            return
+        delay = min(0.4 * (2 ** attempt), max(0.0, deadline - time.monotonic()))
+        if delay > 0:
+            await asyncio.sleep(delay)
 
 
 def _parse(data: dict, model: str) -> Completion:
@@ -80,13 +99,22 @@ class GeminiEmbedder:
         self._c = client
         self._model = model or config.EMBED_MODEL
 
-    async def embed(self, texts: Sequence[str], *, is_query: bool = False) -> list[list[float]]:
+    async def embed(self, texts: Sequence[str], *, is_query: bool = False,
+                    budget_s: float | None = None) -> list[list[float]]:
         # Los modelos de embedding distinguen consulta de documento; usar el
         # task_type correcto mejora de forma apreciable la recuperación.
         task = "RETRIEVAL_QUERY" if is_query else "RETRIEVAL_DOCUMENT"
+        # En la ruta de peticion (consulta del usuario) el embedding tambien debe
+        # tener presupuesto: sin el, tres reintentos con 503 podian consumir ~37 s
+        # por fuera de LLM_BUDGET_S y desbordar el timeout de la plataforma.
+        if budget_s is None:
+            budget_s = config.EMBED_BUDGET_S if is_query else 1e9
+        deadline = time.monotonic() + budget_s
         out: list[list[float]] = []
         for t in texts:
             for attempt in range(3):
+                if time.monotonic() >= deadline:
+                    raise ProviderError("embed: presupuesto de tiempo agotado")
                 r = await self._c.post(
                     f"{config.GEMINI_BASE}/{self._model}:embedContent",
                     params={"key": config.GEMINI_API_KEY},
@@ -94,13 +122,17 @@ class GeminiEmbedder:
                           "content": {"parts": [{"text": t}]},
                           "taskType": task,
                           "outputDimensionality": config.EMBED_DIM},
-                    timeout=config.LLM_TIMEOUT_S,
+                    timeout=max(1.0, min(config.LLM_TIMEOUT_S,
+                                         deadline - time.monotonic())),
                 )
                 if r.status_code == 200:
                     out.append(r.json()["embedding"]["values"])
                     break
                 if r.status_code in _RETRYABLE and attempt < 2:
-                    await asyncio.sleep(0.5 * (2 ** attempt))
+                    delay = min(0.5 * (2 ** attempt),
+                                max(0.0, deadline - time.monotonic()))
+                    if delay > 0:
+                        await asyncio.sleep(delay)
                     continue
                 raise ProviderError(f"embed: HTTP {r.status_code} {r.text[:160]}",
                                     status=r.status_code)

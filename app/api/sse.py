@@ -68,16 +68,22 @@ async def stream_answer(body: dict[str, Any], answer: Answer,
 
 
 def chunk_text(text: str, size: int = 24) -> list[str]:
-    """Trocea respetando límites de palabra: evita cortar a mitad de palabra,
-    que en la interfaz se percibe como un fallo de renderizado."""
-    out, cur = [], ""
-    for word in text.split(" "):
-        cand = f"{cur} {word}" if cur else word
-        if len(cand) >= size:
-            out.append(cand + " ")
-            cur = ""
-        else:
-            cur = cand
-    if cur:
-        out.append(cur)
-    return out or [text]
+    """Trocea respetando limites de palabra.
+
+    Invariante: `"".join(chunk_text(t)) == t` exactamente. Los deltas SSE deben
+    reconstruir el texto caracter a caracter, porque el cliente los concatena y
+    despues recibe `output_text.done` con el texto completo: si difieren, el
+    contenido parpadea o se duplica al final del stream.
+    """
+    if not text:
+        return [""]
+    out, start, n = [], 0, len(text)
+    while start < n:
+        end = min(start + size, n)
+        if end < n:
+            corte = text.rfind(" ", start + 1, end + 1)
+            if corte > start:
+                end = corte + 1  # el espacio se queda en este trozo
+        out.append(text[start:end])
+        start = end
+    return out
