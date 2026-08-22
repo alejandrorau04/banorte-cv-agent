@@ -12,7 +12,8 @@ Cuatro niveles, cada uno con un propósito distinto y un coste distinto:
 | **1. Unitario / contrato** | Conformidad con el esquema, lógica del núcleo, SSE | No | No | 0,05 s |
 | **2. Integración local** | Servidor real, autenticación, streaming | Local | Sí | ~30 s |
 | **3. Evaluación (golden set)** | Comportamiento del agente frente al modelo real | Sí | Sí | ~60 s |
-| **4. Robustez y carga** | Entradas malformadas y ráfagas concurrentes contra el endpoint desplegado | Sí | Sí | ~90 s |
+| **4. Consistencia** | Mismas intenciones formuladas de formas distintas | Sí | Sí | ~40 s |
+| **5. Robustez y carga** | Entradas malformadas y ráfagas concurrentes contra el endpoint desplegado | Sí | Sí | ~90 s |
 
 El nivel 1 corre en cada `push` mediante GitHub Actions. **No requiere red ni claves**:
 el proveedor se sustituye por un doble. Esto permite que el CI de un repositorio público
@@ -89,7 +90,49 @@ solo de preguntas fáciles no probaría la propiedad que más importa aquí.
 
 ---
 
-## Nivel 4 — Robustez y carga contra producción
+## Qué significa «respuesta correcta» en este agente
+
+Definido explícitamente porque de ello depende todo lo demás. El criterio **no** es
+parecido textual con una respuesta modelo: el modelo redacta distinto en cada ejecución.
+Una respuesta es correcta cuando cumple **las cuatro condiciones** de su categoría,
+implementadas en `judge()` de `eval/run_eval.py`:
+
+| Categoría | Criterio de corrección |
+|---|---|
+| `answer` | No se abstiene **y** cita al menos uno de los hechos esperados **y** no contiene fragmentos explícitamente prohibidos |
+| `abstain` | Se abstiene por baja evidencia **y** consume **0 tokens** (no invocó al modelo) |
+| `contact` | Aplica la política de privacidad, sin recuperación ni modelo |
+| `honest` | No **afirma** el término prohibido. Se comprueba negación a nivel de frase: mencionar «Harvard» para negarlo es correcto; afirmarlo no |
+
+Toda cita emitida se contrasta además contra los hechos efectivamente recuperados: una
+cita a un identificador inexistente se elimina del texto antes de responder.
+
+---
+
+## Nivel 4 — Consistencia ante distintas formulaciones
+
+```bash
+python eval/consistencia.py     # 26 formulaciones, 5 intenciones
+```
+
+Recomendado explícitamente por el agente Guía del reto: *«pruebas de consistencia ante
+distintas formas de preguntar»*.
+
+Cinco intenciones, cada una expresada de varias maneras: correcta, con erratas
+(«donde travaja aorita??»), en mayúsculas, en registro coloquial mexicano («cual es su
+chamba actual»), abreviada («q sabe de ia») y en inglés.
+
+Se verifica que todas produzcan: el mismo hecho citado, los datos esenciales presentes,
+ninguna abstención indebida y **el idioma correcto**.
+
+**Resultado: 26/26 consistentes.**
+
+La verificación de idioma detectó que `current employer?` se clasificaba como español.
+Corregido ampliando los marcadores de detección.
+
+---
+
+## Nivel 5 — Robustez y carga contra producción
 
 ```bash
 AGENT_URL=... AGENT_API_KEY=... python scripts/robustez.py           # entradas hostiles
@@ -191,6 +234,30 @@ que funciona.**
 
 ---
 
+## Correspondencia con lo indicado por el agente Guía
+
+Consultado el 2026-08-22 sobre criterios y expectativas. No publica rúbrica ni pesos,
+pero sí enumera qué demuestra criterio de nivel Senior. Correspondencia con lo entregado:
+
+| Indicado por el Guía | Evidencia en este repositorio |
+|---|---|
+| Explicar la arquitectura y qué alternativas se descartaron | 8 ADRs, cada uno con sección *Alternativas descartadas* |
+| Hacer explícitos los límites y supuestos | Tabla de supuestos con mitigación (ADR-001); sección *Qué no se ha probado* |
+| Controlar respuestas no respaldadas por el CV | Cuatro controles en capas, umbral calibrado con datos (ADR-003) |
+| Integración clara y mantenible | Puertos y adaptadores; el núcleo desconoce HTTP y proveedor |
+| Errores, observabilidad, seguridad y operación | Errores tipados, logs estructurados, modelo STRIDE, runbook |
+| Cómo validar y detectar regresiones | 65 tests y golden set de 32 casos; un test por cada defecto hallado |
+| Casos sobre experiencia, habilidades y proyectos | 20 casos `answer` |
+| Preguntas sin respuesta en el CV, verificando que no invente | 5 casos `honest` y 5 `abstain` |
+| Comprobación de citas y fragmentos recuperados | Verificación de citas + `metadata.retrieved` con similitudes |
+| Consistencia ante distintas formas de preguntar | `eval/consistencia.py`, 26 formulaciones |
+| Resultados antes y después de ajustes | Tablas comparativas de p95, carga y golden set en este documento |
+
+También señala: *«no es necesario añadir tecnologías complejas solo para hacer la
+solución más grande; una arquitectura sencilla, bien justificada y operable puede
+demostrar más madurez que una plataforma sobredimensionada»*. Es exactamente el
+razonamiento del ADR-004, que justifica no desplegar base vectorial para 94 vectores.
+
 ## Cronología
 
 | Hora (2026-08-22) | Actividad |
@@ -207,6 +274,9 @@ que funciona.**
 | — | **Batería de robustez** contra producción: 28 entradas hostiles → 1 HTTP 500 hallado y corregido |
 | — | **Prueba de carga**: 5 `429` bajo ráfaga → limitador de concurrencia → 30/30 correctas |
 | — | Tercer defecto de la cadena de respaldo: presupuesto repartido entre modelos |
+| — | **QA adversarial** (26 preguntas capciosas, ambiguas, mal escritas): 2 fallos factuales en consultas de agregación → ADR-008 |
+| — | El golden set contenía una respuesta esperada **incorrecta** (Alcazar en lugar de Guval para marzo 2024); corregido |
+| — | Consulta al Guía sobre criterios; **pruebas de consistencia** añadidas por su recomendación |
 
 ---
 

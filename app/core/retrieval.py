@@ -72,6 +72,9 @@ def detect_lang(text: str) -> Lang:
         "tell", "experience", "work", "worked", "skills", "years", "about",
         "company", "companies", "role", "currently", "projects", "know",
         "the", "of", "for", "with", "me", "you", "your", "and",
+        "current", "employer", "job", "now", "study", "studied", "hold", "held",
+        "certifications", "education", "background", "career", "first", "last",
+        "previous", "companies", "position", "positions", "tell", "give",
     })
     return "en" if en > es else "es"
 
