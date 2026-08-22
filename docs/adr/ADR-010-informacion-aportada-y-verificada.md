@@ -61,6 +61,24 @@ expone un dato de negociación a cualquiera y no puede retirarse después. El ag
 responde con la política —se trata en el proceso de selección—, coherente con el
 tratamiento de datos de contacto del ADR-006.
 
+**Contenedores, Azure y Kubernetes.** El titular pidió añadir experiencia en Azure y
+Kubernetes, ausentes de ambas versiones del CV, planteándolo como «podría decir que tengo
+más de 4 años». Se declinó redactar esa afirmación y se acordó una formulación precisa del
+alcance real: producción con Docker y CI/CD, arquitectura cloud profunda en AWS, despliegue
+propio en Azure Container Apps con registro de imágenes y secretos gestionados, y
+Kubernetes a nivel conceptual sin haber operado un clúster.
+
+Razones: (a) declarar años de una tecnología que la vacante pide explícitamente, horas
+antes de entregar, es un patrón detectable; (b) la afirmación genérica invita a una
+repregunta técnica que, si no se sostiene, arrastra la credibilidad del resto del CV; y
+(c) contradiría el principio que sostiene todo el sistema. La formulación acordada
+describe con exactitud dónde está el candidato, lo cual en una entrevista técnica pesa
+más que un número.
+
+**Este proyecto como hecho del corpus.** Se añade `project.cv_agent`: el propio agente es
+la experiencia más reciente en Azure, Python y RAG, y la única enteramente verificable
+—el código es público—. El agente puede describir cómo está construido.
+
 ## Consecuencias
 
 - El corpus pasa de 46 a 59 hechos.

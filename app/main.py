@@ -44,17 +44,24 @@ async def lifespan(_: FastAPI):
     STATE["client"] = client
     STATE["agent"] = CVAgent(retriever, GeminiLLM(client))
     STATE["facts"] = len(facts)
-    if not retriever.has_vectors:
+    parciales = retriever.partial_models
+    if parciales:
+        # No es fatal mientras quede un modelo completo, pero debe verse: un
+        # indice parcial deja hechos invisibles sin ningun error visible.
+        log.warning('"indice INCOMPLETO en %s"',
+                    ", ".join(f"{m} (faltan {n})" for m, n in parciales.items()))
+    if not retriever.indexed_models:
         # El indice se versiona en git y se copia en la imagen: su ausencia es un
         # error de construccion, no una condicion de ejecucion. Sin el no se puede
         # calibrar la compuerta de abstencion, de modo que fallar ruidosamente es
         # preferible a degradar en silencio la garantia anti-alucinacion.
         raise RuntimeError(
-            "indice de embeddings ausente (data/corpus.index.json). "
+            "ningun modelo de embedding tiene el indice completo. "
             "Ejecutar scripts/build_index.py y reconstruir la imagen."
         )
     STATE["vectors"] = retriever.has_vectors
     STATE["embed_models"] = retriever.indexed_models
+    STATE["embed_parciales"] = parciales
     STATE["started"] = time.time()
     log.info('"arranque: %d hechos, vectores=%s"', len(facts), retriever.has_vectors)
     yield
@@ -115,6 +122,7 @@ async def health() -> dict:
         "facts": STATE.get("facts", 0),
         "vectors_loaded": STATE.get("vectors", False),
         "embed_models": STATE.get("embed_models", []),
+        "embed_models_incompletos": STATE.get("embed_parciales", {}),
         "uptime_s": round(time.time() - STATE.get("started", time.time()), 1),
     }
 

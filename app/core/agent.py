@@ -134,14 +134,30 @@ _SEGUIMIENTO = re.compile(
     r"there|that|those|it|and\s+(what|which|how|when|where|why)|"
     r"more\s+(detail|about|info)|tell\s+me\s+more|elaborate)\b", re.I)
 
-# Longitud por debajo de la cual una pregunta casi seguro depende del contexto.
-_CORTA = 45
+# Preguntas muy cortas que ADEMAS empiezan por conjuncion: "¿y?", "y luego?".
+_CONJUNCION = re.compile(r"^\W*(y|and)\b", re.I)
+_MUY_CORTA = 20
 # Recorte del turno anterior del agente: basta el inicio para dar contexto.
 _CTX_MAX = 260
 
 
 def _es_seguimiento(q: str) -> bool:
-    return len(q) < _CORTA or bool(_SEGUIMIENTO.search(q))
+    """Detecta si la pregunta depende del turno anterior.
+
+    Se exige una MARCA explicita de dependencia. Una version previa marcaba
+    tambien toda pregunta de menos de 45 caracteres, y eso rompio preguntas
+    autonomas perfectamente validas: "¿Donde estudio?" (15 caracteres) se
+    trataba como seguimiento, la busqueda se contaminaba con la pregunta
+    anterior y la respuesta mezclaba dos temas afirmando no tener informacion
+    que si estaba en el corpus.
+
+    El criterio es deliberadamente conservador: **detectar de menos es mejor que
+    detectar de mas**. Un falso negativo degrada al comportamiento anterior --
+    la pregunta se responde sola --; un falso positivo corrompe una pregunta que
+    funcionaba. Los costes no son simetricos.
+    """
+    return bool(_SEGUIMIENTO.search(q)) or (
+        len(q) <= _MUY_CORTA and bool(_CONJUNCION.match(q)))
 
 
 def _ultimo_intercambio(history) -> tuple[str, str]:

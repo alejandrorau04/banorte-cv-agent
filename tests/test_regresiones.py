@@ -401,15 +401,32 @@ def test_el_indice_contiene_vectores_de_todos_los_modelos_declarados():
 def test_se_detectan_las_preguntas_de_seguimiento():
     from app.core.agent import _es_seguimiento
     for q in ["¿Y qué hace ahí?", "cuéntame más", "¿Y antes de eso?", "y eso?",
-              "tell me more", "and what about that?", "¿más detalle?"]:
+              "tell me more", "and what about that?", "¿más detalle?", "¿y?",
+              "¿Qué tecnologías usa en ese proyecto?"]:
         assert _es_seguimiento(q), q
 
 
-def test_una_pregunta_autonoma_no_se_marca_como_seguimiento():
+@pytest.mark.parametrize("q", [
+    # Hallado probando en la plataforma: "¿Dónde estudió?" (15 caracteres) se
+    # marcaba como seguimiento por la heurística de longitud, la búsqueda se
+    # contaminaba con la pregunta previa y la respuesta mezclaba dos temas
+    # afirmando no tener información que sí estaba en el corpus.
+    "¿Dónde estudió?",
+    "¿Dónde trabaja?",
+    "¿Habla inglés?",
+    "¿Cuánto gana?",
+    "¿Sabe Python?",
+    "Where did he study?",
+    "¿Qué hizo para Vinte?",
+    "¿A qué se dedica WESCO?",
+    "¿Qué certificaciones tiene Alejandro Rau Lázaro?",
+    "Describe his complete professional cloud experience please",
+])
+def test_una_pregunta_autonoma_no_se_marca_como_seguimiento(q):
+    """Detectar de menos es mejor que detectar de más: un falso negativo degrada
+    al comportamiento anterior; un falso positivo corrompe una pregunta válida."""
     from app.core.agent import _es_seguimiento
-    for q in ["¿Qué certificaciones tiene Alejandro Rau Lázaro?",
-              "Describe his complete professional cloud experience please"]:
-        assert not _es_seguimiento(q), q
+    assert not _es_seguimiento(q), q
 
 
 def test_solo_se_conserva_el_ultimo_intercambio():
@@ -471,3 +488,20 @@ def test_la_version_sigue_semver():
     import re
     from app import config
     assert re.fullmatch(r"\d+\.\d+\.\d+", config.VERSION), config.VERSION
+
+
+# --- un índice parcial deja hechos invisibles y falla en silencio
+def test_un_modelo_con_indice_incompleto_no_se_usa(facts):
+    from app.core.retrieval import HybridRetriever
+    completo = {f"{f.id}::{lang}": [0.1] for f in facts for lang in ("es", "en")}
+    parcial = dict(list(completo.items())[:-4])
+    r = HybridRetriever(facts, by_model={"completo": completo, "parcial": parcial})
+    assert r.indexed_models == ["completo"]
+    assert r.partial_models == {"parcial": 4}
+
+
+def test_sin_ningun_modelo_completo_no_hay_modelos_utilizables(facts):
+    from app.core.retrieval import HybridRetriever
+    parcial = {f"{facts[0].id}::es": [0.1]}
+    r = HybridRetriever(facts, by_model={"m": parcial})
+    assert r.indexed_models == []

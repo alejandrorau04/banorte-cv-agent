@@ -49,6 +49,7 @@ _SECCION = {
     "achievement": ("Logros", "Achievements"),
     "timeline": ("Trayectoria", "Timeline"),
     "organization": ("Empresa", "Company"),
+    "project": ("Proyecto", "Project"),
     "intent": ("Situación profesional", "Professional situation"),
     "other": ("CV", "CV"),
 }

@@ -114,7 +114,24 @@ class HybridRetriever:
 
     @property
     def indexed_models(self) -> list[str]:
-        return [m for m, v in self._by_model.items() if v]
+        """Modelos cuyo indice cubre el corpus COMPLETO.
+
+        Un indice parcial es peor que ninguno: los hechos sin vector nunca se
+        recuperan y el fallo es silencioso -- el agente responde «no tengo esa
+        informacion» sobre algo que si esta en el corpus. Ocurrio al anadir
+        hechos nuevos con la cuota diaria de un modelo agotada.
+        """
+        necesarias = {f"{fid}::{lang}" for fid in self.facts for lang in ("es", "en")}
+        return [m for m, v in self._by_model.items()
+                if v and necesarias.issubset(v.keys())]
+
+    @property
+    def partial_models(self) -> dict[str, int]:
+        """Modelos con indice incompleto, y cuantos vectores les faltan."""
+        necesarias = {f"{fid}::{lang}" for fid in self.facts for lang in ("es", "en")}
+        return {m: len(necesarias - set(v.keys()))
+                for m, v in self._by_model.items()
+                if v and not necesarias.issubset(v.keys())}
 
     def _lexical(self, query: str, lang: Lang) -> dict[str, float]:
         """Solapamiento ponderado por IDF. Premia términos raros (nombres propios)."""

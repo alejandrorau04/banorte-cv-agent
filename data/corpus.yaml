@@ -379,19 +379,24 @@ facts:
   # ---------------- FORMACIÓN ----------------
   - id: education.degree
     type: education
-    tags: [formacion, universidad, titulo, ingenieria]
-    es: "Ingeniero en Sistemas Computacionales por la Universidad de Cuautitlán Izcalli, titulado en 2016."
-    en: "B.S. in Computer Systems Engineering from Universidad de Cuautitlán Izcalli, graduated in 2016."
+    tags: [formacion, universidad, titulo, ingenieria, estudio, estudios, estudia,
+           estudiar, carrera, escuela, licenciatura, academica, academico, grado,
+           study, studied, studies, education, degree, university, college, school]
+    es: "Formación académica: Alejandro estudió la carrera de Ingeniería en Sistemas Computacionales en la Universidad de Cuautitlán Izcalli, donde se tituló en 2016."
+    en: "Education: Alejandro studied Computer Systems Engineering at Universidad de Cuautitlán Izcalli, where he earned his degree in 2016."
 
   - id: education.certifications
     type: education
-    tags: [certificaciones, ccna, scrum-master, rocketbot, netcontent]
+    tags: [certificaciones, certificado, certificados, certificacion, ccna,
+           scrum-master, scrum, rocketbot, netcontent, cursos, diplomas,
+           certifications, certificates, certified, courses]
     es: "Certificaciones: CCNA de Cisco Systems (2016), Scrum Master (2021), Rocketbot RPA niveles R1 y R2 (2024) y Netcontent SGD (2024)."
     en: "Certifications: CCNA from Cisco Systems (2016), Scrum Master (2021), Rocketbot RPA levels R1 and R2 (2024), and Netcontent DMS (2024)."
 
   - id: education.languages
     type: education
-    tags: [idiomas, español, ingles]
+    tags: [idiomas, idioma, español, espanol, ingles, english, languages,
+           habla, hablar, nivel, speak, speaks, fluent, bilingue]
     es: "Idiomas: español nativo. En inglés, nivel avanzado en lectura y escritura técnica —documentación, especificaciones, código y comunicación escrita profesional— y nivel conversacional en desarrollo activo."
     en: "Languages: native Spanish. In English, advanced level in technical reading and writing —documentation, specifications, code, and professional written communication— and conversational level actively developing."
 
@@ -487,7 +492,8 @@ facts:
 
   - id: intent.objetivo
     type: intent
-    tags: [objetivo, busca, proximo, rol, crecimiento, carrera, motivacion, futuro]
+    tags: [objetivo, busca, buscando, proximo, siguiente, rol, puesto, aspira,
+           expectativas, looking, next, role, goals]
     es: "Busca incorporarse a una organización de gran escala donde la ingeniería de inteligencia artificial tenga impacto real en el negocio y en los usuarios. Tras diez años construyendo soluciones de extremo a extremo y liderando equipos técnicos, le interesa un entorno con exigencia técnica alta, procesos maduros y problemas de volumen —seguridad, trazabilidad y cumplimiento— que no aparecen en proyectos pequeños. Su prioridad es el crecimiento profesional e intelectual a largo plazo, especializándose en IA generativa aplicada a producto dentro de un equipo del que pueda aprender y al que pueda aportar."
     en: "He is looking to join a large-scale organization where AI engineering has real impact on the business and its users. After ten years building end-to-end solutions and leading technical teams, he is drawn to an environment with high technical demands, mature processes, and problems of scale — security, traceability, and compliance — that do not arise in smaller projects. His priority is long-term professional and intellectual growth, specializing in generative AI applied to product, within a team he can learn from and contribute to."
 
@@ -508,3 +514,33 @@ facts:
     tags: [salario, sueldo, expectativa, remuneracion, compensacion, cuanto, gana]
     es: "La expectativa salarial es algo que Alejandro prefiere tratar directamente en el proceso de selección, considerando el alcance del rol y el paquete completo."
     en: "Salary expectations are something Alejandro prefers to discuss directly during the selection process, taking into account the scope of the role and the full compensation package."
+
+  # ---------------- CONTENEDORES, NUBE Y ORQUESTACIÓN ----------------
+  # Formulación acordada con el titular del CV el 2026-08-22. Describe con
+  # precisión el alcance real: producción con Docker y CI/CD, despliegue propio
+  # en Azure, profundidad en AWS, y Kubernetes a nivel conceptual. Declarar años
+  # de Kubernetes sin haberlo operado habría creado una contradicción con el CV
+  # y un riesgo evidente ante una repregunta técnica. Ver ADR-010.
+
+  - id: skills.contenedores_nube
+    type: skills
+    tags: [kubernetes, k8s, azure, aks, orquestacion, contenedores, docker, nube,
+           cloud, devops, despliegue, infraestructura, container, orchestration,
+           deploy, deployment]
+    es: "Contenedores y nube: trabaja con contenedores Docker y pipelines CI/CD en producción. Su experiencia de arquitectura cloud más profunda es en AWS (Cognito, Lambda, API Gateway, RDS, SES, DynamoDB). En Azure ha desplegado sobre Container Apps, con imagen en registro de contenedores, secretos gestionados por la plataforma y despliegue automatizado desde CI/CD. Conoce Kubernetes a nivel conceptual, pero no lo ha operado como responsable principal de un clúster."
+    en: "Containers and cloud: he works with Docker containers and CI/CD pipelines in production. His deepest cloud architecture experience is on AWS (Cognito, Lambda, API Gateway, RDS, SES, DynamoDB). On Azure he has deployed to Container Apps, with the image in a container registry, platform-managed secrets, and automated deployment from CI/CD. He knows Kubernetes conceptually but has not operated a cluster as its primary owner."
+
+  # ---------------- ESTE PROYECTO ----------------
+  # El agente puede hablar de si mismo. Es la experiencia mas reciente en Azure,
+  # Python y RAG, y la unica enteramente verificable: el codigo es publico.
+
+  - id: project.cv_agent
+    type: project
+    org: "Proyecto propio"
+    website: "https://github.com/alejandrorau04/banorte-cv-agent"
+    start: "2026-08"
+    tags: [proyecto, agente, rag, python, fastapi, azure, gemini, embeddings,
+           open-responses, este-agente, tu-mismo, como-funcionas, project,
+           yourself, how-do-you-work]
+    es: "Cómo funciona este agente por dentro: este mismo agente conversacional es un proyecto propio de Alejandro, construido en agosto de 2026. Es un servicio en Python con FastAPI que implementa la especificación abierta Open Responses, con recuperación aumentada (RAG) sobre un corpus estructurado del CV, embeddings vectoriales, control de alucinaciones mediante abstención con umbral calibrado y verificación de citas, streaming SSE, tests automatizados y despliegue en Azure Container Apps con CI/CD en GitHub Actions. El código es público en https://github.com/alejandrorau04/banorte-cv-agent"
+    en: "How this agent works internally: this conversational agent is Alejandro's own project, built in August 2026. It is a Python service using FastAPI that implements the open Open Responses specification, with retrieval-augmented generation (RAG) over a structured corpus of his CV, vector embeddings, hallucination control through calibrated-threshold abstention and citation verification, SSE streaming, automated tests, and deployment on Azure Container Apps with CI/CD on GitHub Actions. The code is public at https://github.com/alejandrorau04/banorte-cv-agent"

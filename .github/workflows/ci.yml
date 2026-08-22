@@ -80,13 +80,19 @@ jobs:
           from app.core.corpus import load_facts
           d = json.load(open("data/corpus.index.json"))
           need = len(load_facts()) * 2
-          malo = False
+          completos = 0
           for m in config.EMBED_MODELS:
               n = len((d.get("by_model") or {}).get(m) or {})
-              estado = "OK" if n >= need else f"INCOMPLETO ({n}/{need})"
-              print(f"  {m}: {n} vectores  {estado}")
-              malo |= n < need
-          sys.exit(1 if malo else 0)
+              if n >= need:
+                  completos += 1
+                  print(f"  {m}: {n}/{need}  OK")
+              else:
+                  # Un indice parcial deja hechos invisibles: no se usa en runtime.
+                  print(f"::warning::{m} tiene el indice INCOMPLETO ({n}/{need}); "
+                        f"no se usara hasta reconstruirlo")
+          print(f"modelos utilizables: {completos}/{len(config.EMBED_MODELS)}")
+          if completos == 0:
+              sys.exit("ERROR: ningun modelo tiene el indice completo")
           PY
 
   # ----------------------------------------------------------------- imagen --
