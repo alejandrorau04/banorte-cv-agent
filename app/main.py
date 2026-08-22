@@ -135,7 +135,9 @@ async def create_response(request: Request):
     agent: CVAgent = STATE["agent"]
 
     try:
-        answer = await agent.answer(question)
+        instrucciones = body.get("instructions")
+        answer = await agent.answer(
+            question, instructions=instrucciones if isinstance(instrucciones, str) else None)
     except ProviderError as e:
         status = 429 if e.status == 429 else 503
         type_ = "too_many_requests" if status == 429 else "server_error"

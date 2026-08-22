@@ -61,7 +61,8 @@ class CVAgent:
         self._r = retriever
         self._llm = llm
 
-    async def answer(self, question: str, lang: Lang | None = None) -> Answer:
+    async def answer(self, question: str, lang: Lang | None = None,
+                     instructions: str | None = None) -> Answer:
         t0 = time.monotonic()
         lang = lang or detect_lang(question)
 
@@ -102,8 +103,9 @@ class CVAgent:
                                reason=f"low_evidence(sim={best:.3f}<{floor})"))
 
         user = _build_user_prompt(q, retrieved, lang)
+        system = prompts.compose_system(lang, instructions)
         try:
-            c = await self._llm.complete(prompts.SYSTEM[lang], user)
+            c = await self._llm.complete(system, user)
         except ProviderError as e:
             raise e
 
