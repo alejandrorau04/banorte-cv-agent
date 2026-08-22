@@ -1,0 +1,402 @@
+# Corpus del agente de CV — Alejandro Rau Lázaro
+# FUENTE DE VERDAD: CV en español (Alejandro-Rau-CV-Espanol.pdf).
+# La versión en inglés se deriva de esta; ante discrepancia, prevalece `es`.
+#
+# Reglas (ver ADR-002 y ADR-003):
+#  - Cada hecho tiene un `id` ESTABLE. El agente cita por id; cambiarlo rompe trazabilidad.
+#  - `es` y `en` deben afirmar EXACTAMENTE lo mismo. No añadir información en la traducción.
+#  - PROHIBIDO incluir datos de contacto (teléfono, correo). Ver ADR-006.
+
+meta:
+  version: "1.0.0"
+  source: "Alejandro-Rau-CV-Espanol.pdf"
+  updated: "2026-08-22"
+  subject: "Alejandro Rau Lázaro"
+
+facts:
+
+  # ---------------- PERFIL ----------------
+  - id: profile.headline
+    type: profile
+    tags: [perfil, titulo, rol]
+    es: "Alejandro Rau Lázaro es Full Stack Developer, Especialista Móvil iOS y Android, y Líder de Desarrollo. Reside en Playa del Carmen, Quintana Roo, México."
+    en: "Alejandro Rau Lázaro is a Full Stack Developer, iOS and Android Mobile Specialist, and Development Lead. He is based in Playa del Carmen, Quintana Roo, Mexico."
+
+  - id: profile.summary
+    type: profile
+    tags: [perfil, resumen, experiencia, años]
+    es: "Ingeniero en Sistemas con más de 10 años de experiencia en desarrollo full stack, aplicaciones móviles nativas iOS y Android, y liderazgo de equipos técnicos. Especialista en arquitectura de soluciones cloud sobre AWS, plataformas SaaS, CRM a medida y sistemas de comunicación con inteligencia artificial."
+    en: "Systems Engineer with over 10 years of experience in full stack development, native iOS and Android mobile applications, and technical team leadership. Specialist in AWS cloud solution architecture, SaaS platforms, custom CRM systems, and AI-powered communication systems."
+
+  - id: profile.impact
+    type: profile
+    tags: [logros, impacto, rpa, ia]
+    es: "Ha construido desde cero aplicaciones móviles con React Native y diseño Glass UI, plataformas de agentes de llamadas con IA (Retell AI/Twilio), dashboards ejecutivos y CRM a medida. Ha liderado implementaciones que automatizaron procesos con RPA e IA, redujeron costos de infraestructura y optimizaron tiempos críticos de operación hasta en un 50%."
+    en: "He has built from scratch mobile apps with React Native and Glass UI design, AI call agent platforms (Retell AI/Twilio), executive dashboards, and custom CRMs. He has led implementations that automated processes with RPA and AI, reduced infrastructure costs, and optimized critical operation times by up to 50%."
+
+  # ---------------- EXPERIENCIA: GLOBALCONNECT ----------------
+  - id: exp.globalconnect.role
+    type: experience
+    org: GlobalConnect
+    location: "Cancún, Quintana Roo, México"
+    title: "Desarrollador Full Stack & Móvil"
+    start: "2025-05"
+    end: null
+    current: true
+    tags: [globalconnect, actual, saas, leads, react-native]
+    es: "Desde mayo de 2025 y hasta la fecha es Desarrollador Full Stack y Móvil en GlobalConnect, en Cancún, Quintana Roo. Es su puesto actual."
+    en: "Since May 2025 and to date he has been a Full Stack and Mobile Developer at GlobalConnect in Cancún, Quintana Roo. This is his current role."
+
+  - id: exp.globalconnect.saas
+    type: experience
+    org: GlobalConnect
+    start: "2025-05"
+    end: null
+    tags: [saas, dashboard, crm, react-native, glass-ui, movil]
+    es: "En GlobalConnect desarrolla full stack una plataforma SaaS de generación de leads para contratistas: dashboard web con métricas en tiempo real, CRM personalizado y aplicaciones móviles iOS y Android con React Native y diseño Glass UI responsive."
+    en: "At GlobalConnect he does full stack development of a SaaS lead generation platform for contractors: a web dashboard with real-time metrics, a custom CRM, and iOS and Android mobile apps built with React Native and responsive Glass UI design."
+
+  - id: exp.globalconnect.ai_calls
+    type: experience
+    org: GlobalConnect
+    start: "2025-05"
+    end: null
+    tags: [ia, retell, twilio, voz, whatsapp, agentes, multicanal]
+    es: "Diseñó la arquitectura e implementó una plataforma de agentes de llamadas con inteligencia artificial usando Retell AI y Twilio, para comunicación multicanal automatizada por SMS, email, llamadas de voz y WhatsApp."
+    en: "He architected and implemented an AI call agent platform using Retell AI and Twilio for automated multichannel communication over SMS, email, voice calls, and WhatsApp."
+
+  - id: exp.globalconnect.ai_systems
+    type: experience
+    org: GlobalConnect
+    start: "2025-05"
+    end: null
+    tags: [ia, agentes-conversacionales, automatizacion, leads]
+    es: "Implementó inteligencia artificial en sistemas propios: agentes conversacionales inteligentes, automatización de seguimiento de leads, calificación automática y flujos de comunicación adaptativos."
+    en: "He implemented AI within proprietary systems: intelligent conversational agents, automated lead tracking, automatic qualification, and adaptive communication workflows."
+
+  - id: exp.globalconnect.crm
+    type: experience
+    org: GlobalConnect
+    start: "2025-05"
+    end: null
+    tags: [crm, pipeline, ventas, reportes]
+    es: "Creó un CRM desde cero con gestión completa de pipeline de ventas, seguimiento de leads, asignación automática por zona y servicio, y reportes ejecutivos en tiempo real."
+    en: "He built a CRM from scratch with full sales pipeline management, lead tracking, automatic assignment by zone and service, and real-time executive reports."
+
+  - id: exp.globalconnect.mobile
+    type: experience
+    org: GlobalConnect
+    start: "2025-05"
+    end: null
+    tags: [ios, android, movil, glass-ui, push, sincronizacion]
+    es: "Desarrolló una aplicación iOS con interfaz Glass UI nativa, experiencia premium, notificaciones push y gestión de leads en campo; y una aplicación Android con visualización de leads, estados de seguimiento, comunicación directa y sincronización en tiempo real."
+    en: "He developed an iOS app with a native Glass UI interface, premium UX, push notifications, and field lead management; and an Android app with lead visualization, follow-up status tracking, direct communication, and real-time sync."
+
+  - id: exp.globalconnect.stack
+    type: experience
+    org: GlobalConnect
+    start: "2025-05"
+    end: null
+    tags: [nodejs, nextjs, vercel, cicd, cognito, docker, aws, stripe, supabase, lambda]
+    es: "El stack incluye backend con Node.js, frontend Next.js desplegado en Vercel con pipelines CI/CD automatizados, autenticación con AWS Cognito, contenedores Docker, pagos con Stripe, base de datos PostgreSQL/Supabase, funciones Lambda y APIs REST que interconectan los servicios."
+    en: "The stack includes a Node.js backend, a Next.js frontend deployed on Vercel with automated CI/CD pipelines, AWS Cognito authentication, Docker containers, Stripe payments, a PostgreSQL/Supabase database, Lambda functions, and REST APIs connecting all services."
+
+  - id: exp.globalconnect.agile
+    type: experience
+    org: GlobalConnect
+    start: "2025-05"
+    end: null
+    tags: [scrum, clickup, jira, agile, documentacion]
+    es: "Gestiona el trabajo con Scrum: sprint planning en ClickUp y Jira, retrospectivas, entrega continua y documentación técnica."
+    en: "He manages work with Scrum: sprint planning in ClickUp and Jira, retrospectives, continuous delivery, and technical documentation."
+
+  # ---------------- EXPERIENCIA: ALLDORA ----------------
+  - id: exp.alldora.role
+    type: experience
+    org: "Alldora Latinoamérica"
+    title: "Líder de Desarrollo – DevOps"
+    start: "2024-06"
+    end: "2025-05"
+    tags: [alldora, liderazgo, devops, rpa]
+    es: "De junio de 2024 a mayo de 2025 fue Líder de Desarrollo y DevOps en Alldora Latinoamérica."
+    en: "From June 2024 to May 2025 he was Development Lead and DevOps at Alldora Latinoamérica."
+
+  - id: exp.alldora.rpa
+    type: experience
+    org: "Alldora Latinoamérica"
+    start: "2024-06"
+    end: "2025-05"
+    tags: [rpa, rocketbot, automation-anywhere, netcontent, liderazgo, equipos]
+    es: "Lideró equipos de desarrollo para proyectos de automatización empresarial con RPA usando Rocketbot y Automation Anywhere, y gestión documental con Netcontent."
+    en: "He led development teams on enterprise automation projects using RPA with Rocketbot and Automation Anywhere, and document management with Netcontent."
+
+  - id: exp.alldora.vinte
+    type: experience
+    org: "Alldora Latinoamérica"
+    client: Vinte
+    start: "2024-06"
+    end: "2025-05"
+    tags: [ia, vinte, inmobiliario, robot, captacion]
+    es: "Diseñó y desplegó un robot digital con inteligencia artificial para los desarrollos inmobiliarios de Vinte, abriendo un nuevo canal digital de captación de clientes."
+    en: "He designed and deployed an AI-powered digital robot for Vinte's real estate developments, opening a new digital client acquisition channel."
+
+  - id: exp.alldora.sap
+    type: experience
+    org: "Alldora Latinoamérica"
+    start: "2024-06"
+    end: "2025-05"
+    tags: [sap, contabilidad, automatizacion, reportes]
+    es: "Automatizó procesos contables en SAP: robots que extraían datos de pagos mensuales y enviaban reportes automáticos a la gerencia, reduciendo el trabajo manual."
+    en: "He automated accounting processes in SAP: robots extracted monthly payment data and sent automatic reports to management, reducing manual work."
+
+  - id: exp.alldora.docs_infra
+    type: experience
+    org: "Alldora Latinoamérica"
+    start: "2024-06"
+    end: "2025-05"
+    tags: [gestion-documental, hospitales, infraestructura, servidores]
+    es: "Implementó un sistema de gestión documental para hospitales y empresas, y administró infraestructura: servidores físicos y virtuales, mesa de ayuda y planificación de proyectos."
+    en: "He implemented a document management system for hospitals and enterprises, and administered infrastructure: physical and virtual servers, help desk, and project planning."
+
+  # ---------------- EXPERIENCIA: GUVAL FOODS ----------------
+  - id: exp.guval.role
+    type: experience
+    org: "Guval Foods"
+    location: "México"
+    title: "Desarrollador Odoo / Full Stack"
+    start: "2024-02"
+    end: "2024-06"
+    tags: [guval, odoo, erp]
+    es: "De febrero a junio de 2024 fue Desarrollador Odoo y Full Stack en Guval Foods, en México."
+    en: "From February to June 2024 he was an Odoo and Full Stack Developer at Guval Foods in Mexico."
+
+  - id: exp.guval.odoo
+    type: experience
+    org: "Guval Foods"
+    start: "2024-02"
+    end: "2024-06"
+    tags: [odoo, erp, inventarios, contabilidad, rrhh, powerbi, nodejs, react, aws]
+    es: "Implementó Odoo ERP cubriendo inventarios, almacén, producción, calidad, contabilidad y recursos humanos, con desarrollo complementario en Node.js, React, AWS y reportería con Power BI."
+    en: "He implemented Odoo ERP covering inventory, warehouse, production, quality, accounting, and HR, with complementary development in Node.js, React, AWS, and reporting with Power BI."
+
+  # ---------------- EXPERIENCIA: ALCAZAR ----------------
+  - id: exp.alcazar.role
+    type: experience
+    org: "Alcazar & Compañía"
+    title: "Gerente de Sistemas / Implementador Odoo ERP"
+    start: "2023-08"
+    end: "2024-02"
+    tags: [alcazar, gerente, ti, liderazgo]
+    es: "De agosto de 2023 a febrero de 2024 fue Gerente de Sistemas e Implementador de Odoo ERP en Alcazar & Compañía."
+    en: "From August 2023 to February 2024 he was IT Manager and Odoo ERP Implementer at Alcazar & Compañía."
+
+  - id: exp.alcazar.leadership
+    type: experience
+    org: "Alcazar & Compañía"
+    start: "2023-08"
+    end: "2024-02"
+    tags: [dotnet, nodejs, react, php, active-directory, seguridad, erp]
+    es: "Dirigió el área de TI impulsando desarrollos en .NET, Node.js, React y PHP; administró servidores, Active Directory y software empresarial (CRM, ERP Odoo, Contpaq, Microsoft 365)."
+    en: "He led the IT department driving development in .NET, Node.js, React, and PHP; and administered servers, Active Directory, and enterprise software (CRM, Odoo ERP, Contpaq, Microsoft 365)."
+
+  - id: exp.alcazar.security
+    type: experience
+    org: "Alcazar & Compañía"
+    start: "2023-08"
+    end: "2024-02"
+    tags: [seguridad, vulnerabilidades, qa, capacitacion, proyectos]
+    es: "Coordinó proyectos de TI, supervisó la seguridad de la información y la prevención de vulnerabilidades, y capacitó a usuarios finales en herramientas tecnológicas."
+    en: "He coordinated IT projects, supervised information security and vulnerability prevention, and trained end users on technology tools."
+
+  # ---------------- EXPERIENCIA: WESCO ----------------
+  - id: exp.wesco.role
+    type: experience
+    org: "WESCO Distribution de México"
+    title: "Desarrollador y Soporte Técnico"
+    start: "2020-10"
+    end: "2023-07"
+    tags: [wesco, desarrollo, soporte]
+    es: "De octubre de 2020 a julio de 2023 fue Desarrollador y Soporte Técnico en WESCO Distribution de México."
+    en: "From October 2020 to July 2023 he was a Developer and Technical Support engineer at WESCO Distribution de México."
+
+  - id: exp.wesco.systems
+    type: experience
+    org: "WESCO Distribution de México"
+    start: "2020-10"
+    end: "2023-07"
+    tags: [csharp, dotnet, nodejs, quickbase, dashboards, tickets, iso]
+    es: "Desarrolló más de 8 sistemas internos en C#, .NET, Node.js y Quickbase: contrataciones y bajas, solicitudes de crédito de clientes, pagos anticipados, dashboard de ventas con KPIs, sistema de tickets y auditorías ISO, además de automatización de reportes."
+    en: "He developed more than 8 internal enterprise systems in C#, .NET, Node.js, and Quickbase: hiring and termination management, client credit requests, advance payments, a sales dashboard with KPIs, a ticketing system, and ISO audits, plus reporting automation."
+
+  - id: exp.wesco.support
+    type: experience
+    org: "WESCO Distribution de México"
+    start: "2020-10"
+    end: "2023-07"
+    tags: [soporte-n3, active-directory, eclipse-erp, sucursales]
+    es: "Administró Active Directory y políticas de seguridad, gestionó el ERP Eclipse y brindó soporte técnico N3 a sucursales nacionales en Monterrey, Veracruz, Querétaro, Ciudad Juárez, Chihuahua y Ciudad de México."
+    en: "He administered Active Directory and security policies, managed the Eclipse ERP, and provided N3 technical support to national branches in Monterrey, Veracruz, Querétaro, Ciudad Juárez, Chihuahua, and Mexico City."
+
+  # ---------------- EXPERIENCIA: WEBMAPS ----------------
+  - id: exp.webmaps.role
+    type: experience
+    org: Webmaps
+    title: "Desarrollador y Soporte Técnico"
+    start: "2020-03"
+    end: "2020-10"
+    tags: [webmaps, php, laravel]
+    es: "De marzo a octubre de 2020 fue Desarrollador y Soporte Técnico en Webmaps."
+    en: "From March to October 2020 he was a Developer and Technical Support engineer at Webmaps."
+
+  - id: exp.webmaps.salinas
+    type: experience
+    org: Webmaps
+    client: "Grupo Salinas"
+    start: "2020-03"
+    end: "2020-10"
+    tags: [grupo-salinas, camaras, prepago, interfaz]
+    es: "Implementó un sistema de cámaras para Grupo Salinas: una plataforma de prepago que redujo costos y tiempos para el cliente, con rediseño completo de la interfaz."
+    en: "He implemented a camera system for Grupo Salinas: a prepaid platform that reduced client costs and turnaround times, with a complete interface redesign."
+
+  - id: exp.webmaps.stack
+    type: experience
+    org: Webmaps
+    start: "2020-03"
+    end: "2020-10"
+    tags: [php, laravel, nodejs, dotnet, aws, git, vmware]
+    es: "Trabajó en desarrollo full stack con PHP y Laravel, Node.js y .NET, configuración y soporte de servidores virtuales en AWS, control de versiones con Git y máquinas virtuales Linux en VMWare."
+    en: "He worked on full stack development with PHP/Laravel, Node.js, and .NET, AWS virtual server configuration and support, version control with Git, and Linux virtual machines on VMWare."
+
+  # ---------------- EXPERIENCIA: JOHNSON HEALTH ----------------
+  - id: exp.johnson.role
+    type: experience
+    org: "Johnson Health Technologies"
+    title: "Desarrollador"
+    start: "2018-09"
+    end: "2020-02"
+    tags: [johnson, desarrollador, php]
+    es: "De septiembre de 2018 a febrero de 2020 fue Desarrollador en Johnson Health Technologies."
+    en: "From September 2018 to February 2020 he was a Developer at Johnson Health Technologies."
+
+  - id: exp.johnson.quoter
+    type: experience
+    org: "Johnson Health Technologies"
+    start: "2018-09"
+    end: "2020-02"
+    tags: [cotizador, php, laravel, ventas, nacional]
+    es: "Creó y desplegó un cotizador web nacional en PHP y Laravel en todos los estados donde opera Johnson Health, permitiendo cotizaciones en vivo con descuentos, financiamiento y arrendamiento, con impacto significativo en ventas."
+    en: "He created and deployed a nationwide web quotation tool in PHP/Laravel across all states where Johnson Health operates, enabling live quotes with discounts, financing, and leasing options, with significant sales impact."
+
+  - id: exp.johnson.tickets
+    type: experience
+    org: "Johnson Health Technologies"
+    start: "2018-09"
+    end: "2020-02"
+    tags: [tickets, 50-porciento, ahorro, atencion-cliente]
+    es: "Desarrolló un sistema de tickets para reporte de fallas de equipo que redujo en 50% los tiempos de los procesos de atención al cliente y eliminó el costo de un sistema de pago externo."
+    en: "He developed a ticketing system for equipment failure reporting that reduced customer service process times by 50% and eliminated the cost of an external paid system."
+
+  # ---------------- EXPERIENCIA: SUMMA ----------------
+  - id: exp.summa.role
+    type: experience
+    org: "SUMMA Woodbridge · Global Equipment (Automotriz)"
+    title: "Desarrollador / Auxiliar de Programación"
+    start: "2015-01"
+    end: "2018-07"
+    tags: [summa, automotriz, inicio-carrera, visual-basic, access]
+    es: "De enero de 2015 a julio de 2018 fue Desarrollador y Auxiliar de Programación en SUMMA Woodbridge y Global Equipment, del sector automotriz. Fue su primer puesto profesional. Realizaba mantenimiento informático, gestión de bases de datos Access, programación en Visual Basic y administración de cuentas corporativas."
+    en: "From January 2015 to July 2018 he was a Developer and Programming Assistant at SUMMA Woodbridge and Global Equipment, in the automotive sector. This was his first professional role. He handled IT equipment maintenance, Access database management, Visual Basic programming, and corporate account administration."
+
+  # ---------------- HABILIDADES ----------------
+  - id: skills.frontend
+    type: skills
+    tags: [frontend, react, nextjs, angular, tailwind]
+    es: "Frontend: React, React Native, Next.js, Angular, Tailwind CSS, HTML5 y CSS3."
+    en: "Frontend: React, React Native, Next.js, Angular, Tailwind CSS, HTML5, and CSS3."
+
+  - id: skills.backend
+    type: skills
+    tags: [backend, nodejs, express, laravel, dotnet, rest, graphql]
+    es: "Backend: Node.js, Express, Laravel, .NET, C# y APIs REST y GraphQL."
+    en: "Backend: Node.js, Express, Laravel, .NET, C#, and REST and GraphQL APIs."
+
+  - id: skills.cloud
+    type: skills
+    tags: [cloud, aws, docker, vercel, cicd, devops, lambda, cognito]
+    es: "Cloud y DevOps: AWS (Cognito, Lambda, API Gateway, RDS, SES, DynamoDB), Docker, Vercel y CI/CD."
+    en: "Cloud and DevOps: AWS (Cognito, Lambda, API Gateway, RDS, SES, DynamoDB), Docker, Vercel, and CI/CD."
+
+  - id: skills.mobile
+    type: skills
+    tags: [movil, ios, android, react-native, glass-ui, responsive]
+    es: "Móvil: React Native para iOS y Android, diseño Glass UI y diseño responsive."
+    en: "Mobile: React Native for iOS and Android, Glass UI design, and responsive design."
+
+  - id: skills.databases
+    type: skills
+    tags: [bases-de-datos, postgresql, supabase, mysql, sqlserver, dynamodb]
+    es: "Bases de datos: PostgreSQL y Supabase, MySQL, SQL Server, DynamoDB y Quickbase."
+    en: "Databases: PostgreSQL and Supabase, MySQL, SQL Server, DynamoDB, and Quickbase."
+
+  - id: skills.ai
+    type: skills
+    tags: [ia, retell, twilio, openai, agentes-conversacionales, llm]
+    es: "IA y comunicación: Retell AI, Twilio, la API de OpenAI y agentes conversacionales de IA."
+    en: "AI and communications: Retell AI, Twilio, the OpenAI API, and conversational AI agents."
+
+  - id: skills.automation
+    type: skills
+    tags: [rpa, rocketbot, automation-anywhere, netcontent, automatizacion]
+    es: "Automatización: Rocketbot, Automation Anywhere y Netcontent (RPA y gestión documental)."
+    en: "Automation: Rocketbot, Automation Anywhere, and Netcontent (RPA and document management)."
+
+  - id: skills.languages_prog
+    type: skills
+    tags: [lenguajes, javascript, typescript, python, php, csharp, java, sql]
+    es: "Lenguajes de programación: JavaScript, TypeScript, PHP, C#, Java, C++, SQL y Python."
+    en: "Programming languages: JavaScript, TypeScript, PHP, C#, Java, C++, SQL, and Python."
+
+  - id: skills.management
+    type: skills
+    tags: [gestion, scrum, clickup, jira, git, github, stripe]
+    es: "Gestión y pagos: Scrum, ClickUp, Jira, Git y GitHub, y Stripe."
+    en: "Management and payments: Scrum, ClickUp, Jira, Git and GitHub, and Stripe."
+
+  - id: skills.erp
+    type: skills
+    tags: [crm, erp, odoo, contpaq, quickbase, powerbi]
+    es: "CRM y ERP: desarrollo de CRM desde cero, Odoo, Contpaq, Quickbase y Power BI."
+    en: "CRM and ERP: building custom CRMs from scratch, Odoo, Contpaq, Quickbase, and Power BI."
+
+  # ---------------- FORMACIÓN ----------------
+  - id: education.degree
+    type: education
+    tags: [formacion, universidad, titulo, ingenieria]
+    es: "Ingeniero en Sistemas Computacionales por la Universidad de Cuautitlán Izcalli, titulado en 2016."
+    en: "B.S. in Computer Systems Engineering from Universidad de Cuautitlán Izcalli, graduated in 2016."
+
+  - id: education.certifications
+    type: education
+    tags: [certificaciones, ccna, scrum-master, rocketbot, netcontent]
+    es: "Certificaciones: CCNA de Cisco Systems (2016), Scrum Master (2021), Rocketbot RPA niveles R1 y R2 (2024) y Netcontent SGD (2024)."
+    en: "Certifications: CCNA from Cisco Systems (2016), Scrum Master (2021), Rocketbot RPA levels R1 and R2 (2024), and Netcontent DMS (2024)."
+
+  - id: education.languages
+    type: education
+    tags: [idiomas, español, ingles]
+    es: "Idiomas: español nativo e inglés intermedio conversacional."
+    en: "Languages: native Spanish and intermediate conversational English."
+
+  # ---------------- LOGROS ----------------
+  - id: achievements.globalconnect
+    type: achievement
+    org: GlobalConnect
+    tags: [logros, apps, dashboard, crm, ia]
+    es: "Logros en GlobalConnect: más de 3 aplicaciones móviles desarrolladas y desplegadas (app iOS con Glass UI nativo, app Android con gestión completa de leads y app de campo para contratistas con sincronización en tiempo real), dashboard web ejecutivo con métricas en tiempo real y reportes descargables, páginas web optimizadas para conversión, CRM completo desde cero y plataforma de agentes de llamadas con IA."
+    en: "Achievements at GlobalConnect: more than 3 mobile applications developed and deployed (an iOS app with native Glass UI, an Android app with full lead management, and a contractor field app with real-time sync), an executive web dashboard with real-time metrics and downloadable reports, conversion-optimized web pages, a complete CRM built from scratch, and an AI call agent platform."
+
+  - id: achievements.other
+    type: achievement
+    tags: [logros, vinte, sap, wesco, johnson, salinas]
+    es: "Otros logros destacados: robot digital con IA para Vinte como canal de captación; automatización contable en SAP con reportes automáticos a gerencia; gestión documental para hospitales y empresas; más de 8 sistemas internos en WESCO; cotizador web nacional y sistema de tickets con 50% de reducción de tiempos en Johnson Health; y sistema de cámaras prepago para Grupo Salinas."
+    en: "Other notable achievements: an AI digital robot for Vinte as a client acquisition channel; SAP accounting automation with automatic reports to management; document management for hospitals and enterprises; more than 8 internal systems at WESCO; a nationwide web quotation tool and a ticketing system with a 50% reduction in service times at Johnson Health; and a prepaid camera system for Grupo Salinas."
