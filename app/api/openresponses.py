@@ -131,6 +131,12 @@ def build_response(
         })
         if answer.reason:
             metadata["abstain_reason"] = answer.reason[:120]
+        # Modelo que atendio realmente la peticion. El campo `model` del contrato
+        # refleja lo que pide el cliente, no lo que se uso: con cadena de respaldo
+        # ambos pueden diferir. Saber cual respondio es necesario para diagnosticar
+        # (y para verificar que el respaldo se activo).
+        if answer.model:
+            metadata["upstream_model"] = answer.model
 
     return {
         "id": response_id or _id("resp"),
