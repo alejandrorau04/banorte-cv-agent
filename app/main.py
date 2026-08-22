@@ -16,7 +16,8 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from app import config
 from app.adapters.base import ProviderError
 from app.adapters.gemini import GeminiLLM, MultiEmbedder
-from app.api.openresponses import SPEC_VERSION, build_response, error_body, extract_question
+from app.api.openresponses import (SPEC_VERSION, build_response, error_body,
+                                   extract_question, extract_turns)
 from app.api.sse import chunk_text, stream_answer
 from app.core.agent import CVAgent
 from app.core.corpus import load_facts
@@ -130,19 +131,22 @@ async def create_response(request: Request):
         body = {}
 
     try:
+        turnos = extract_turns(body)
         question = extract_question(body)
     except Exception:  # noqa: BLE001
         # Defensa en profundidad: la extraccion ya es tolerante, pero una forma
         # de `input` no prevista no debe convertirse en un 500 sin contrato.
         log.warning('"%s input no interpretable"', rid)
-        question = ""
+        turnos, question = [], ""
 
     agent: CVAgent = STATE["agent"]
 
     try:
         instrucciones = body.get("instructions")
         answer = await agent.answer(
-            question, instructions=instrucciones if isinstance(instrucciones, str) else None)
+            question,
+            instructions=instrucciones if isinstance(instrucciones, str) else None,
+            history=turnos)
     except ProviderError as e:
         status = 429 if e.status == 429 else 503
         type_ = "too_many_requests" if status == 429 else "server_error"

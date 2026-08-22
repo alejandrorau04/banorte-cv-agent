@@ -22,6 +22,44 @@ def _id(prefix: str) -> str:
 
 # ---------------------------------------------------------------- entrada ----
 
+def extract_turns(body: dict[str, Any]) -> list[tuple[str, str]]:
+    """Extrae la conversacion como [(rol, texto)].
+
+    La plataforma reenvia la transcripcion completa en cada peticion (modo
+    «Reproducir transcripcion (sin estado)», confirmado en ADR-001). El historial
+    NO se manda al modelo: eso multiplicaria el coste por turno. Solo se usa lo
+    imprescindible para resolver preguntas de seguimiento (ADR-012).
+    """
+    inp = body.get("input")
+    if isinstance(inp, str):
+        return [("user", inp.strip())] if inp.strip() else []
+    if not isinstance(inp, list):
+        return []
+
+    turnos: list[tuple[str, str]] = []
+    for item in inp:
+        if not isinstance(item, dict):
+            continue
+        if item.get("type") not in (None, "message"):
+            continue
+        rol = item.get("role") or "user"
+        if rol not in ("user", "assistant"):
+            continue
+        content = item.get("content")
+        texto = ""
+        if isinstance(content, str):
+            texto = content
+        elif isinstance(content, list):
+            partes = [p.get("text") for p in content
+                      if isinstance(p, dict)
+                      and p.get("type") in ("input_text", "text", "output_text", None)
+                      and isinstance(p.get("text"), str)]
+            texto = "".join(partes)
+        if texto.strip():
+            turnos.append((rol, texto.strip()))
+    return turnos
+
+
 def extract_question(body: dict[str, Any]) -> str:
     """Obtiene el último mensaje de usuario.
 

@@ -62,7 +62,8 @@ class CVAgent:
         self._llm = llm
 
     async def answer(self, question: str, lang: Lang | None = None,
-                     instructions: str | None = None) -> Answer:
+                     instructions: str | None = None,
+                     history: list[tuple[str, str]] | None = None) -> Answer:
         t0 = time.monotonic()
         lang = lang or detect_lang(question)
 
@@ -79,7 +80,14 @@ class CVAgent:
             return done(Answer(text=prompts.CONTACT[lang], lang=lang,
                                abstained=True, reason="contact_policy"))
 
-        retrieved, embed_model = await self._r.search(q, lang)
+        # Preguntas de seguimiento («¿y ahí qué hacía?») no se entienden solas.
+        # Para RECUPERAR se expande la consulta con el turno anterior: cuesta cero
+        # tokens de LLM, solo un embedding de texto algo mas largo.
+        prev_user, prev_answer = _ultimo_intercambio(history)
+        seguimiento = bool(prev_user) and _es_seguimiento(q)
+        consulta = f"{prev_user} {q}" if seguimiento else q
+
+        retrieved, embed_model = await self._r.search(consulta, lang)
 
         # Las preguntas de agregacion / orden se responden con la linea de tiempo
         # derivada de los metadatos, no con lo que el modelo infiera del top-k.
@@ -103,7 +111,9 @@ class CVAgent:
                                embed_model=embed_model,
                                reason=f"low_evidence(sim={best:.3f}<{floor})"))
 
-        user = _build_user_prompt(q, retrieved, lang)
+        user = _build_user_prompt(q, retrieved, lang,
+                                  prev_user if seguimiento else None,
+                                  prev_answer if seguimiento else None)
         system = prompts.compose_system(lang, instructions)
         try:
             c = await self._llm.complete(system, user)
@@ -116,10 +126,53 @@ class CVAgent:
                            model=c.model, embed_model=embed_model, usage=c.usage))
 
 
-def _build_user_prompt(question: str, retrieved: list[Retrieved], lang: Lang) -> str:
+# Marcas de pregunta dependiente del contexto previo.
+_SEGUIMIENTO = re.compile(
+    r"\b(ahi|all[ií]|ah[ií]|eso|esa|ese|esos|esas|esta|este|"
+    r"y\s+(qu[eé]|cu[aá]l|c[oó]mo|cu[aá]nto|d[oó]nde|cu[aá]ndo|por)|"
+    r"m[aá]s\s+(detalle|informaci[oó]n|sobre)|cu[eé]ntame\s+m[aá]s|amplia|"
+    r"there|that|those|it|and\s+(what|which|how|when|where|why)|"
+    r"more\s+(detail|about|info)|tell\s+me\s+more|elaborate)\b", re.I)
+
+# Longitud por debajo de la cual una pregunta casi seguro depende del contexto.
+_CORTA = 45
+# Recorte del turno anterior del agente: basta el inicio para dar contexto.
+_CTX_MAX = 260
+
+
+def _es_seguimiento(q: str) -> bool:
+    return len(q) < _CORTA or bool(_SEGUIMIENTO.search(q))
+
+
+def _ultimo_intercambio(history) -> tuple[str, str]:
+    """Ultima pregunta del usuario y ultima respuesta del agente, anteriores al
+    turno actual. Solo se conservan esos dos: el historial completo crece de
+    forma cuadratica y es la fuga de tokens mas comun en agentes conversacionales."""
+    if not history:
+        return "", ""
+    previos = history[:-1] if history and history[-1][0] == "user" else history
+    ultima_pregunta = next((t for r, t in reversed(previos) if r == "user"), "")
+    ultima_respuesta = next((t for r, t in reversed(previos) if r == "assistant"), "")
+    return ultima_pregunta, ultima_respuesta
+
+
+def _build_user_prompt(question: str, retrieved: list[Retrieved], lang: Lang,
+                       prev_user: str | None = None,
+                       prev_answer: str | None = None) -> str:
     facts = "\n".join(f"[{r.fact.id}] {r.fact.text(lang)}" for r in retrieved)
     label = "PREGUNTA" if lang == "es" else "QUESTION"
-    return f"HECHOS:\n{facts}\n\n{label}: {question}"
+    bloques = [f"HECHOS:\n{facts}"]
+    if prev_user:
+        cab = ("TURNO ANTERIOR (solo para resolver referencias como «ahí» o «eso»)"
+               if lang == "es" else
+               "PREVIOUS TURN (only to resolve references such as 'there' or 'that')")
+        ctx = f"{cab}\nUsuario: {prev_user}"
+        if prev_answer:
+            corte = prev_answer.split("\n\nFuentes:")[0].split("\n\nSources:")[0]
+            ctx += f"\nAgente: {corte[:_CTX_MAX]}"
+        bloques.append(ctx)
+    bloques.append(f"{label}: {question}")
+    return "\n\n".join(bloques)
 
 
 _FUENTES = {"es": "Fuentes", "en": "Sources"}

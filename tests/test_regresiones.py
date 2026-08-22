@@ -395,3 +395,63 @@ def test_el_indice_contiene_vectores_de_todos_los_modelos_declarados():
     for m in config.EMBED_MODELS:
         vect = (d.get("by_model") or {}).get(m) or {}
         assert vect, f"el índice no tiene vectores de {m}"
+
+
+# --- conversación: los seguimientos deben entenderse sin enviar todo el historial
+def test_se_detectan_las_preguntas_de_seguimiento():
+    from app.core.agent import _es_seguimiento
+    for q in ["¿Y qué hace ahí?", "cuéntame más", "¿Y antes de eso?", "y eso?",
+              "tell me more", "and what about that?", "¿más detalle?"]:
+        assert _es_seguimiento(q), q
+
+
+def test_una_pregunta_autonoma_no_se_marca_como_seguimiento():
+    from app.core.agent import _es_seguimiento
+    for q in ["¿Qué certificaciones tiene Alejandro Rau Lázaro?",
+              "Describe his complete professional cloud experience please"]:
+        assert not _es_seguimiento(q), q
+
+
+def test_solo_se_conserva_el_ultimo_intercambio():
+    """El historial completo crece de forma cuadrática: es la fuga de tokens más
+    común en agentes conversacionales."""
+    from app.core.agent import _ultimo_intercambio
+    hist = [("user", "p1"), ("assistant", "r1"),
+            ("user", "p2"), ("assistant", "r2"),
+            ("user", "p3")]
+    pu, pa = _ultimo_intercambio(hist)
+    assert (pu, pa) == ("p2", "r2")
+    assert "p1" not in pu and "r1" not in pa
+
+
+def test_el_contexto_del_turno_anterior_esta_acotado():
+    from app.core.agent import _CTX_MAX, _build_user_prompt
+    from app.core.models import Fact, Retrieved
+    f = Fact(id="x.y", type="other", text_es="hecho", text_en="fact")
+    marca = "\u03a9"                 # caracter ausente del resto del prompt
+    p = _build_user_prompt("¿y ahí?", [Retrieved(fact=f, score=1.0)], "es",
+                           "pregunta previa", marca * 5000)
+    assert p.count(marca) == _CTX_MAX
+
+
+def test_el_pie_de_fuentes_no_entra_en_el_contexto():
+    """Reenviar las fuentes del turno anterior gasta tokens sin aportar nada."""
+    from app.core.agent import _build_user_prompt
+    from app.core.models import Fact, Retrieved
+    f = Fact(id="x.y", type="other", text_es="hecho", text_en="fact")
+    previa = "Trabaja en GlobalConnect.\n\nFuentes: [Experiencia](http://x)"
+    p = _build_user_prompt("¿y ahí?", [Retrieved(fact=f, score=1.0)], "es",
+                           "¿dónde trabaja?", previa)
+    assert "http://x" not in p and "Fuentes:" not in p.split("PREGUNTA")[0].split("Agente:")[1]
+
+
+def test_extract_turns_devuelve_la_conversacion_completa():
+    from app.api.openresponses import extract_turns
+    body = {"input": [
+        {"role": "user", "content": "p1"},
+        {"role": "assistant", "content": "r1"},
+        {"role": "user", "content": [{"type": "input_text", "text": "p2"}]},
+    ]}
+    assert extract_turns(body) == [("user", "p1"), ("assistant", "r1"), ("user", "p2")]
+    assert extract_turns({"input": "hola"}) == [("user", "hola")]
+    assert extract_turns({}) == []
