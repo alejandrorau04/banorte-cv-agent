@@ -54,16 +54,37 @@ conservador en la salida.
 El esquema define **24 tipos de evento SSE**. La documentación narrativa del sitio solo
 describe un subconjunto; la fuente de verdad es el OpenAPI.
 
-## Supuestos pendientes de confirmación
+## Supuestos y su verificación
 
-No confirmables antes de la entrega. Se documentan con su mitigación:
+Se documentaron como supuestos no confirmables y se mitigaron por diseño. El formulario
+de alta de agentes de la plataforma (**Parley**) confirmó posteriormente dos de ellos.
 
-| # | Supuesto | Mitigación |
-|---|---|---|
-| 1 | La plataforma consume la versión `2026-04-24` | Emitir los 31 campos obligatorios: un cliente anclado a versión previa ignora campos desconocidos sin romperse |
-| 2 | Autenticación por `Authorization: Bearer <token>` | Aceptar además header alternativo y token sin prefijo |
-| 3 | El valor de `model` puede llegar ausente o arbitrario | Valor por defecto y eco del recibido en la respuesta |
-| 4 | El multi-turno llega como historial completo en `input` | Soportar además `previous_response_id` |
+| # | Supuesto | Mitigación aplicada | Estado |
+|---|---|---|---|
+| 1 | La plataforma consume la versión `2026-04-24` | Emitir los 31 campos obligatorios: un cliente anclado a una versión previa ignora los campos desconocidos sin romperse | Sin confirmar; mitigado |
+| 2 | Autenticación por `Authorization: Bearer <token>` | Aceptar además `x-api-key`, `api-key` y token sin prefijo | **Confirmado.** El formulario indica: «Se envía como `Authorization: Bearer …` y se almacena cifrada» |
+| 3 | El valor de `model` puede llegar ausente o arbitrario | Valor por defecto y eco del recibido | **Confirmado.** El campo *Modelo* está marcado como opcional |
+| 4 | El multi-turno llega como historial completo en `input` | Tomar el último mensaje de usuario del array; soportar también `previous_response_id` | **Confirmado.** El selector *Estado de la conversación* ofrece «Reproducir transcripción (sin estado)» —opción por defecto y la usada— frente a «previous_response_id (el agente guarda el estado)» |
+
+Consecuencia de la confirmación del supuesto 4: **el servicio es deliberadamente sin
+estado.** No persiste conversaciones, de modo que escala horizontalmente sin
+sincronización. La alternativa habría exigido almacenamiento, gestión del ciclo de vida
+de esos datos y, en un contexto bancario, una política de retención.
+
+### Nota sobre `instructions`
+
+El formulario permite enviar instrucciones de sistema en cada petición. El servidor las
+honra **subordinadas** a las reglas de grounding: se añaden después de ellas, acotadas en
+longitud y con la indicación expresa de que las reglas absolutas prevalecen. Verificado
+contra producción: una instrucción de tono se aplica; una que pide afirmar experiencia
+inexistente se ignora.
+
+### Capacidades no declaradas
+
+Los interruptores de *entrada de imágenes* y *entrada de archivos* se dejan desactivados
+porque **no están implementados**. Declarar una capacidad ausente produciría un fallo
+silencioso ante el evaluador y contradiría el principio que sostiene todo el diseño: no
+afirmar lo que no se puede respaldar.
 
 ## Fuentes
 
