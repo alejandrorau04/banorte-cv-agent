@@ -455,3 +455,19 @@ def test_extract_turns_devuelve_la_conversacion_completa():
     assert extract_turns(body) == [("user", "p1"), ("assistant", "r1"), ("user", "p2")]
     assert extract_turns({"input": "hola"}) == [("user", "hola")]
     assert extract_turns({}) == []
+
+
+# --- versionado: la versión declarada debe coincidir con el changelog
+def test_la_version_esta_en_el_changelog():
+    import re
+    from pathlib import Path
+    from app import config
+    texto = Path("CHANGELOG.md").read_text(encoding="utf-8")
+    assert re.search(rf"^## \[{re.escape(config.VERSION)}\]", texto, re.M), \
+        f"la versión {config.VERSION} no tiene entrada en CHANGELOG.md"
+
+
+def test_la_version_sigue_semver():
+    import re
+    from app import config
+    assert re.fullmatch(r"\d+\.\d+\.\d+", config.VERSION), config.VERSION

@@ -6,6 +6,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Version del SERVICIO y su contrato (SemVer). No versiona el contenido del CV:
+# una correccion del corpus es PATCH; un cambio en la forma de la respuesta que
+# un cliente pudiera notar es MINOR o MAJOR. Ver CHANGELOG.md.
+VERSION = "1.1.0"
+
 ROOT = Path(__file__).resolve().parent.parent
 CORPUS_PATH = ROOT / "data" / "corpus.yaml"
 INDEX_PATH = ROOT / "data" / "corpus.index.json"

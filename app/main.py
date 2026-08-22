@@ -4,6 +4,7 @@ Contrato: `POST /v1/responses` (OpenAPI 2026-04-24, ver docs/contract/).
 """
 from __future__ import annotations
 import logging
+import os
 import time
 import uuid
 from contextlib import asynccontextmanager
@@ -60,7 +61,8 @@ async def lifespan(_: FastAPI):
     await client.aclose()
 
 
-app = FastAPI(title="CV Agent — Open Responses", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="CV Agent — Open Responses",
+              version=config.VERSION, lifespan=lifespan)
 
 # El validador oficial de conformidad se ejecuta desde el navegador y necesita CORS.
 app.add_middleware(
@@ -105,6 +107,10 @@ async def unhandled(_: Request, exc: Exception) -> JSONResponse:
 async def health() -> dict:
     return {
         "status": "ok",
+        "version": config.VERSION,
+        # Revision del contenedor en ejecucion. Permite comprobar QUE codigo
+        # esta sirviendo, no solo que el servicio responda.
+        "revision": os.getenv("CONTAINER_APP_REVISION", "local"),
         "spec_version": SPEC_VERSION,
         "facts": STATE.get("facts", 0),
         "vectors_loaded": STATE.get("vectors", False),

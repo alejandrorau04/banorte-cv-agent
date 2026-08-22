@@ -1,0 +1,64 @@
+# Publicacion de versiones.
+#
+# Se dispara al empujar una etiqueta `vX.Y.Z`. Verifica que la etiqueta coincida
+# con la version declarada en el codigo y con el CHANGELOG -- una release cuya
+# version no cuadra con lo que sirve el contenedor es una fuente de confusion en
+# produccion -- y publica la release con las notas del propio CHANGELOG.
+
+name: Release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: La etiqueta debe coincidir con la versión del código
+        run: |
+          python - <<'PY'
+          import os, re, sys
+          sys.path.insert(0, ".")
+          tag = os.environ["GITHUB_REF_NAME"].lstrip("v")
+          version = re.search(r'^VERSION = "([^"]+)"',
+                              open("app/config.py").read(), re.M).group(1)
+          print(f"etiqueta={tag}  config.VERSION={version}")
+          if tag != version:
+              sys.exit(f"ERROR: la etiqueta no coincide con la versión del código")
+          if not re.search(rf"^## \[{re.escape(tag)}\]",
+                           open("CHANGELOG.md", encoding="utf-8").read(), re.M):
+              sys.exit("ERROR: la versión no tiene entrada en CHANGELOG.md")
+          print("coherencia verificada")
+          PY
+
+      - name: Extraer las notas de esta versión
+        run: |
+          python - <<'PY'
+          import os, re
+          tag = os.environ["GITHUB_REF_NAME"].lstrip("v")
+          texto = open("CHANGELOG.md", encoding="utf-8").read()
+          m = re.search(rf"^## \[{re.escape(tag)}\].*?\n(.*?)(?=^## \[|\Z)",
+                        texto, re.M | re.S)
+          open("NOTAS.md", "w", encoding="utf-8").write((m.group(1) if m else "").strip())
+          PY
+
+      - name: Publicar la release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file NOTAS.md \
+            --verify-tag
