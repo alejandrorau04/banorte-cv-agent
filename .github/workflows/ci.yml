@@ -1,17 +1,43 @@
-name: CI
+# Pipeline CI/CD del agente de CV.
+#
+#   push a main  ->  calidad  ->  imagen  ->  despliegue  ->  verificacion
+#
+# Principios:
+#   * Nada se despliega sin pasar la puerta de calidad.
+#   * La imagen se etiqueta con el SHA del commit: cada revision desplegada es
+#     trazable hasta el codigo exacto y revertir es reactivar la anterior.
+#   * Los tests no requieren red ni credenciales, de modo que cualquiera puede
+#     ejecutar este pipeline en un fork.
+#   * El despliegue se verifica: un pipeline que no comprueba el resultado solo
+#     confirma que el comando no fallo, no que el servicio funcione.
+
+name: CI/CD
 
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:        # permite desplegar a mano una revision concreta
+
+concurrency:
+  # Evita que dos despliegues simultaneos se pisen.
+  group: ${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  IMAGEN: ghcr.io/${{ github.repository_owner }}/cv-agent
+  APP: cv-agent
+  GRUPO: rg-cv-agent
 
 jobs:
-  test:
+  # ---------------------------------------------------------------- calidad --
+  calidad:
+    name: Calidad
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: pip
@@ -24,51 +50,140 @@ jobs:
       - name: Tests (sin red, sin credenciales)
         run: pytest -q
 
-      - name: Verificar conformidad con el OpenAPI oficial
+      - name: Conformidad con el OpenAPI oficial
         run: |
           python - <<'PY'
           import json, sys
           sys.path.insert(0, ".")
           from app.api.openresponses import build_response
-          req = json.load(open("docs/contract/openapi.json"))["components"]["schemas"]["ResponseResource"]["required"]
-          missing = [k for k in req if k not in build_response({}, None)]
-          print(f"campos obligatorios: {len(req)} | faltantes: {missing or 'ninguno'}")
-          sys.exit(1 if missing else 0)
+          req = json.load(open("docs/contract/openapi.json"))[
+              "components"]["schemas"]["ResponseResource"]["required"]
+          faltan = [k for k in req if k not in build_response({}, None)]
+          print(f"campos obligatorios: {len(req)} | faltantes: {faltan or 'ninguno'}")
+          sys.exit(1 if faltan else 0)
           PY
 
-      - name: Verificar ausencia de PII en el corpus (ADR-006)
+      - name: Integridad del corpus y ausencia de PII
         run: |
           python - <<'PY'
           import sys; sys.path.insert(0, ".")
           from app.core.corpus import load_facts
-          print(f"corpus valido: {len(load_facts())} hechos, sin datos de contacto")
+          f = load_facts()
+          print(f"corpus valido: {len(f)} hechos, sin datos de contacto")
           PY
 
-  build-and-push:
+      - name: El índice cubre todos los modelos declarados
+        run: |
+          python - <<'PY'
+          import json, sys; sys.path.insert(0, ".")
+          from app import config
+          from app.core.corpus import load_facts
+          d = json.load(open("data/corpus.index.json"))
+          need = len(load_facts()) * 2
+          malo = False
+          for m in config.EMBED_MODELS:
+              n = len((d.get("by_model") or {}).get(m) or {})
+              estado = "OK" if n >= need else f"INCOMPLETO ({n}/{need})"
+              print(f"  {m}: {n} vectores  {estado}")
+              malo |= n < need
+          sys.exit(1 if malo else 0)
+          PY
+
+  # ----------------------------------------------------------------- imagen --
+  imagen:
+    name: Construir y publicar
+    needs: calidad
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    needs: test
     permissions:
       contents: read
       packages: write
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@v5
       - uses: docker/setup-buildx-action@v3
 
-      - name: Autenticar en GHCR
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Construir y publicar imagen
+      - id: build
         uses: docker/build-push-action@v6
         with:
           context: .
-          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/cv-agent:latest
-            ghcr.io/${{ github.repository_owner }}/cv-agent:${{ github.sha }}
+            ${{ env.IMAGEN }}:${{ github.sha }}
+            ${{ env.IMAGEN }}:latest
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  # ------------------------------------------------------------- despliegue --
+  despliegue:
+    name: Desplegar en Azure
+    needs: imagen
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: produccion
+    steps:
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Publicar nueva revisión
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az containerapp update \
+              -n ${{ env.APP }} -g ${{ env.GRUPO }} \
+              --image ${{ env.IMAGEN }}:${{ github.sha }} \
+              -o none
+            echo "FQDN=$(az containerapp show -n ${{ env.APP }} -g ${{ env.GRUPO }} \
+              --query properties.configuration.ingress.fqdn -o tsv)" >> $GITHUB_ENV
+
+      - name: Verificar el despliegue
+        run: |
+          echo "esperando a https://$FQDN/health"
+          for i in $(seq 1 40); do
+            if curl -sf "https://$FQDN/health" -o /tmp/h.json; then
+              cat /tmp/h.json | python -m json.tool
+              python - <<'PY'
+          import json, sys
+          h = json.load(open("/tmp/h.json"))
+          # Un despliegue "exitoso" que sirve un contenedor degradado es peor que
+          # un fallo visible: se comprueba el estado real, no solo el HTTP 200.
+          fallos = []
+          if h.get("status") != "ok":        fallos.append("status != ok")
+          if not h.get("vectors_loaded"):    fallos.append("indice de embeddings ausente")
+          if h.get("facts", 0) < 50:         fallos.append(f"solo {h.get('facts')} hechos")
+          if len(h.get("embed_models", [])) < 2:
+              fallos.append("menos de 2 modelos de embedding indexados")
+          print("FALLOS:", fallos or "ninguno")
+          sys.exit(1 if fallos else 0)
+          PY
+              exit $?
+            fi
+            sleep 5
+          done
+          echo "el servicio no respondió a /health"; exit 1
+
+      - name: Resumen
+        if: always()
+        run: |
+          {
+            echo "### Despliegue"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Commit | \`${{ github.sha }}\` |"
+            echo "| Imagen | \`${{ env.IMAGEN }}:${{ github.sha }}\` |"
+            echo "| Endpoint | https://$FQDN |"
+            echo "| Resultado | ${{ job.status }} |"
+          } >> $GITHUB_STEP_SUMMARY
