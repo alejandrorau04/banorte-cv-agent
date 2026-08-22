@@ -18,3 +18,7 @@ venv/
 # El indice se versiona: permite construir la imagen sin credenciales
 # y arrancar el contenedor sin llamar al proveedor (ADR-005).
 .DS_Store
+
+# Frontend
+web/node_modules/
+web/dist/
