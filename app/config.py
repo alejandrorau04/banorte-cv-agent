@@ -44,6 +44,15 @@ LLM_BUDGET_S = 25.0
 # Presupuesto del embedding de la consulta, que tambien esta en la ruta critica.
 EMBED_BUDGET_S = 8.0
 
+# Llamadas simultaneas al proveedor. Medido el 2026-08-22: con 10 peticiones
+# concurrentes, el nivel gratuito rechazaba 5 de 30 con HTTP 429. Encolar
+# brevemente convierte un error en una espera corta. No protege de un abuso
+# sostenido -- para eso hace falta rate limiting en la puerta de entrada
+# (ver MODELO-AMENAZAS.md) -- pero absorbe rafagas, que es el caso real.
+MAX_CONCURRENT_LLM = 3
+# Espera maxima en cola antes de rendirse con 429.
+QUEUE_WAIT_S = 6.0
+
 # --- Recuperación ------------------------------------------------------------
 TOP_K = 6
 # Umbral de abstencion sobre el coseno CRUDO. Calibrado empiricamente el

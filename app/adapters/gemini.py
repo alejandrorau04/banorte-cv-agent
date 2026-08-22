@@ -17,6 +17,26 @@ from app.adapters.base import Completion, ProviderError
 
 _RETRYABLE = {429, 500, 502, 503, 504}
 
+# Compartido por todas las peticiones del proceso: limita cuantas llamadas
+# viajan a la vez al proveedor.
+_GATE = asyncio.Semaphore(config.MAX_CONCURRENT_LLM)
+
+
+class _Slot:
+    """Adquiere un hueco de concurrencia o falla con 429 tras esperar."""
+
+    async def __aenter__(self):
+        try:
+            await asyncio.wait_for(_GATE.acquire(), timeout=config.QUEUE_WAIT_S)
+        except asyncio.TimeoutError:
+            raise ProviderError("servicio saturado: cola de espera agotada",
+                                status=429) from None
+        return self
+
+    async def __aexit__(self, *exc):
+        _GATE.release()
+        return False
+
 
 class GeminiLLM:
     def __init__(self, client: httpx.AsyncClient, models: Sequence[str] | None = None):
@@ -24,6 +44,10 @@ class GeminiLLM:
         self._models = tuple(models or config.GEN_MODELS)
 
     async def complete(self, system: str, user: str) -> Completion:
+        async with _Slot():
+            return await self._complete(system, user)
+
+    async def _complete(self, system: str, user: str) -> Completion:
         deadline = time.monotonic() + config.LLM_BUDGET_S
         body = {
             "systemInstruction": {"parts": [{"text": system}]},

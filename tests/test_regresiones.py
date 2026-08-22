@@ -120,3 +120,31 @@ def test_input_con_formas_arbitrarias_nunca_lanza():
                  {"input": [{"role": "user", "content": []}]},
                  {"input": [{"role": "user", "content": [{"type": "zzz"}]}]}]:
         assert isinstance(extract_question(body), str)
+
+
+# --- carga: el limitador de concurrencia debe encolar, no desbordar al proveedor
+@pytest.mark.asyncio
+async def test_limitador_de_concurrencia_acota_las_llamadas_simultaneas():
+    import asyncio
+    from app import config
+    from app.adapters import gemini
+
+    activas = 0
+    pico = 0
+
+    class LentoLLM(gemini.GeminiLLM):
+        def __init__(self):
+            pass
+
+        async def _complete(self, system, user):
+            nonlocal activas, pico
+            activas += 1
+            pico = max(pico, activas)
+            await asyncio.sleep(0.05)
+            activas -= 1
+            from app.adapters.base import Completion
+            return Completion(text="ok", model="fake", usage={})
+
+    llm = LentoLLM()
+    await asyncio.gather(*(llm.complete("s", "u") for _ in range(12)))
+    assert pico <= config.MAX_CONCURRENT_LLM, f"pico {pico} > {config.MAX_CONCURRENT_LLM}"
