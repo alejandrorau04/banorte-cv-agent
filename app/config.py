@@ -27,7 +27,13 @@ EMBED_DIM = 768
 THINKING_LEVEL = "minimal"
 TEMPERATURE = 0.2
 MAX_OUTPUT_TOKENS = 800
-LLM_TIMEOUT_S = 30.0
+# Timeout corto deliberado. El nivel gratuito presenta picos de latencia (p95
+# medido: 32 s). Esperar 30 s y solo entonces reintentar acumula retraso; es
+# preferible cortar pronto y pasar al modelo de respaldo. Ver ADR-005.
+LLM_TIMEOUT_S = 12.0
+# Cota superior del tiempo total dedicado al proveedor, incluidos reintentos y
+# respaldos. Protege frente al timeout (no documentado) de la plataforma.
+LLM_BUDGET_S = 25.0
 
 # --- Recuperación ------------------------------------------------------------
 TOP_K = 6

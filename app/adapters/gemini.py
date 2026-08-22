@@ -7,6 +7,8 @@ Dos comportamientos no negociables, ambos medidos el 2026-08-22:
 """
 from __future__ import annotations
 import asyncio
+import time
+
 import httpx
 from typing import Sequence
 
@@ -22,6 +24,7 @@ class GeminiLLM:
         self._models = tuple(models or config.GEN_MODELS)
 
     async def complete(self, system: str, user: str) -> Completion:
+        deadline = time.monotonic() + config.LLM_BUDGET_S
         body = {
             "systemInstruction": {"parts": [{"text": system}]},
             "contents": [{"role": "user", "parts": [{"text": user}]}],
@@ -34,6 +37,8 @@ class GeminiLLM:
         last: Exception | None = None
         for model in self._models:
             for attempt in range(3):
+                if time.monotonic() >= deadline:
+                    raise last or ProviderError("presupuesto de tiempo agotado")
                 try:
                     r = await self._c.post(
                         f"{config.GEMINI_BASE}/{model}:generateContent",
