@@ -100,8 +100,8 @@ abstenerse ante una pregunta legítima cuesta más que responder una fuera de do
 
 | Medición | Resultado |
 |---|---|
-| Preguntas que **no** llegan al LLM | **4 de 8** del conjunto de prueba |
-| Reducción de consumo total | **−54 %** (4.966 → 2.279 tokens) |
+| Preguntas que **no** llegan al LLM | **25 %** del golden set |
+| Reducción de consumo total | **−54 %** (4.966 → 2.279 tokens en el conjunto equivalente) |
 | Tokens de razonamiento eliminados | **−77 %** vía `thinkingLevel: minimal` |
 | Coste de una abstención | **0 tokens**, 236–494 ms |
 
@@ -141,7 +141,14 @@ python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt
 cp .env.example .env          # rellenar GEMINI_API_KEY y AGENT_API_KEY
 ./.venv/bin/python scripts/build_index.py     # embeddings del corpus
 ./.venv/bin/uvicorn app.main:app --reload
-./.venv/bin/python -m pytest -q               # 23 tests, sin red
+./.venv/bin/python -m pytest -q               # 65 tests, sin red
+```
+
+```bash
+python eval/run_eval.py          # golden set: 32 casos
+python eval/consistencia.py      # 26 formulaciones de 5 intenciones
+AGENT_URL=... python scripts/robustez.py          # 28 entradas hostiles
+AGENT_URL=... python scripts/robustez.py --carga  # ráfaga concurrente
 ```
 
 Los tests **no requieren credenciales ni conexión**: el proveedor se sustituye por un
@@ -149,6 +156,19 @@ doble. El CI verifica además los 31 campos obligatorios contra el OpenAPI ofici
 ausencia de datos de contacto en el corpus.
 
 ---
+
+## Documentación
+
+| Documento | Para quién |
+|---|---|
+| [RESUMEN-EJECUTIVO.md](docs/RESUMEN-EJECUTIVO.md) | Lectura de 3 minutos: qué es, qué resuelve, resultados medidos |
+| [ARQUITECTURA.md](docs/ARQUITECTURA.md) | Diagramas C4 y de secuencia; flujo de una petición |
+| [RAG.md](docs/RAG.md) | El pipeline de recuperación etapa por etapa |
+| [PLAN-DE-PRUEBAS.md](docs/PLAN-DE-PRUEBAS.md) | Estrategia, evidencia, defectos hallados y cronología |
+| [MODELO-AMENAZAS.md](docs/MODELO-AMENAZAS.md) | STRIDE y riesgos aceptados |
+| [RUNBOOK.md](docs/RUNBOOK.md) | Operación, diagnóstico y reversión |
+| [DEMO.md](docs/DEMO.md) | Guion de la demostración |
+| [BACKLOG-VALOR-AGREGADO.md](docs/BACKLOG-VALOR-AGREGADO.md) | Extensiones que la arquitectura ya admite |
 
 ## Decisiones técnicas
 
@@ -160,6 +180,8 @@ ausencia de datos de contacto en el corpus.
 | [004](docs/adr/ADR-004-recuperacion-sin-base-vectorial.md) | Recuperación híbrida en proceso, **sin base vectorial externa** |
 | [005](docs/adr/ADR-005-consumo-de-tokens-y-latencia.md) | Consumo de tokens y latencia |
 | [006](docs/adr/ADR-006-privacidad-y-datos-de-contacto.md) | Exclusión de datos de contacto |
+| [007](docs/adr/ADR-007-despliegue-y-construccion-de-imagen.md) | Despliegue en Azure con construcción en GitHub Actions |
+| [008](docs/adr/ADR-008-consultas-de-agregacion.md) | Consultas de agregación resueltas con metadatos |
 
 ### Dos decisiones que suelen sorprender
 
