@@ -100,3 +100,23 @@ def test_peticiones_de_contacto_si_se_detectan(q):
 def test_presupuesto_total_por_debajo_de_un_timeout_tipico():
     assert config.LLM_TIMEOUT_S < config.LLM_BUDGET_S
     assert config.LLM_BUDGET_S + config.EMBED_BUDGET_S <= 35.0
+
+
+# --- robustez: `text` con forma inesperada provocaba HTTP 500 no tipado
+@pytest.mark.parametrize("valor", [
+    {"a": {"b": 1}}, [1, 2], 42, None, True,
+])
+def test_text_con_forma_inesperada_no_lanza(valor):
+    from app.api.openresponses import extract_question
+    body = {"input": [{"role": "user", "content": [{"type": "input_text", "text": valor}]}]}
+    assert extract_question(body) == ""
+
+
+def test_input_con_formas_arbitrarias_nunca_lanza():
+    from app.api.openresponses import extract_question
+    for body in [{}, {"input": None}, {"input": 1}, {"input": True}, {"input": {"a": 1}},
+                 {"input": []}, {"input": [None, 1, "x"]},
+                 {"input": [{"role": "user"}]},
+                 {"input": [{"role": "user", "content": []}]},
+                 {"input": [{"role": "user", "content": [{"type": "zzz"}]}]}]:
+        assert isinstance(extract_question(body), str)

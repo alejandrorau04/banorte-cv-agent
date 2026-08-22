@@ -48,14 +48,21 @@ def extract_question(body: dict[str, Any]) -> str:
         if isinstance(content, str):
             last = content
         elif isinstance(content, list):
-            parts = [
-                p.get("text", "") for p in content
-                if isinstance(p, dict)
-                and p.get("type") in ("input_text", "text", "output_text", None)
-            ]
+            parts: list[str] = []
+            for p in content:
+                if not isinstance(p, dict):
+                    continue
+                if p.get("type") not in ("input_text", "text", "output_text", None):
+                    continue
+                txt = p.get("text")
+                # `text` puede llegar con cualquier forma: el contrato no valida
+                # tipos. Solo se acepta texto; cualquier otra cosa se ignora en
+                # lugar de propagar un TypeError.
+                if isinstance(txt, str):
+                    parts.append(txt)
             if any(parts):
                 last = "".join(parts)
-    return last.strip()
+    return last.strip() if isinstance(last, str) else ""
 
 
 # ----------------------------------------------------------------- salida ----

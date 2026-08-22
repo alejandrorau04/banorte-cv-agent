@@ -84,6 +84,18 @@ def _authorized(request: Request) -> bool:
     return False
 
 
+@app.exception_handler(Exception)
+async def unhandled(_: Request, exc: Exception) -> JSONResponse:
+    """Red de ultimo recurso.
+
+    Un error imprevisto devolveria `Internal Server Error` en texto plano, que
+    NO cumple el formato de error del contrato. Todo fallo debe salir tipado.
+    """
+    log.exception('"error no controlado: %s"', type(exc).__name__)
+    return JSONResponse(status_code=500, content=error_body(
+        "Unexpected server error.", "server_error", "internal_error"))
+
+
 @app.get("/health")
 async def health() -> dict:
     return {
@@ -112,7 +124,14 @@ async def create_response(request: Request):
     if not isinstance(body, dict):
         body = {}
 
-    question = extract_question(body)
+    try:
+        question = extract_question(body)
+    except Exception:  # noqa: BLE001
+        # Defensa en profundidad: la extraccion ya es tolerante, pero una forma
+        # de `input` no prevista no debe convertirse en un 500 sin contrato.
+        log.warning('"%s input no interpretable"', rid)
+        question = ""
+
     agent: CVAgent = STATE["agent"]
 
     try:
