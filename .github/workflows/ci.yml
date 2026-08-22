@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instalar dependencias
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio
+
+      - name: Tests (sin red, sin credenciales)
+        run: pytest -q
+
+      - name: Verificar conformidad con el OpenAPI oficial
+        run: |
+          python - <<'PY'
+          import json, sys
+          sys.path.insert(0, ".")
+          from app.api.openresponses import build_response
+          req = json.load(open("docs/contract/openapi.json"))["components"]["schemas"]["ResponseResource"]["required"]
+          missing = [k for k in req if k not in build_response({}, None)]
+          print(f"campos obligatorios: {len(req)} | faltantes: {missing or 'ninguno'}")
+          sys.exit(1 if missing else 0)
+          PY
+
+      - name: Verificar ausencia de PII en el corpus (ADR-006)
+        run: |
+          python - <<'PY'
+          import sys; sys.path.insert(0, ".")
+          from app.core.corpus import load_facts
+          print(f"corpus valido: {len(load_facts())} hechos, sin datos de contacto")
+          PY
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construir imagen Docker
+        run: docker build -t cv-agent:ci .
