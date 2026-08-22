@@ -12,7 +12,7 @@ Cuatro niveles, cada uno con un propósito distinto y un coste distinto:
 | **1. Unitario / contrato** | Conformidad con el esquema, lógica del núcleo, SSE | No | No | 0,05 s |
 | **2. Integración local** | Servidor real, autenticación, streaming | Local | Sí | ~30 s |
 | **3. Evaluación (golden set)** | Comportamiento del agente frente al modelo real | Sí | Sí | ~60 s |
-| **4. Producción** | Endpoint público desplegado | Sí | Sí | ~15 s |
+| **4. Robustez y carga** | Entradas malformadas y ráfagas concurrentes contra el endpoint desplegado | Sí | Sí | ~90 s |
 
 El nivel 1 corre en cada `push` mediante GitHub Actions. **No requiere red ni claves**:
 el proveedor se sustituye por un doble. Esto permite que el CI de un repositorio público
@@ -23,7 +23,7 @@ sea ejecutable por cualquiera, incluido un evaluador.
 ## Nivel 1 — Pruebas automatizadas (57)
 
 ```bash
-pytest -q          # 57 passed
+pytest -q          # 65 passed
 ```
 
 | Archivo | Casos | Cubre |
@@ -31,7 +31,7 @@ pytest -q          # 57 passed
 | `tests/test_contract.py` | 8 | Los 31 campos obligatorios, campos fuera de esquema, `object` constante, anulables explícitos, las 4 formas de `input`, multi-turno, forma del error |
 | `tests/test_agent.py` | 11 | Detección de idioma, verificación de citas, citas agrupadas, política de contacto sin LLM, integridad y ausencia de PII del corpus |
 | `tests/test_sse.py` | 8 | `sequence_number` monotónico, `event` == `type`, troceo sin partir palabras, secuencia completa y `[DONE]` |
-| `tests/test_regresiones.py` | 30 | Un caso por hallazgo de la revisión de código (ver abajo) |
+| `tests/test_regresiones.py` | 38 | Un caso por hallazgo de la revisión de código y de la batería de robustez |
 
 Dos verificaciones adicionales corren en CI y **fallan la construcción**:
 
@@ -63,8 +63,8 @@ solo de preguntas fáciles no probaría la propiedad que más importa aquí.
 |---|---|
 | Aciertos | **26 / 26 (100 %)** |
 | Consultas que no invocan al LLM | 8 / 26 (30,8 %) |
-| Tokens totales | 10.829 (media 416/consulta) |
-| Latencia p50 / p95 | 1.144 ms / 13.613 ms |
+| Tokens totales | 10.911 (media 420/consulta) |
+| Latencia p50 / p95 | 1.229 ms / 13.284 ms |
 
 ### Recorrido feliz — ejemplo verificado
 
@@ -89,6 +89,52 @@ solo de preguntas fáciles no probaría la propiedad que más importa aquí.
 
 ---
 
+## Nivel 4 — Robustez y carga contra producción
+
+```bash
+AGENT_URL=... AGENT_API_KEY=... python scripts/robustez.py           # entradas hostiles
+AGENT_URL=... AGENT_API_KEY=... python scripts/robustez.py --carga   # ráfaga concurrente
+```
+
+### Entradas malformadas — 28 casos, 28/28 sin 5xx
+
+Criterio: **ninguna entrada, por hostil que sea, debe producir 5xx ni una respuesta no
+conforme.** El contrato no declara campos obligatorios, así que romperse ante una entrada
+inesperada es incumplirlo.
+
+Cubre: cuerpo vacío, JSON inválido, array o `null` en lugar de objeto, `input` numérico /
+booleano / objeto / array vacío, items sin `content`, `role` y `type` desconocidos, `text`
+anidado no textual, todos los campos con tipos erróneos a la vez, campos desconocidos,
+emoji y HTML, caracteres de control, anulación bidireccional, cadenas tipo SQL, path
+traversal, entradas de 100 000 y 1 000 000 de caracteres, 500 items de historial,
+`previous_response_id` inexistente e `instructions` con inyección.
+
+**Hallazgo:** `text` con forma no textual producía **HTTP 500 con «Internal Server Error»
+en texto plano**, sin el formato de error del contrato — el fallo ocurría fuera del bloque
+de captura. Corregido con extracción defensiva y un **manejador global** que garantiza que
+ningún error imprevisto escape sin tipar.
+
+Una entrada de 1 000 000 de caracteres devuelve `429` correctamente tipado, no un fallo.
+
+### Carga — 30 peticiones, concurrencia 10
+
+| Medición | Antes del limitador | Después |
+|---|---|---|
+| Códigos | 25×`200`, **5×`429`** | **30×`200`** |
+| Duración | 15,3 s | 24,1 s |
+| p50 / p95 / máx | 2,47 / 9,18 / 15,33 s | 3,43 / 8,06 / 19,22 s |
+| Respuestas 5xx | 0 | 0 |
+
+Los `429` procedían del límite de cuota del nivel gratuito al lanzar diez llamadas
+simultáneas. Se añadió un limitador a 3 llamadas concurrentes con cola de hasta 6 s:
+**se cambia un error visible por una espera corta**. Es el intercambio correcto en un
+escenario de evaluación.
+
+No sustituye al *rate limiting* en la puerta de entrada, que sigue siendo un riesgo
+aceptado y documentado en el modelo de amenazas: absorbe ráfagas, no abuso sostenido.
+
+---
+
 ## Revisión de código — 2026-08-22
 
 Revisión sistemática de las ~1.000 líneas del servicio, nivel de exigencia alto.
@@ -105,7 +151,7 @@ Revisión sistemática de las ~1.000 líneas del servicio, nivel de exigencia al
 | 7 | El patrón de contacto capturaba `number` y `contacto` sueltos | «What number of years…» recibía la respuesta de privacidad | Patrón restringido a expresiones explícitas |
 | 8 | El timeout no se acotaba al presupuesto restante; se esperaba tras el último intento | Tiempo total hasta ~37 s frente a los 25 s declarados | Timeout acotado y sin espera final |
 
-### Dos hallazgos derivados, encontrados al corregir
+### Hallazgos derivados, encontrados al corregir
 
 - **El umbral léxico propuesto para el hallazgo 2 no funcionaba.** Al medirlo: una
   pregunta legítima puntuaba **0,00** y una fuera de dominio **3,85**. La señal léxica
@@ -115,6 +161,15 @@ Revisión sistemática de las ~1.000 líneas del servicio, nivel de exigencia al
   (`gemini-3.6-flash`) cuya mediana medida es 15,5 s y su máximo 35,7 s, el respaldo
   **nunca podía completarse**. Sustituido por `gemini-3.5-flash-lite` (1,01 s). Efecto:
   p95 del golden set de 31,9 s a 13,6 s.
+- **La cadena de respaldo seguía siendo decorativa, por otra vía.** Detectado al reejecutar
+  el golden set: los reintentos del modelo primario consumían el presupuesto completo
+  (2 intentos × 12 s = 24 s de 25 s), de modo que el respaldo **nunca llegaba a
+  intentarse**. Corregido repartiendo el presupuesto entre modelos y no reintentando un
+  timeout contra el mismo modelo. Verificado con un doble de cliente que comprueba que el
+  segundo modelo se ejecuta.
+
+El patrón se repitió tres veces: **un mecanismo de resiliencia que parece correcto en el
+código y no funciona en la práctica.** Ninguno se habría detectado sin medir.
 
 ---
 
@@ -149,6 +204,9 @@ que funciona.**
 | — | Despliegue: fallo de ACR Tasks → build en GitHub Actions + GHCR → Azure |
 | Tarde | **Revisión de código**: 8 hallazgos, corregidos con tests de regresión |
 | — | Re-medición: p95 de 31,9 s a 13,6 s; golden set 26/26 |
+| — | **Batería de robustez** contra producción: 28 entradas hostiles → 1 HTTP 500 hallado y corregido |
+| — | **Prueba de carga**: 5 `429` bajo ráfaga → limitador de concurrencia → 30/30 correctas |
+| — | Tercer defecto de la cadena de respaldo: presupuesto repartido entre modelos |
 
 ---
 
@@ -156,7 +214,8 @@ que funciona.**
 
 Honestidad sobre los límites de esta campaña:
 
-- **Sin pruebas de carga.** No se conoce el comportamiento con concurrencia alta.
+- **Carga probada solo hasta concurrencia 10 y 30 peticiones.** No se ha probado
+  concurrencia alta sostenida ni con varias réplicas.
 - **Sin pruebas de larga duración.** No se ha observado el servicio durante días.
 - **Golden set de 26 casos**, ampliable. El umbral se calibró con 15 preguntas: es
   suficiente para separar los grupos observados, no para afirmar robustez estadística.
