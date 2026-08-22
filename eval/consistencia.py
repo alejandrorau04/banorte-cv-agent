@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import httpx
 from app.adapters.base import ProviderError
-from app.adapters.gemini import GeminiEmbedder, GeminiLLM
+from app.adapters.gemini import GeminiLLM, MultiEmbedder
 from app.core.agent import CVAgent
 from app.core.corpus import load_facts
 from app.core.retrieval import HybridRetriever
@@ -92,8 +92,9 @@ async def main() -> int:
     fallos, total = [], 0
 
     async with httpx.AsyncClient() as c:
-        agent = CVAgent(HybridRetriever.from_index(facts, embedder=GeminiEmbedder(c)),
-                        GeminiLLM(c))
+        retriever = HybridRetriever.from_index(facts)
+        retriever._embedder = MultiEmbedder(c, disponibles=retriever.indexed_models)
+        agent = CVAgent(retriever, GeminiLLM(c))
         for intencion, variantes, cita, terminos in GRUPOS:
             print(f"\n=== {intencion} ({len(variantes)} formulaciones) ===")
             for q in variantes:

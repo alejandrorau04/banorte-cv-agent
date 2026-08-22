@@ -39,6 +39,7 @@ def test_preguntas_en_espanol_se_detectan_como_espanol(q):
 async def test_sin_indice_degrada_a_lexico_en_vez_de_abstenerse(facts, fake_llm):
     r = HybridRetriever(facts)            # sin vectores
     assert not r.has_vectors
+    assert r.indexed_models == []
     a = await CVAgent(r, fake_llm()).answer("¿Qué certificaciones tiene?")
     assert not a.abstained, "en modo degradado debe responder, no abstenerse de todo"
 
@@ -286,3 +287,111 @@ def test_las_lineas_del_corpus_se_localizan_correctamente(facts):
             continue
         assert f"id: {f.id}" in lineas[f.line_start - 1], f.id
         assert f.line_end >= f.line_start
+
+
+# --- cuota: el embedding de consulta es la llamada más frecuente del sistema
+@pytest.mark.asyncio
+async def test_el_embedding_de_consulta_se_cachea():
+    """Las preguntas sugeridas de la interfaz se repiten mucho: recalcular su
+    embedding cada vez desperdicia la llamada más frecuente del sistema."""
+    import httpx
+    from app.adapters.gemini import GeminiEmbedder
+
+    llamadas = 0
+
+    class FakeClient:
+        async def post(self, url, **kw):
+            nonlocal llamadas
+            llamadas += 1
+            return httpx.Response(200, json={"embedding": {"values": [0.1, 0.2]}},
+                                  request=httpx.Request("POST", url))
+
+    e = GeminiEmbedder(FakeClient())
+    await e.embed(["¿Dónde trabaja?"], is_query=True)
+    await e.embed(["¿Dónde trabaja?"], is_query=True)
+    await e.embed(["¿Dónde trabaja?"], is_query=True)
+    assert llamadas == 1, f"se esperaba 1 llamada, hubo {llamadas}"
+
+    await e.embed(["otra pregunta"], is_query=True)
+    assert llamadas == 2
+
+
+@pytest.mark.asyncio
+async def test_los_documentos_no_se_cachean():
+    """Solo se cachean consultas: el corpus se indexa una vez en build."""
+    import httpx
+    from app.adapters.gemini import GeminiEmbedder
+
+    llamadas = 0
+
+    class FakeClient:
+        async def post(self, url, **kw):
+            nonlocal llamadas
+            llamadas += 1
+            return httpx.Response(200, json={"embedding": {"values": [0.1]}},
+                                  request=httpx.Request("POST", url))
+
+    e = GeminiEmbedder(FakeClient())
+    await e.embed(["texto"], is_query=False)
+    await e.embed(["texto"], is_query=False)
+    assert llamadas == 2
+
+
+@pytest.mark.asyncio
+async def test_la_cache_de_consultas_esta_acotada():
+    import httpx
+    from app import config
+    from app.adapters.gemini import GeminiEmbedder
+
+    class FakeClient:
+        async def post(self, url, **kw):
+            return httpx.Response(200, json={"embedding": {"values": [0.1]}},
+                                  request=httpx.Request("POST", url))
+
+    e = GeminiEmbedder(FakeClient())
+    for i in range(config.QUERY_CACHE_SIZE + 20):
+        await e.embed([f"pregunta {i}"], is_query=True)
+    assert len(e._cache) <= config.QUERY_CACHE_SIZE
+
+
+# --- cuota de embeddings: era el punto único de fallo más grave del sistema
+@pytest.mark.asyncio
+async def test_el_embedding_cae_al_segundo_modelo_si_el_primero_agota_cuota():
+    import httpx
+    from app.adapters.gemini import MultiEmbedder
+
+    intentados: list[str] = []
+
+    class FakeClient:
+        async def post(self, url, **kw):
+            m = url.rsplit("/", 1)[-1].split(":")[0]
+            intentados.append(m)
+            if m == "gemini-embedding-001":
+                return httpx.Response(429, json={"error": {"message": "quota"}},
+                                      request=httpx.Request("POST", url))
+            return httpx.Response(200, json={"embedding": {"values": [0.5, 0.5]}},
+                                  request=httpx.Request("POST", url))
+
+    modelo, v = await MultiEmbedder(FakeClient()).embed_query("hola")
+    assert modelo == "gemini-embedding-2"
+    assert v == [0.5, 0.5]
+    assert "gemini-embedding-2" in intentados
+
+
+def test_cada_modelo_de_embedding_tiene_su_propio_umbral():
+    """La escala del coseno no es comparable entre modelos: reutilizar el umbral
+    de uno para otro invalidaría la calibración."""
+    from app import config
+    for m in config.EMBED_MODELS:
+        assert m in config.MIN_SCORE_BY_MODEL, f"falta calibrar {m}"
+    assert len(set(config.MIN_SCORE_BY_MODEL.values())) > 1, \
+        "umbrales idénticos: probablemente no se recalibró"
+
+
+def test_el_indice_contiene_vectores_de_todos_los_modelos_declarados():
+    import json
+    from app import config
+    d = json.loads(config.INDEX_PATH.read_text())
+    for m in config.EMBED_MODELS:
+        vect = (d.get("by_model") or {}).get(m) or {}
+        assert vect, f"el índice no tiene vectores de {m}"

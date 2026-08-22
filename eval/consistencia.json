@@ -1,4 +1,135 @@
 {
   "total": 26,
-  "fallos": []
+  "fallos": [
+    {
+      "intencion": "empleo actual",
+      "q": "¿Dónde trabaja actualmente Alejandro?",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "empleo actual",
+      "q": "donde travaja aorita??",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "empleo actual",
+      "q": "EN QUE EMPRESA ESTA AHORA",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "empleo actual",
+      "q": "cual es su chamba actual",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "empleo actual",
+      "q": "Where does he work now?",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "empleo actual",
+      "q": "current employer?",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "empleo actual",
+      "q": "dime su trabajo actual porfa",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "experiencia en IA",
+      "q": "¿Qué experiencia tiene con inteligencia artificial?",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "experiencia en IA",
+      "q": "q sabe de ia",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "experiencia en IA",
+      "q": "hábleme de su experiencia en IA",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "experiencia en IA",
+      "q": "What is his AI experience?",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "experiencia en IA",
+      "q": "ha trabajado con IA?",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "experiencia en IA",
+      "q": "cuentame sobre inteligencia artificial en su carrera",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "certificaciones",
+      "q": "¿Qué certificaciones tiene?",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "certificaciones",
+      "q": "certificaciones?",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "certificaciones",
+      "q": "esta certificado en algo",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "certificaciones",
+      "q": "What certifications does he hold?",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "certificaciones",
+      "q": "tiene algun certificado",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "primer empleo",
+      "q": "¿Cuál fue su primer empleo?",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "primer empleo",
+      "q": "donde empezo a trabajar",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "primer empleo",
+      "q": "What was his first job?",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "primer empleo",
+      "q": "su primer trabajo cual fue",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "formación",
+      "q": "¿Dónde estudió?",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "formación",
+      "q": "que estudio",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "formación",
+      "q": "Where did he study?",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    },
+    {
+      "intencion": "formación",
+      "q": "cual es su carrera universitaria",
+      "problema": "error proveedor: embed: HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error,"
+    }
+  ]
 }

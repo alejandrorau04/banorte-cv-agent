@@ -24,7 +24,16 @@ GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
 #   gemini-3.6-flash       15.46s / 35.67s  <- DESCARTADO, excede el presupuesto
 # Ver ADR-005.
 GEN_MODELS = ("gemini-3.1-flash-lite", "gemini-3.5-flash-lite")
-EMBED_MODEL = "gemini-embedding-001"
+# Cadena de modelos de embedding. El corpus se indexa con TODOS: cada modelo
+# produce vectores en un espacio distinto, asi que una consulta solo puede
+# compararse contra el conjunto generado por su MISMO modelo. Indexar con varios
+# convierte la cuota de embeddings -- punto unico de fallo mas grave del sistema,
+# porque se invoca en cada peticion -- en algo realmente redundante.
+#
+# Medido el 2026-08-22: la cuota es `PerProjectPerModel`, de modo que cada modelo
+# tiene su propio limite diario. Ver ADR-011.
+EMBED_MODELS = ("gemini-embedding-001", "gemini-embedding-2")
+EMBED_MODEL = EMBED_MODELS[0]
 # 768 en lugar de 3072: indice 4x menor y coseno 4x mas rapido en Python puro,
 # con perdida de calidad marginal (embeddings truncables). Ver ADR-004.
 EMBED_DIM = 768
@@ -52,6 +61,11 @@ EMBED_BUDGET_S = 8.0
 MAX_CONCURRENT_LLM = 3
 # Espera maxima en cola antes de rendirse con 429.
 QUEUE_WAIT_S = 6.0
+# Cache de embeddings de consulta. Las preguntas sugeridas de la interfaz se
+# repiten mucho, y el embedding es la llamada MAS frecuente: se calcula en cada
+# peticion, incluso en las que luego se abstienen. Cachearlas elimina esa
+# llamada por completo en las repeticiones.
+QUERY_CACHE_SIZE = 512
 
 # --- Recuperación ------------------------------------------------------------
 TOP_K = 6
@@ -60,7 +74,24 @@ TOP_K = 6
 # Se elige 0.62, por debajo del punto medio 0.627: abstenerse ante una pregunta
 # legitima cuesta mas que responder una fuera de dominio, que el prompt ya
 # maneja con elegancia. Ver ADR-003.
-MIN_SCORE = 0.62
+# Umbral por modelo: la escala del coseno NO es comparable entre modelos, asi
+# que cada uno necesita su propia calibracion empirica.
+# Calibrado empiricamente el 2026-08-22 con scripts/calibrar.py:
+#
+#   gemini-embedding-001  dentro min 0.6633 / fuera max 0.5899  -> separacion +0.073
+#   gemini-embedding-2    dentro min 0.5593 / fuera max 0.5620  -> SOLAPAMIENTO -0.003
+#
+# El segundo modelo no separa limpiamente: no existe umbral perfecto. Se elige
+# 0.55, que deja pasar todas las preguntas legitimas a costa de que alguna fuera
+# de dominio llegue al modelo, donde el prompt la redirige con elegancia. Es el
+# mismo criterio asimetrico del ADR-003 y es aceptable porque este modelo solo
+# entra como RESPALDO, cuando el primario agota cuota: una compuerta algo menos
+# precisa en modo degradado es preferible a un agente que no responde.
+MIN_SCORE_BY_MODEL = {
+    "gemini-embedding-001": 0.62,
+    "gemini-embedding-2": 0.55,
+}
+MIN_SCORE = MIN_SCORE_BY_MODEL["gemini-embedding-001"]
 
 # --- Seguridad ---------------------------------------------------------------
 AGENT_API_KEY = os.getenv("AGENT_API_KEY", "")

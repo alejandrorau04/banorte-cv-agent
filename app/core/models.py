@@ -48,6 +48,8 @@ _SECCION = {
     "education": ("Formación", "Education"),
     "achievement": ("Logros", "Achievements"),
     "timeline": ("Trayectoria", "Timeline"),
+    "organization": ("Empresa", "Company"),
+    "intent": ("Situación profesional", "Professional situation"),
     "other": ("CV", "CV"),
 }
 
@@ -88,5 +90,6 @@ class Answer:
     abstained: bool = False
     reason: str = ""
     model: str | None = None
+    embed_model: str | None = None
     usage: dict[str, int] = field(default_factory=dict)
     latency_ms: int = 0

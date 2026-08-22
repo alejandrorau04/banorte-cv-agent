@@ -79,7 +79,7 @@ class CVAgent:
             return done(Answer(text=prompts.CONTACT[lang], lang=lang,
                                abstained=True, reason="contact_policy"))
 
-        retrieved = await self._r.search(q, lang)
+        retrieved, embed_model = await self._r.search(q, lang)
 
         # Las preguntas de agregacion / orden se responden con la linea de tiempo
         # derivada de los metadatos, no con lo que el modelo infiera del top-k.
@@ -96,10 +96,11 @@ class CVAgent:
         # arranque falla si falta el indice (ver app/main.py). La red de seguridad
         # restante es el prompt, que redirige con elegancia.
         best = max((r.semantic for r in retrieved), default=0.0)
-        floor = config.MIN_SCORE
-        if self._r.has_vectors and (not retrieved or best < floor):
+        floor = config.MIN_SCORE_BY_MODEL.get(embed_model or "", config.MIN_SCORE)
+        if self._r.has_vectors and embed_model and (not retrieved or best < floor):
             return done(Answer(text=prompts.ABSTAIN[lang], lang=lang,
                                retrieved=retrieved, abstained=True,
+                               embed_model=embed_model,
                                reason=f"low_evidence(sim={best:.3f}<{floor})"))
 
         user = _build_user_prompt(q, retrieved, lang)
@@ -112,7 +113,7 @@ class CVAgent:
         text, cites = _verify_citations(c.text, {r.fact.id for r in retrieved})
         text = _render_sources(text, cites, {r.fact.id: r.fact for r in retrieved}, lang)
         return done(Answer(text=text, lang=lang, citations=cites, retrieved=retrieved,
-                           model=c.model, usage=c.usage))
+                           model=c.model, embed_model=embed_model, usage=c.usage))
 
 
 def _build_user_prompt(question: str, retrieved: list[Retrieved], lang: Lang) -> str:

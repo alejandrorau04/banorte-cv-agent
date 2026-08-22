@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 
 from app import config
 from app.adapters.base import ProviderError
-from app.adapters.gemini import GeminiEmbedder, GeminiLLM
+from app.adapters.gemini import GeminiLLM, MultiEmbedder
 from app.api.openresponses import SPEC_VERSION, build_response, error_body, extract_question
 from app.api.sse import chunk_text, stream_answer
 from app.core.agent import CVAgent
@@ -35,7 +35,10 @@ STATE: dict = {}
 async def lifespan(_: FastAPI):
     facts = load_facts()
     client = httpx.AsyncClient()
-    retriever = HybridRetriever.from_index(facts, embedder=GeminiEmbedder(client))
+    # Solo se ofrecen los modelos que estan realmente indexados: uno sin
+    # vectores produciria similitudes vacias y abstencion permanente.
+    retriever = HybridRetriever.from_index(facts)
+    retriever._embedder = MultiEmbedder(client, disponibles=retriever.indexed_models)
     STATE["client"] = client
     STATE["agent"] = CVAgent(retriever, GeminiLLM(client))
     STATE["facts"] = len(facts)
@@ -49,6 +52,7 @@ async def lifespan(_: FastAPI):
             "Ejecutar scripts/build_index.py y reconstruir la imagen."
         )
     STATE["vectors"] = retriever.has_vectors
+    STATE["embed_models"] = retriever.indexed_models
     STATE["started"] = time.time()
     log.info('"arranque: %d hechos, vectores=%s"', len(facts), retriever.has_vectors)
     yield
@@ -103,6 +107,7 @@ async def health() -> dict:
         "spec_version": SPEC_VERSION,
         "facts": STATE.get("facts", 0),
         "vectors_loaded": STATE.get("vectors", False),
+        "embed_models": STATE.get("embed_models", []),
         "uptime_s": round(time.time() - STATE.get("started", time.time()), 1),
     }
 

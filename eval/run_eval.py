@@ -14,10 +14,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import httpx, yaml
 from app.adapters.base import ProviderError
-from app.adapters.gemini import GeminiEmbedder, GeminiLLM
+from app.adapters.gemini import GeminiLLM, MultiEmbedder
 from app.core.agent import CVAgent
 from app.core.corpus import load_facts
 from app.core.retrieval import HybridRetriever
+from app import config
 
 GS = Path(__file__).parent / "golden_set.yaml"
 
@@ -77,8 +78,9 @@ async def main() -> int:
     rows, t0 = [], time.time()
 
     async with httpx.AsyncClient() as c:
-        agent = CVAgent(HybridRetriever.from_index(facts, embedder=GeminiEmbedder(c)),
-                        GeminiLLM(c))
+        retriever = HybridRetriever.from_index(facts)
+        retriever._embedder = MultiEmbedder(c, disponibles=retriever.indexed_models)
+        agent = CVAgent(retriever, GeminiLLM(c))
         for case in cases:
             try:
                 a = await agent.answer(case["q"])
@@ -92,7 +94,9 @@ async def main() -> int:
                 print(f"  ERROR  [{case['expect']:7}] {case['q'][:58]}  <- {e}")
                 continue
             ok, why = judge(case, a)
+            degradado = bool(a.embed_model and a.embed_model != config.EMBED_MODELS[0])
             rows.append({"q": case["q"], "expect": case["expect"], "ok": ok, "why": why,
+                         "embed_model": a.embed_model, "degradado": degradado,
                          "lang": a.lang, "abstained": a.abstained,
                          "tokens": a.usage.get("total_tokens", 0),
                          "ms": a.latency_ms, "citations": a.citations,
@@ -106,7 +110,20 @@ async def main() -> int:
     tok = sum(r["tokens"] for r in rows)
     lat = sorted(r["ms"] for r in rows)
 
+    degradados = [r for r in rows if r.get("degradado")]
+    fallos_degradados = [r for r in degradados if not r["ok"]]
+
     print("\n" + "=" * 72)
+    if degradados:
+        # Transparencia: la compuerta se calibra por modelo y el respaldo separa
+        # peor. Reportarlo por separado evita atribuir al agente una degradacion
+        # que en realidad viene de haber agotado la cuota del modelo primario.
+        modelos = sorted({r["embed_model"] for r in degradados if r["embed_model"]})
+        print(f"  MODO DEGRADADO      : {len(degradados)}/{n} casos usaron "
+              f"embedding de respaldo ({', '.join(modelos)})")
+        if fallos_degradados:
+            print(f"                        {len(fallos_degradados)} de los fallos "
+                  f"ocurrieron en ese modo")
     print(f"  aciertos            : {passed}/{n}  ({100*passed/n:.1f}%)")
     print(f"  sin invocar al LLM  : {no_llm}/{n}  ({100*no_llm/n:.1f}%)")
     print(f"  tokens totales      : {tok}   (media {tok/n:.0f}/consulta)")

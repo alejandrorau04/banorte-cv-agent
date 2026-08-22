@@ -82,11 +82,12 @@ def detect_lang(text: str) -> Lang:
 class HybridRetriever:
     """Índice en memoria. Los vectores se precalculan en build (scripts/build_index.py)."""
 
-    def __init__(self, facts: list[Fact], embedder: Embedder | None = None,
-                 vectors: dict[str, list[float]] | None = None):
+    def __init__(self, facts: list[Fact], embedder=None,
+                 by_model: dict[str, dict[str, list[float]]] | None = None):
         self.facts = {f.id: f for f in facts}
         self._embedder = embedder
-        self._vectors = vectors or {}
+        # Un conjunto de vectores por modelo: los espacios no son comparables.
+        self._by_model = by_model or {}
         self._tokens: dict[tuple[str, Lang], set[str]] = {}
         self._df: dict[Lang, dict[str, int]] = {"es": {}, "en": {}}
         for f in facts:
@@ -98,14 +99,22 @@ class HybridRetriever:
 
     @classmethod
     def from_index(cls, facts: list[Fact], path: Path | None = None,
-                   embedder: Embedder | None = None) -> "HybridRetriever":
+                   embedder=None) -> "HybridRetriever":
         p = path or config.INDEX_PATH
-        vectors = json.loads(p.read_text())["vectors"] if p.exists() else {}
-        return cls(facts, embedder=embedder, vectors=vectors)
+        by_model: dict[str, dict[str, list[float]]] = {}
+        if p.exists():
+            d = json.loads(p.read_text())
+            by_model = d.get("by_model") or (
+                {config.EMBED_MODEL: d["vectors"]} if "vectors" in d else {})
+        return cls(facts, embedder=embedder, by_model=by_model)
 
     @property
     def has_vectors(self) -> bool:
-        return bool(self._vectors)
+        return any(self._by_model.values())
+
+    @property
+    def indexed_models(self) -> list[str]:
+        return [m for m, v in self._by_model.items() if v]
 
     def _lexical(self, query: str, lang: Lang) -> dict[str, float]:
         """Solapamiento ponderado por IDF. Premia términos raros (nombres propios)."""
@@ -145,15 +154,23 @@ class HybridRetriever:
                 extra.append(Retrieved(fact=f, score=0.99, semantic=0.99))
         return extra + retrieved
 
-    async def search(self, query: str, lang: Lang, k: int | None = None) -> list[Retrieved]:
+    async def search(self, query: str, lang: Lang,
+                     k: int | None = None) -> tuple[list[Retrieved], str | None]:
+        """Devuelve los hechos recuperados y QUE modelo de embedding se uso.
+
+        El modelo importa aguas arriba: el umbral de abstencion se calibra por
+        modelo, porque la escala del coseno no es comparable entre ellos.
+        """
         k = k or config.TOP_K
         lex = self._lexical(query, lang)
         sem: dict[str, float] = {}
+        modelo: str | None = None
 
-        if self._vectors and self._embedder:
-            qv = (await self._embedder.embed([query], is_query=True))[0]
+        if self.has_vectors and self._embedder:
+            modelo, qv = await self._embedder.embed_query(query)
+            vectores = self._by_model.get(modelo) or {}
             for fid in self.facts:
-                v = self._vectors.get(f"{fid}::{lang}")
+                v = vectores.get(f"{fid}::{lang}")
                 if v:
                     sem[fid] = max(0.0, _cosine(qv, v))
         # `sem` se conserva SIN normalizar: el coseno crudo es la unica senal con
@@ -169,6 +186,6 @@ class HybridRetriever:
             for fid in set(sem) | set(lex)
         }
         ranked = sorted(combined.items(), key=lambda kv: kv[1], reverse=True)[:k]
-        return [Retrieved(fact=self.facts[fid], score=round(s, 4),
-                          semantic=round(sem.get(fid, 0.0), 4))
-                for fid, s in ranked if s > 0]
+        return ([Retrieved(fact=self.facts[fid], score=round(s, 4),
+                           semantic=round(sem.get(fid, 0.0), 4))
+                 for fid, s in ranked if s > 0], modelo)

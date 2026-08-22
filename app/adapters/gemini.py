@@ -12,6 +12,8 @@ import time
 import httpx
 from typing import Sequence
 
+from collections import OrderedDict
+
 from app import config
 from app.adapters.base import Completion, ProviderError
 
@@ -133,9 +135,31 @@ def _parse(data: dict, model: str) -> Completion:
 
 
 class GeminiEmbedder:
+    """Embeddings con cache de consultas y el mismo limitador de concurrencia.
+
+    El embedding es la llamada mas frecuente del sistema: ocurre en TODA
+    peticion, incluso en las que despues se abstienen. Sin limitar, una rafaga
+    agota la cuota del nivel gratuito antes que las llamadas de generacion.
+    """
+
     def __init__(self, client: httpx.AsyncClient, model: str | None = None):
         self._c = client
         self._model = model or config.EMBED_MODEL
+        # Solo se cachean consultas, nunca documentos: el corpus se indexa una
+        # vez en build y no pasa por aqui en runtime.
+        self._cache: "OrderedDict[str, list[float]]" = OrderedDict()
+
+    def _cacheado(self, texto: str) -> list[float] | None:
+        v = self._cache.get(texto)
+        if v is not None:
+            self._cache.move_to_end(texto)
+        return v
+
+    def _guardar(self, texto: str, v: list[float]) -> None:
+        self._cache[texto] = v
+        self._cache.move_to_end(texto)
+        while len(self._cache) > config.QUERY_CACHE_SIZE:
+            self._cache.popitem(last=False)
 
     async def embed(self, texts: Sequence[str], *, is_query: bool = False,
                     budget_s: float | None = None) -> list[list[float]]:
@@ -150,6 +174,11 @@ class GeminiEmbedder:
         deadline = time.monotonic() + budget_s
         out: list[list[float]] = []
         for t in texts:
+            if is_query:
+                hit = self._cacheado(t)
+                if hit is not None:
+                    out.append(hit)
+                    continue
             for attempt in range(3):
                 if time.monotonic() >= deadline:
                     raise ProviderError("embed: presupuesto de tiempo agotado")
@@ -164,7 +193,10 @@ class GeminiEmbedder:
                                          deadline - time.monotonic())),
                 )
                 if r.status_code == 200:
-                    out.append(r.json()["embedding"]["values"])
+                    v = r.json()["embedding"]["values"]
+                    if is_query:
+                        self._guardar(t, v)
+                    out.append(v)
                     break
                 if r.status_code in _RETRYABLE and attempt < 2:
                     delay = min(0.5 * (2 ** attempt),
@@ -175,3 +207,58 @@ class GeminiEmbedder:
                 raise ProviderError(f"embed: HTTP {r.status_code} {r.text[:160]}",
                                     status=r.status_code)
         return out
+
+    async def _post_embed(self, texto: str, task: str, timeout: float,
+                          *, limitar: bool) -> httpx.Response:
+        """Un POST de embedding. Las consultas pasan por el mismo limitador de
+        concurrencia que la generacion; la indexacion en build no lo necesita."""
+        async def _hacer() -> httpx.Response:
+            return await self._c.post(
+                f"{config.GEMINI_BASE}/{self._model}:embedContent",
+                params={"key": config.GEMINI_API_KEY},
+                json={"model": f"models/{self._model}",
+                      "content": {"parts": [{"text": texto}]},
+                      "taskType": task,
+                      "outputDimensionality": config.EMBED_DIM},
+                timeout=timeout,
+            )
+
+        if not limitar:
+            return await _hacer()
+        async with _Slot():
+            return await _hacer()
+
+
+class MultiEmbedder:
+    """Cadena de modelos de embedding con cuota independiente.
+
+    La cuota de embeddings es `PerProjectPerModel` (medido 2026-08-22): cada
+    modelo tiene su propio limite diario. Como el embedding se calcula en TODA
+    peticion, agotarlo dejaria al agente sin poder recuperar nada -- era el punto
+    unico de fallo mas grave del sistema.
+
+    Devuelve siempre el modelo que respondio, para que la comparacion se haga
+    contra el conjunto de vectores correcto. Ver ADR-011.
+    """
+
+    def __init__(self, client: httpx.AsyncClient,
+                 models: Sequence[str] | None = None,
+                 disponibles: Sequence[str] | None = None):
+        elegidos = [m for m in (models or config.EMBED_MODELS)
+                    if disponibles is None or m in disponibles]
+        self._embedders = [(m, GeminiEmbedder(client, model=m)) for m in elegidos]
+
+    @property
+    def models(self) -> list[str]:
+        return [m for m, _ in self._embedders]
+
+    async def embed_query(self, text: str) -> tuple[str, list[float]]:
+        last: Exception | None = None
+        for modelo, emb in self._embedders:
+            try:
+                v = await emb.embed([text], is_query=True)
+                return modelo, v[0]
+            except ProviderError as e:
+                last = e
+                continue
+        raise last or ProviderError("sin modelos de embedding disponibles")

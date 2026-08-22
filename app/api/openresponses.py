@@ -137,6 +137,8 @@ def build_response(
         # (y para verificar que el respaldo se activo).
         if answer.model:
             metadata["upstream_model"] = answer.model
+        if answer.embed_model:
+            metadata["embed_model"] = answer.embed_model
 
     return {
         "id": response_id or _id("resp"),

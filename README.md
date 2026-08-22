@@ -183,6 +183,8 @@ ausencia de datos de contacto en el corpus.
 | [007](docs/adr/ADR-007-despliegue-y-construccion-de-imagen.md) | Despliegue en Azure con construcción en GitHub Actions |
 | [008](docs/adr/ADR-008-consultas-de-agregacion.md) | Consultas de agregación resueltas con metadatos |
 | [009](docs/adr/ADR-009-presentacion-de-fuentes.md) | Fuentes como enlaces legibles al corpus, no identificadores |
+| [010](docs/adr/ADR-010-informacion-aportada-y-verificada.md) | Información fuera del CV: empresas y situación profesional |
+| [011](docs/adr/ADR-011-redundancia-de-embeddings.md) | Índice multi-modelo para eliminar el punto único de fallo |
 
 ### Dos decisiones que suelen sorprender
 

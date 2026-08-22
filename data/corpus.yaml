@@ -392,8 +392,8 @@ facts:
   - id: education.languages
     type: education
     tags: [idiomas, español, ingles]
-    es: "Idiomas: español nativo e inglés intermedio conversacional."
-    en: "Languages: native Spanish and intermediate conversational English."
+    es: "Idiomas: español nativo. En inglés, nivel avanzado en lectura y escritura técnica —documentación, especificaciones, código y comunicación escrita profesional— y nivel conversacional en desarrollo activo."
+    en: "Languages: native Spanish. In English, advanced level in technical reading and writing —documentation, specifications, code, and professional written communication— and conversational level actively developing."
 
   # ---------------- LOGROS ----------------
   - id: achievements.globalconnect
@@ -408,3 +408,103 @@ facts:
     tags: [logros, vinte, sap, wesco, johnson, salinas]
     es: "Otros logros destacados: robot digital con IA para Vinte como canal de captación; automatización contable en SAP con reportes automáticos a gerencia; gestión documental para hospitales y empresas; más de 8 sistemas internos en WESCO; cotizador web nacional y sistema de tickets con 50% de reducción de tiempos en Johnson Health; y sistema de cámaras prepago para Grupo Salinas."
     en: "Other notable achievements: an AI digital robot for Vinte as a client acquisition channel; SAP accounting automation with automatic reports to management; document management for hospitals and enterprises; more than 8 internal systems at WESCO; a nationwide web quotation tool and a ticketing system with a 50% reduction in service times at Johnson Health; and a prepaid camera system for Grupo Salinas."
+
+  # ---------------- ORGANIZACIONES ----------------
+  # Descripciones de las empresas donde trabajó. Las de GlobalConnect, Alldora y
+  # Guval se verificaron consultando su sitio web el 2026-08-22; las de Alcazar,
+  # WESCO, Johnson Health y SW las aportó el titular del CV porque sus sitios
+  # rechazan peticiones automatizadas (HTTP 403). Ver ADR-010.
+
+  - id: org.globalconnect
+    type: organization
+    org: GlobalConnect
+    website: "https://www.globalconnectleads.com/"
+    tags: [globalconnect, empresa, sitio, web, leads, marketing]
+    es: "GlobalConnect es una plataforma de marketing B2C que permite a contratistas comprar y gestionar leads, y a proveedores de datos monetizar su tráfico, combinando tecnología de IA con estrategia humana e infraestructura de marketing. Sitio web: https://www.globalconnectleads.com/"
+    en: "GlobalConnect is a B2C marketing platform that lets contractors buy and manage leads and lets data providers monetize their traffic, combining AI technology with human strategy and marketing infrastructure. Website: https://www.globalconnectleads.com/"
+
+  - id: org.alldora
+    type: organization
+    org: "Alldora Latinoamérica"
+    website: "https://www.alldora.com.mx/"
+    tags: [alldora, empresa, sitio, web, impresion, documental, automatizacion]
+    es: "Alldora Latinoamérica es una empresa tecnológica que ofrece servicios administrados de impresión, gestión documental y automatización con inteligencia artificial para eficiencia empresarial. Sitio web: https://www.alldora.com.mx/"
+    en: "Alldora Latinoamérica is a technology company offering managed printing services, document management, and AI-powered automation for business efficiency. Website: https://www.alldora.com.mx/"
+
+  - id: org.guval
+    type: organization
+    org: "Guval Foods"
+    website: "https://www.guval.mx/"
+    tags: [guval, empresa, sitio, web, alimentos, importacion, supermercados]
+    es: "Guval Foods es una empresa mexicana dedicada a la importación y distribución de alimentos y bebidas asiáticos, con presencia en supermercados y comercios de México. Sitio web: https://www.guval.mx/"
+    en: "Guval Foods is a Mexican company that imports and distributes Asian food and beverage products to supermarkets and retailers across Mexico. Website: https://www.guval.mx/"
+
+  - id: org.alcazar
+    type: organization
+    org: "Alcazar & Compañía"
+    website: "https://alcazar.com.mx/"
+    tags: [alcazar, empresa, sitio, web, franquicias, negocios]
+    es: "Alcazar & Compañía es una firma especializada en el desarrollo y la expansión de negocios y franquicias. Sitio web: https://alcazar.com.mx/"
+    en: "Alcazar & Compañía is a firm specialized in business and franchise development and expansion. Website: https://alcazar.com.mx/"
+
+  - id: org.wesco
+    type: organization
+    org: "WESCO Distribution de México"
+    website: "https://www.wesco.com/us/en.html"
+    tags: [wesco, empresa, sitio, web, distribucion, electrico, cadena-suministro]
+    es: "WESCO Distribution es un líder global en distribución B2B de material eléctrico, de comunicaciones y para el sector de servicios públicos, así como en servicios de cadena de suministro. Sitio web: https://www.wesco.com/us/en.html"
+    en: "WESCO Distribution is a global leader in B2B electrical, communications, and utility distribution, as well as supply chain services. Website: https://www.wesco.com/us/en.html"
+
+  - id: org.johnson
+    type: organization
+    org: "Johnson Health Technologies"
+    website: "https://www.johnsonhealthtech.com/mx/esp"
+    tags: [johnson, empresa, sitio, web, ejercicio, fitness, equipos]
+    es: "Johnson Health Technologies se especializa en el diseño, producción y distribución de aparatos de ejercicio premiados mundialmente. Sitio web: https://www.johnsonhealthtech.com/mx/esp"
+    en: "Johnson Health Technologies specializes in the design, manufacture, and distribution of globally awarded exercise equipment. Website: https://www.johnsonhealthtech.com/mx/esp"
+
+  - id: org.summa
+    type: organization
+    org: "SUMMA Woodbridge · Global Equipment"
+    website: "https://www.poliuretanossw.com.mx/"
+    tags: [summa, woodbridge, empresa, sitio, web, poliuretano, automotriz]
+    es: "SUMMA Woodbridge fabrica piezas de poliuretano y polipropileno expandido (EPP), principalmente para la industria automotriz y otros sectores industriales en México. Sitio web: https://www.poliuretanossw.com.mx/"
+    en: "SUMMA Woodbridge manufactures polyurethane and expanded polypropylene (EPP) parts, mainly for the automotive industry and other industrial sectors in Mexico. Website: https://www.poliuretanossw.com.mx/"
+
+  # ---------------- SITUACIÓN PROFESIONAL ACTUAL ----------------
+  # Declaraciones de intención y disponibilidad aportadas y aprobadas por el
+  # titular del CV el 2026-08-22. No proceden del documento: son información
+  # que un reclutador necesita y que el CV no contiene. Ver ADR-010.
+  #
+  # NO se incluye expectativa salarial: el endpoint es publico y el repositorio
+  # abierto. Se responde con la politica, no con una cifra.
+
+  - id: intent.disponibilidad
+    type: intent
+    tags: [disponibilidad, cdmx, reubicacion, hibrido, mudanza, incorporacion, viajar]
+    es: "Alejandro está disponible para trabajar en Ciudad de México, incluyendo modalidad híbrida y la reubicación que el puesto requiera. Su disponibilidad de incorporación es inmediata."
+    en: "Alejandro is available to work in Mexico City, including hybrid arrangements and any relocation the role requires. He is available to start immediately."
+
+  - id: intent.objetivo
+    type: intent
+    tags: [objetivo, busca, proximo, rol, crecimiento, carrera, motivacion, futuro]
+    es: "Busca incorporarse a una organización de gran escala donde la ingeniería de inteligencia artificial tenga impacto real en el negocio y en los usuarios. Tras diez años construyendo soluciones de extremo a extremo y liderando equipos técnicos, le interesa un entorno con exigencia técnica alta, procesos maduros y problemas de volumen —seguridad, trazabilidad y cumplimiento— que no aparecen en proyectos pequeños. Su prioridad es el crecimiento profesional e intelectual a largo plazo, especializándose en IA generativa aplicada a producto dentro de un equipo del que pueda aprender y al que pueda aportar."
+    en: "He is looking to join a large-scale organization where AI engineering has real impact on the business and its users. After ten years building end-to-end solutions and leading technical teams, he is drawn to an environment with high technical demands, mature processes, and problems of scale — security, traceability, and compliance — that do not arise in smaller projects. His priority is long-term professional and intellectual growth, specializing in generative AI applied to product, within a team he can learn from and contribute to."
+
+  - id: intent.motivacion_ia
+    type: intent
+    tags: [motivacion, ia, inteligencia-artificial, por-que, interes, generativa]
+    es: "Su interés por la inteligencia artificial viene de haberla llevado a producción, no de la teoría: construyó una plataforma de agentes de llamadas con IA sobre Retell AI y Twilio para comunicación multicanal, un robot digital de captación para desarrollos inmobiliarios de Vinte, y flujos de calificación y seguimiento automático de leads. Le atrae que la IA generativa permite resolver problemas que antes requerían intervención humana constante, y le interesa especialmente el trabajo de hacerla fiable: control de alucinaciones, trazabilidad de las respuestas y operación en entornos exigentes."
+    en: "His interest in AI comes from taking it to production rather than from theory: he built an AI call agent platform on Retell AI and Twilio for multichannel communication, a digital lead-acquisition robot for Vinte's real estate developments, and automated lead qualification and follow-up workflows. He is drawn to how generative AI solves problems that previously required constant human intervention, and is particularly interested in making it reliable: hallucination control, response traceability, and operation in demanding environments."
+
+  - id: intent.motivacion_financiero
+    type: intent
+    tags: [motivacion, financiero, banca, banco, sector, por-que, banorte]
+    es: "El sector financiero le interesa porque es donde los requisitos que más valora dejan de ser opcionales: seguridad, trazabilidad, auditabilidad y disponibilidad. Su experiencia previa incluye sistemas críticos de proceso en entornos corporativos —solicitudes de crédito de clientes, pagos anticipados y automatización contable en SAP con reportes a dirección—, donde un error tiene consecuencias reales. Le motiva aplicar IA generativa en ese contexto, donde una respuesta debe poder justificarse y no solo sonar convincente."
+    en: "He is drawn to the financial sector because it is where the requirements he values most stop being optional: security, traceability, auditability, and availability. His prior experience includes process-critical corporate systems — client credit requests, advance payments, and SAP accounting automation with reporting to management — where an error has real consequences. He is motivated to apply generative AI in that context, where an answer must be justifiable and not merely plausible."
+
+  - id: intent.salario
+    type: intent
+    tags: [salario, sueldo, expectativa, remuneracion, compensacion, cuanto, gana]
+    es: "La expectativa salarial es algo que Alejandro prefiere tratar directamente en el proceso de selección, considerando el alcance del rol y el paquete completo."
+    en: "Salary expectations are something Alejandro prefers to discuss directly during the selection process, taking into account the scope of the role and the full compensation package."

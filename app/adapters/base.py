@@ -26,3 +26,14 @@ class LLM(Protocol):
 
 class Embedder(Protocol):
     async def embed(self, texts: Sequence[str], *, is_query: bool = False) -> list[list[float]]: ...
+
+
+class QueryEmbedder(Protocol):
+    """Embebe una consulta y declara QUE modelo la produjo.
+
+    Es imprescindible: cada modelo genera vectores en un espacio distinto, de
+    modo que la consulta solo puede compararse contra los vectores del corpus
+    generados por el mismo modelo.
+    """
+
+    async def embed_query(self, text: str) -> tuple[str, list[float]]: ...
