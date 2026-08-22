@@ -54,6 +54,11 @@ def judge(case: dict, a) -> tuple[bool, str]:
         want = set(case.get("must_cite") or [])
         if want and not (set(a.citations) & want):
             return False, f"citas {a.citations} no intersecan {sorted(want)}"
+        # `forbid_text`: fragmentos que NO deben aparecer literalmente. Distinto
+        # de `forbid` (que admite negacion): aqui la frase es incorrecta en si.
+        mal = [s for s in (case.get("forbid_text") or []) if s.lower() in a.text.lower()]
+        if mal:
+            return False, f"contiene texto prohibido: {mal}"
         return True, ""
     if exp == "honest":
         if a.abstained:

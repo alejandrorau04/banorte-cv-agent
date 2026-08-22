@@ -40,6 +40,7 @@ facts:
     org: GlobalConnect
     location: "Cancún, Quintana Roo, México"
     title: "Desarrollador Full Stack & Móvil"
+    title_en: "Full Stack & Mobile Developer"
     start: "2025-05"
     end: null
     current: true
@@ -115,6 +116,7 @@ facts:
     type: experience
     org: "Alldora Latinoamérica"
     title: "Líder de Desarrollo – DevOps"
+    title_en: "Development Lead – DevOps"
     start: "2024-06"
     end: "2025-05"
     tags: [alldora, liderazgo, devops, rpa]
@@ -164,6 +166,7 @@ facts:
     org: "Guval Foods"
     location: "México"
     title: "Desarrollador Odoo / Full Stack"
+    title_en: "Odoo Developer / Full Stack"
     start: "2024-02"
     end: "2024-06"
     tags: [guval, odoo, erp]
@@ -184,6 +187,7 @@ facts:
     type: experience
     org: "Alcazar & Compañía"
     title: "Gerente de Sistemas / Implementador Odoo ERP"
+    title_en: "IT Manager / Odoo ERP Implementer"
     start: "2023-08"
     end: "2024-02"
     tags: [alcazar, gerente, ti, liderazgo]
@@ -213,6 +217,7 @@ facts:
     type: experience
     org: "WESCO Distribution de México"
     title: "Desarrollador y Soporte Técnico"
+    title_en: "Developer & Technical Support"
     start: "2020-10"
     end: "2023-07"
     tags: [wesco, desarrollo, soporte]
@@ -242,6 +247,7 @@ facts:
     type: experience
     org: Webmaps
     title: "Desarrollador y Soporte Técnico"
+    title_en: "Developer & Technical Support"
     start: "2020-03"
     end: "2020-10"
     tags: [webmaps, php, laravel]
@@ -272,6 +278,7 @@ facts:
     type: experience
     org: "Johnson Health Technologies"
     title: "Desarrollador"
+    title_en: "Developer"
     start: "2018-09"
     end: "2020-02"
     tags: [johnson, desarrollador, php]
@@ -301,6 +308,7 @@ facts:
     type: experience
     org: "SUMMA Woodbridge · Global Equipment (Automotriz)"
     title: "Desarrollador / Auxiliar de Programación"
+    title_en: "Developer / Programming Assistant"
     start: "2015-01"
     end: "2018-07"
     tags: [summa, automotriz, inicio-carrera, visual-basic, access]

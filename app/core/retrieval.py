@@ -125,6 +125,23 @@ class HybridRetriever:
             scores = {k: v / top for k, v in scores.items()}
         return scores
 
+    def with_timeline(self, retrieved: list[Retrieved]) -> list[Retrieved]:
+        """Antepone la linea de tiempo derivada y los hechos de puesto.
+
+        Garantiza que una pregunta de agregacion vea TODOS los empleos, no solo
+        los mas parecidos a la consulta. Con 46 hechos el coste es asumible:
+        ~9 hechos adicionales frente a un error factual.
+        """
+        tl = self.facts.get("derived.timeline")
+        if tl is None:
+            return retrieved
+        ya = {r.fact.id for r in retrieved}
+        extra = [Retrieved(fact=tl, score=1.0, semantic=1.0)] if tl.id not in ya else []
+        for f in self.facts.values():
+            if f.title and f.id not in ya and f.id != tl.id:
+                extra.append(Retrieved(fact=f, score=0.99, semantic=0.99))
+        return extra + retrieved
+
     async def search(self, query: str, lang: Lang, k: int | None = None) -> list[Retrieved]:
         k = k or config.TOP_K
         lex = self._lexical(query, lang)

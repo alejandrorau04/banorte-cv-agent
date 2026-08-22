@@ -26,6 +26,28 @@ _CITE_BLOCK = re.compile(r"\[([a-z0-9_.\-]+(?:\s*,\s*[a-z0-9_.\-]+)*)\]", re.I)
 # `contact` y `contacto` sueltos, de modo que "What number of years did he work
 # at Vinte?" recibia la respuesta de privacidad. La compuerta precede a la
 # recuperacion, asi que un falso positivo aqui no tiene via de recuperacion.
+# Preguntas de AGREGACION, ORDEN o SECUENCIA. La recuperacion top-k no puede
+# responderlas: necesitan el corpus completo. Se detectan para inyectar la linea
+# de tiempo derivada de los metadatos (ver ADR-008).
+#
+# Sin esto se midieron dos fallos reales contra produccion:
+#   "cual fue su ultimo puesto antes de GlobalConnect?" -> afirmaba que no habia
+#   ninguno entre 2018 y 2025, cuando la respuesta era Alldora.
+#   "lista todas las empresas en orden cronologico" -> orden incorrecto y
+#   mezclaba clientes con empleadores.
+_AGREGADA = re.compile(
+    r"\b(todas?\s+(las\s+)?(sus\s+)?empresas?|lista|listado|enumera|"
+    r"cronol[oó]gic\w*|orden\w*|trayectoria|historial|carrera\s+completa|"
+    r"cu[aá]nt\w+\s+(empresas?|trabajos?|puestos?|a[nñ]os)|"
+    r"antes\s+de|anterior\w*|previo\w*|despu[eé]s\s+de|"
+    r"primer\w*\s+(empleo|trabajo|puesto)|[uú]ltim\w*\s+(empleo|trabajo|puesto)|"
+    r"resumen\s+de\s+su|"
+    r"list\s+(all|every|the)|all\s+(the\s+)?(companies|jobs|roles|positions)|"
+    r"chronolog\w*|timeline|work\s+history|career\s+(path|history|summary)|"
+    r"how\s+many\s+(companies|jobs|roles|years)|"
+    r"before\s+|previous\s+(job|role|position|employer)|after\s+(he|leaving)|"
+    r"first\s+(job|role|position)|last\s+(job|role|position))\b", re.I)
+
 _CONTACT = re.compile(
     r"\b(tel[eé]fono|celular|whatsapp|"
     r"correo\s+(electr[oó]nico|personal)?|e-?mail|"
@@ -57,6 +79,11 @@ class CVAgent:
                                abstained=True, reason="contact_policy"))
 
         retrieved = await self._r.search(q, lang)
+
+        # Las preguntas de agregacion / orden se responden con la linea de tiempo
+        # derivada de los metadatos, no con lo que el modelo infiera del top-k.
+        if _AGREGADA.search(q):
+            retrieved = self._r.with_timeline(retrieved)
 
         # Compuerta de evidencia: sin base suficiente no se llama al modelo.
         # La compuerta usa el coseno CRUDO maximo, no la puntuacion combinada.

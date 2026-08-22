@@ -15,6 +15,8 @@ class Fact:
     text_en: str
     tags: tuple[str, ...] = ()
     org: str | None = None
+    title: str | None = None
+    title_en: str | None = None
     start: str | None = None
     end: str | None = None
 

@@ -40,9 +40,16 @@ cases:
     must_cite: [education.languages]
 
   # ---- consulta temporal (requiere fechas coherentes) ----
+  # Marzo 2024 cae en Guval Foods (feb-jun 2024); Alcazar termino en febrero.
+  # Este caso esperaba "Alcazar" y era INCORRECTO: el golden set consagraba un
+  # error factual que la linea de tiempo derivada (ADR-008) destapo.
   - q: "¿Dónde trabajaba en marzo de 2024?"
     expect: answer
-    must_cite: [exp.alcazar.role, exp.alcazar.leadership, exp.alcazar.security]
+    must_cite: [exp.guval.role, exp.guval.odoo, derived.timeline]
+    forbid_text: ["Alcazar"]
+  - q: "¿Dónde trabajaba en septiembre de 2023?"
+    expect: answer
+    must_cite: [exp.alcazar.role, exp.alcazar.leadership, derived.timeline]
 
   # ---- en dominio, inglés ----
   - q: "Where does Alejandro currently work?"
@@ -57,6 +64,25 @@ cases:
   - q: "What was his first professional job?"
     expect: answer
     must_cite: [exp.summa.role]
+
+  # ---- agregacion y orden (requieren el corpus completo, no top-k) ----
+  - q: "¿Cuál fue su último puesto antes de GlobalConnect?"
+    expect: answer
+    must_cite: [derived.timeline, exp.alldora.role]
+    forbid_text: ["no mencionan ningún puesto", "no hay información sobre puestos"]
+  - q: "What was his previous job before GlobalConnect?"
+    expect: answer
+    must_cite: [derived.timeline, exp.alldora.role]
+  - q: "Lista todas las empresas en orden cronológico"
+    expect: answer
+    must_cite: [derived.timeline]
+    forbid_text: ["Grupo Salinas", "Vinte"]
+  - q: "¿Cuántas empresas ha tenido?"
+    expect: answer
+    must_cite: [derived.timeline]
+  - q: "¿Cuál fue su primer empleo?"
+    expect: answer
+    must_cite: [exp.summa.role, derived.timeline]
 
   # ---- honestidad: pregunta legítima cuya respuesta NO está en el CV ----
   - q: "¿Tiene experiencia con Kubernetes?"
