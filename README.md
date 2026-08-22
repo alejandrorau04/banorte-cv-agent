@@ -182,6 +182,7 @@ ausencia de datos de contacto en el corpus.
 | [006](docs/adr/ADR-006-privacidad-y-datos-de-contacto.md) | Exclusión de datos de contacto |
 | [007](docs/adr/ADR-007-despliegue-y-construccion-de-imagen.md) | Despliegue en Azure con construcción en GitHub Actions |
 | [008](docs/adr/ADR-008-consultas-de-agregacion.md) | Consultas de agregación resueltas con metadatos |
+| [009](docs/adr/ADR-009-presentacion-de-fuentes.md) | Fuentes como enlaces legibles al corpus, no identificadores |
 
 ### Dos decisiones que suelen sorprender
 

@@ -65,3 +65,15 @@ MIN_SCORE = 0.62
 # --- Seguridad ---------------------------------------------------------------
 AGENT_API_KEY = os.getenv("AGENT_API_KEY", "")
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+
+# --- Presentacion de fuentes -------------------------------------------------
+# Base para enlazar cada cita a las lineas exactas del corpus en el repositorio
+# publico. Un identificador tecnico no debe llegar al usuario: se muestra una
+# etiqueta legible que enlaza al dato original y puede verificarse con un clic.
+CORPUS_URL = os.getenv(
+    "CORPUS_URL",
+    "https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml",
+)
+# Con `False`, las fuentes se listan sin hipervinculo (clientes que no renderizan
+# Markdown). Las citas verificadas siguen en `metadata.citations` en ambos casos.
+SOURCES_AS_LINKS = os.getenv("SOURCES_AS_LINKS", "true").lower() != "false"

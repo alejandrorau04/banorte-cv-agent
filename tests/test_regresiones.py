@@ -229,3 +229,60 @@ def test_una_abstencion_no_declara_modelo_upstream():
     r = build_response({}, Answer(text="x", lang="es", abstained=True))
     assert "upstream_model" not in r["metadata"]
     assert r["usage"]["total_tokens"] == 0
+
+
+# --- presentación: las fuentes deben ser legibles, no identificadores crudos
+def test_las_citas_no_aparecen_como_identificadores_en_el_cuerpo(facts):
+    from app.core.agent import _render_sources
+    f = {x.id: x for x in facts}
+    out = _render_sources(
+        "Trabaja en GlobalConnect [exp.globalconnect.role]. Desde 2025 "
+        "[exp.globalconnect.role].", ["exp.globalconnect.role"], f, "es")
+    cuerpo = out.split("\n\nFuentes:")[0]
+    assert "[exp.globalconnect.role]" not in cuerpo
+    assert "exp.globalconnect" not in cuerpo
+    assert "Fuentes:" in out
+    assert "Experiencia · GlobalConnect" in out
+
+
+def test_la_fuente_enlaza_a_las_lineas_del_corpus(facts):
+    from app import config
+    from app.core.agent import _render_sources
+    f = {x.id: x for x in facts}
+    out = _render_sources("Algo [education.degree].", ["education.degree"], f, "es")
+    fact = f["education.degree"]
+    assert f"#L{fact.line_start}-L{fact.line_end}" in out
+    assert config.CORPUS_URL in out
+
+
+def test_una_misma_seccion_no_se_repite_en_las_fuentes(facts):
+    from app.core.agent import _render_sources
+    f = {x.id: x for x in facts}
+    out = _render_sources("A [skills.frontend]. B [skills.backend].",
+                          ["skills.frontend", "skills.backend"], f, "es")
+    assert out.count("Competencias") == 1
+
+
+def test_sin_citas_no_se_anade_pie_de_fuentes(facts):
+    from app.core.agent import _render_sources
+    texto = "No encuentro información en el CV."
+    assert _render_sources(texto, [], {x.id: x for x in facts}, "es") == texto
+
+
+def test_el_pie_de_fuentes_respeta_el_idioma(facts):
+    from app.core.agent import _render_sources
+    f = {x.id: x for x in facts}
+    assert "Sources:" in _render_sources("X [education.degree].", ["education.degree"], f, "en")
+    assert "Fuentes:" in _render_sources("X [education.degree].", ["education.degree"], f, "es")
+
+
+def test_las_lineas_del_corpus_se_localizan_correctamente(facts):
+    """Si el YAML se reordena, los enlaces deben seguir apuntando bien."""
+    from pathlib import Path
+    from app.config import CORPUS_PATH
+    lineas = CORPUS_PATH.read_text(encoding="utf-8").splitlines()
+    for f in facts:
+        if not f.line_start:      # derived.timeline no vive en el archivo
+            continue
+        assert f"id: {f.id}" in lineas[f.line_start - 1], f.id
+        assert f.line_end >= f.line_start

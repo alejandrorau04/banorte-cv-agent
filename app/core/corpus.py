@@ -14,8 +14,32 @@ class CorpusError(RuntimeError):
     pass
 
 
+def _lineas_por_id(texto: str) -> dict[str, tuple[int, int]]:
+    """Localiza en que lineas del YAML vive cada hecho.
+
+    Permite enlazar cada cita a las lineas exactas del corpus en el repositorio
+    publico: la fuente deja de ser un identificador y pasa a ser un enlace que
+    cualquiera puede abrir y verificar.
+    """
+    lineas = texto.splitlines()
+    marcas: list[tuple[str, int]] = []
+    for n, l in enumerate(lineas, start=1):
+        s = l.strip()
+        if s.startswith("- id:"):
+            marcas.append((s.split("- id:", 1)[1].strip(), n))
+    out: dict[str, tuple[int, int]] = {}
+    for i, (fid, ini) in enumerate(marcas):
+        fin = marcas[i + 1][1] - 1 if i + 1 < len(marcas) else len(lineas)
+        while fin > ini and not lineas[fin - 1].strip():
+            fin -= 1
+        out[fid] = (ini, fin)
+    return out
+
+
 def load_facts() -> list[Fact]:
-    raw = yaml.safe_load(CORPUS_PATH.read_text(encoding="utf-8"))
+    crudo = CORPUS_PATH.read_text(encoding="utf-8")
+    lineas = _lineas_por_id(crudo)
+    raw = yaml.safe_load(crudo)
     items = raw.get("facts") or []
     if not items:
         raise CorpusError("corpus vacío")
@@ -43,6 +67,8 @@ def load_facts() -> list[Fact]:
             org=it.get("org"), title=it.get("title"),
             title_en=it.get("title_en") or it.get("title"),
             start=it.get("start"), end=it.get("end"),
+            line_start=lineas.get(fid, (0, 0))[0],
+            line_end=lineas.get(fid, (0, 0))[1],
         ))
     facts.append(_timeline(facts))
     return facts

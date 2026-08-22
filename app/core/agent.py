@@ -110,6 +110,7 @@ class CVAgent:
             raise e
 
         text, cites = _verify_citations(c.text, {r.fact.id for r in retrieved})
+        text = _render_sources(text, cites, {r.fact.id: r.fact for r in retrieved}, lang)
         return done(Answer(text=text, lang=lang, citations=cites, retrieved=retrieved,
                            model=c.model, usage=c.usage))
 
@@ -118,6 +119,45 @@ def _build_user_prompt(question: str, retrieved: list[Retrieved], lang: Lang) ->
     facts = "\n".join(f"[{r.fact.id}] {r.fact.text(lang)}" for r in retrieved)
     label = "PREGUNTA" if lang == "es" else "QUESTION"
     return f"HECHOS:\n{facts}\n\n{label}: {question}"
+
+
+_FUENTES = {"es": "Fuentes", "en": "Sources"}
+
+
+def _render_sources(text: str, cites: list[str], facts: dict, lang: Lang) -> str:
+    """Saca las citas del cuerpo y las consolida en una linea final legible.
+
+    Un identificador como `exp.globalconnect.role` es trazabilidad para una
+    maquina, no informacion para una persona; ademas el modelo repite la misma
+    cita en frases consecutivas, lo que ensucia la lectura.
+
+    La verificacion NO cambia: sigue ejecutandose antes, y solo se listan citas
+    que existen entre los hechos recuperados. Cambia donde se muestran.
+    """
+    if not cites:
+        return text
+    limpio = _CITE_BLOCK.sub("", text)
+    limpio = re.sub(r"\s+([.,;:])", r"\1", limpio)
+    limpio = re.sub(r"[ \t]{2,}", " ", limpio)
+    limpio = re.sub(r"\n{3,}", "\n\n", limpio).strip()
+
+    vistas, items = set(), []
+    for cid in cites:
+        f = facts.get(cid)
+        if f is None:
+            continue
+        etiqueta = f.label(lang)
+        if etiqueta in vistas:      # varios hechos comparten seccion: no repetir
+            continue
+        vistas.add(etiqueta)
+        if config.SOURCES_AS_LINKS and f.line_start:
+            items.append(f"[{etiqueta}]({config.CORPUS_URL}#L{f.line_start}-L{f.line_end})")
+        else:
+            items.append(etiqueta)
+
+    if not items:
+        return limpio
+    return f"{limpio}\n\n{_FUENTES[lang]}: " + " · ".join(items)
 
 
 def _verify_citations(text: str, allowed: set[str]) -> tuple[str, list[str]]:
