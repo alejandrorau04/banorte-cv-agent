@@ -59,44 +59,58 @@ class GeminiLLM:
             },
         }
         last: Exception | None = None
-        for model in self._models:
-            for attempt in range(3):
-                if time.monotonic() >= deadline:
-                    raise last or ProviderError("presupuesto de tiempo agotado")
+        modelos = self._models
+        for i, model in enumerate(modelos):
+            # Reparto del presupuesto entre modelos. Sin esto, los reintentos del
+            # primario lo agotaban entero y el respaldo NUNCA se intentaba: dos
+            # intentos de 12 s consumen 24 s de los 25 s disponibles. Un respaldo
+            # que no llega a ejecutarse no es un respaldo.
+            restante = deadline - time.monotonic()
+            if restante <= 1.0:
+                break
+            slot = time.monotonic() + restante / (len(modelos) - i)
+
+            for attempt in range(2):
+                if time.monotonic() >= slot:
+                    break
                 try:
-                    # El timeout se acota al presupuesto restante: sin esto, el
-                    # tiempo total podia superar LLM_BUDGET_S sumando intentos.
                     timeout = max(1.0, min(config.LLM_TIMEOUT_S,
-                                           deadline - time.monotonic()))
+                                           slot - time.monotonic()))
                     r = await self._c.post(
                         f"{config.GEMINI_BASE}/{model}:generateContent",
                         params={"key": config.GEMINI_API_KEY},
                         json=body, timeout=timeout,
                     )
                     if r.status_code in _RETRYABLE:
-                        last = ProviderError(f"{model}: HTTP {r.status_code}", status=r.status_code)
-                        await self._backoff(attempt, deadline)
+                        last = ProviderError(f"{model}: HTTP {r.status_code}",
+                                             status=r.status_code)
+                        await self._backoff(attempt, slot)
                         continue
                     if r.status_code != 200:
                         last = ProviderError(
-                            f"{model}: HTTP {r.status_code} {r.text[:160]}", status=r.status_code)
-                        break  # error no reintentable: pasar al siguiente modelo
+                            f"{model}: HTTP {r.status_code} {r.text[:160]}",
+                            status=r.status_code)
+                        break  # no reintentable: pasar al siguiente modelo
                     return _parse(r.json(), model)
                 except ProviderError as e:
-                    # Respuesta 200 pero vacia o truncada. Debe agotar reintentos
-                    # y respaldos igual que un fallo de red, no abortar la cadena.
+                    # Respuesta 200 pero vacia o truncada: reintentable.
                     last = e
-                    await self._backoff(attempt, deadline)
+                    await self._backoff(attempt, slot)
+                except httpx.TimeoutException:
+                    # Un timeout no se reintenta contra el MISMO modelo: si esta
+                    # degradado, insistir solo quema el presupuesto del respaldo.
+                    last = ProviderError(f"{model}: ReadTimeout")
+                    break
                 except httpx.HTTPError as e:
                     last = ProviderError(f"{model}: {type(e).__name__}")
-                    await self._backoff(attempt, deadline)
+                    await self._backoff(attempt, slot)
         raise last or ProviderError("sin modelos disponibles")
 
     @staticmethod
     async def _backoff(attempt: int, deadline: float) -> None:
         """Espera exponencial, nunca despues del ultimo intento ni mas alla del
         presupuesto: dormir sin reintentar despues solo anade latencia."""
-        if attempt >= 2:
+        if attempt >= 1:
             return
         delay = min(0.4 * (2 ** attempt), max(0.0, deadline - time.monotonic()))
         if delay > 0:

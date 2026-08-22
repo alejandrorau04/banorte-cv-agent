@@ -148,3 +148,30 @@ async def test_limitador_de_concurrencia_acota_las_llamadas_simultaneas():
     llm = LentoLLM()
     await asyncio.gather(*(llm.complete("s", "u") for _ in range(12)))
     assert pico <= config.MAX_CONCURRENT_LLM, f"pico {pico} > {config.MAX_CONCURRENT_LLM}"
+
+
+# --- el respaldo debe llegar a intentarse aunque el primario agote su turno
+@pytest.mark.asyncio
+async def test_el_modelo_de_respaldo_se_intenta_cuando_el_primario_expira():
+    """Los reintentos del primario consumian el presupuesto entero y el respaldo
+    nunca se ejecutaba. Cada modelo debe recibir su porcion de tiempo."""
+    import httpx
+    from app.adapters.gemini import GeminiLLM
+
+    intentados: list[str] = []
+
+    class FakeClient:
+        async def post(self, url, **kw):
+            modelo = url.rsplit("/", 1)[-1].split(":")[0]
+            intentados.append(modelo)
+            if modelo == "gemini-3.1-flash-lite":
+                raise httpx.ReadTimeout("simulado")
+            return httpx.Response(
+                200, json={"candidates": [{"content": {"parts": [{"text": "ok"}]}}],
+                           "usageMetadata": {"totalTokenCount": 5}},
+                request=httpx.Request("POST", url))
+
+    c = await GeminiLLM(FakeClient(), models=("gemini-3.1-flash-lite",
+                                              "gemini-3.5-flash-lite")).complete("s", "u")
+    assert c.model == "gemini-3.5-flash-lite"
+    assert "gemini-3.5-flash-lite" in intentados, intentados
