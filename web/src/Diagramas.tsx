@@ -1,106 +1,101 @@
-/* Diagramas en SVG inline: se adaptan al tema, escalan sin perder nitidez y no
-   añaden ninguna dependencia. */
+/* Diagramas como protagonistas: grandes, adaptados al tema, sin dependencias. */
+
+const punta = (id: string) => (
+  <defs>
+    <marker id={id} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" className="dg-p" />
+    </marker>
+  </defs>
+);
 
 export function FlujoRAG() {
-  const pasos = [
-    { x: 20,  t: "Pregunta",   s: "" },
-    { x: 150, t: "Idioma",     s: "0 tokens" },
-    { x: 280, t: "¿Contacto?", s: "0 tokens" },
-    { x: 420, t: "Recuperar",  s: "coseno + IDF" },
-    { x: 560, t: "¿Evidencia ≥ 0.62?", s: "" },
-    { x: 720, t: "Generar",    s: "solo hechos" },
-    { x: 850, t: "Verificar",  s: "citas" },
+  const p = [
+    { x: 0,   t: "Pregunta" },
+    { x: 148, t: "Idioma",     s: "determinista" },
+    { x: 296, t: "Recuperar",  s: "coseno + IDF" },
+    { x: 444, t: "Compuerta",  s: "sim ≥ 0.62" },
+    { x: 592, t: "Generar",    s: "solo hechos" },
+    { x: 740, t: "Verificar",  s: "citas" },
   ];
   return (
-    <svg viewBox="0 0 980 200" role="img" aria-labelledby="rag-t" className="diagrama">
+    <svg viewBox="0 0 900 210" role="img" aria-labelledby="rag-t" className="dg">
       <title id="rag-t">
-        Flujo del pipeline: pregunta, detección de idioma, política de contacto,
-        recuperación híbrida, compuerta de evidencia, generación y verificación de citas.
-        Las ramas de contacto y de evidencia insuficiente devuelven la respuesta sin
-        invocar al modelo, con coste cero.
+        Pipeline: pregunta, detección de idioma, recuperación híbrida, compuerta de
+        evidencia, generación restringida a los hechos y verificación de citas. Si la
+        evidencia no supera el umbral, se responde sin invocar al modelo.
       </title>
-      {pasos.map((p, i) => (
+      {p.map((n, i) => (
         <g key={i}>
-          <rect x={p.x} y={70} width={110} height={52} rx="3"
-                className={i >= 5 ? "d-caja d-caja--activa" : "d-caja"} />
-          <text x={p.x + 55} y={p.s ? 92 : 100} className="d-texto">{p.t}</text>
-          {p.s && <text x={p.x + 55} y={108} className="d-nota">{p.s}</text>}
-          {i < pasos.length - 1 && (
-            <path d={`M${p.x + 110} 96 L${pasos[i + 1].x - 4} 96`} className="d-linea" markerEnd="url(#f)" />
+          <rect x={n.x} y={74} width={128} height={54} rx="4"
+                className={i >= 4 ? "dg-caja dg-caja--on" : "dg-caja"} />
+          <text x={n.x + 64} y={n.s ? 95 : 101} className="dg-t">{n.t}</text>
+          {n.s && <text x={n.x + 64} y={112} className="dg-s">{n.s}</text>}
+          {i < p.length - 1 && (
+            <path d={`M${n.x + 128} 101 L${p[i + 1].x - 5} 101`} className="dg-l" markerEnd="url(#a)" />
           )}
         </g>
       ))}
-      <path d="M335 70 L335 34 L900 34" className="d-linea d-linea--corta" markerEnd="url(#f)" />
-      <text x={610} y={26} className="d-nota d-nota--corta">política de privacidad · 0 tokens</text>
-      <path d="M615 122 L615 160 L900 160" className="d-linea d-linea--corta" markerEnd="url(#f)" />
-      <text x={745} y={176} className="d-nota d-nota--corta">abstención · 0 tokens · &lt;500 ms</text>
-      <rect x={900} y={70} width={62} height={52} rx="3" className="d-caja d-caja--fin" />
-      <text x={931} y={100} className="d-texto">Respuesta</text>
-      <defs>
-        <marker id="f" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M0 0 L8 4 L0 8 z" className="d-punta" />
-        </marker>
-      </defs>
+      <rect x={868} y={74} width={32} height={54} rx="4" className="dg-caja dg-caja--on" />
+      <path d="M508 74 L508 30 L884 30 L884 70" className="dg-l dg-l--v" markerEnd="url(#a)" />
+      <text x={696} y={20} className="dg-s dg-s--v">sin evidencia → abstención · 0 tokens · &lt;500 ms</text>
+      <path d="M64 128 L64 172 L884 172 L884 132" className="dg-l dg-l--v" markerEnd="url(#a)" />
+      <text x={474} y={190} className="dg-s dg-s--v">petición de contacto → política determinista · 0 tokens</text>
+      {punta("a")}
     </svg>
   );
 }
 
 export function Capas() {
-  const capas = [
-    { y: 16,  t: "Transporte · app/api/",   s: "Open Responses · SSE · auth · errores tipados" },
-    { y: 96,  t: "Núcleo · app/core/",      s: "recuperar → decidir → generar → verificar" },
-    { y: 176, t: "Adaptadores · app/adapters/", s: "puertos LLM y Embedder" },
+  const c = [
+    { y: 0,   t: "Transporte",  r: "app/api/",      s: "Open Responses · SSE · auth · errores tipados" },
+    { y: 78,  t: "Núcleo",      r: "app/core/",     s: "recuperar → decidir → generar → verificar" },
+    { y: 156, t: "Adaptadores", r: "app/adapters/", s: "puertos LLM y Embedder" },
   ];
   return (
-    <svg viewBox="0 0 620 290" role="img" aria-labelledby="capas-t" className="diagrama">
-      <title id="capas-t">
-        Tres capas concéntricas: transporte, núcleo y adaptadores. Las dependencias
-        apuntan hacia el núcleo, que no conoce ni HTTP ni el proveedor de modelo.
+    <svg viewBox="0 0 560 250" role="img" aria-labelledby="cap-t" className="dg">
+      <title id="cap-t">
+        Tres capas con las dependencias apuntando hacia el núcleo, que no conoce HTTP
+        ni el proveedor de modelo.
       </title>
-      {capas.map((c, i) => (
+      {c.map((n, i) => (
         <g key={i}>
-          <rect x={40} y={c.y} width={540} height={64} rx="3"
-                className={i === 1 ? "d-caja d-caja--activa" : "d-caja"} />
-          <text x={60} y={c.y + 27} className="d-texto d-texto--izq">{c.t}</text>
-          <text x={60} y={c.y + 46} className="d-nota d-nota--izq">{c.s}</text>
+          <rect x={0} y={n.y} width={470} height={62} rx="4"
+                className={i === 1 ? "dg-caja dg-caja--on" : "dg-caja"} />
+          <text x={18} y={n.y + 24} className="dg-t dg-t--i">{n.t}</text>
+          <text x={18} y={n.y + 42} className="dg-s dg-s--i">{n.r} — {n.s}</text>
         </g>
       ))}
-      <path d="M300 80 L300 92" className="d-linea" markerEnd="url(#f2)" />
-      <path d="M300 160 L300 172" className="d-linea" markerEnd="url(#f2)" />
-      <text x={310} y={268} className="d-nota d-nota--izq">las dependencias apuntan hacia adentro</text>
-      <defs>
-        <marker id="f2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M0 0 L8 4 L0 8 z" className="d-punta" />
-        </marker>
-      </defs>
+      <path d="M500 20 L520 20 L520 218 L500 218" className="dg-l" />
+      <path d="M520 108 L482 108" className="dg-l" markerEnd="url(#b)" />
+      <text x={534} y={119} className="dg-s dg-s--i" transform="rotate(-90 534 119)">
+        dependencias hacia adentro
+      </text>
+      {punta("b")}
     </svg>
   );
 }
 
 export function Entrega() {
-  const pasos = ["git push", "Calidad", "Imagen · GHCR", "Azure", "Verificación"];
+  const p = ["git push", "Calidad", "Imagen", "Azure", "Verificación"];
+  const s = ["", "102 tests", "GHCR · SHA", "Container Apps", "estado real"];
   return (
-    <svg viewBox="0 0 940 96" role="img" aria-labelledby="cd-t" className="diagrama">
+    <svg viewBox="0 0 900 96" role="img" aria-labelledby="cd-t" className="dg">
       <title id="cd-t">
-        Cadena de entrega continua: un push dispara la puerta de calidad, la
-        construcción y publicación de la imagen, el despliegue en Azure y la
-        verificación del estado real del contenedor.
+        Cadena de entrega: push, puerta de calidad, imagen etiquetada por commit,
+        despliegue en Azure y verificación del estado real del contenedor.
       </title>
-      {pasos.map((p, i) => (
+      {p.map((n, i) => (
         <g key={i}>
-          <rect x={i * 190} y={24} width={162} height={48} rx="3"
-                className={i === 1 || i === 4 ? "d-caja d-caja--activa" : "d-caja"} />
-          <text x={i * 190 + 81} y={53} className="d-texto">{p}</text>
-          {i < pasos.length - 1 && (
-            <path d={`M${i * 190 + 162} 48 L${(i + 1) * 190 - 4} 48`} className="d-linea" markerEnd="url(#f3)" />
+          <rect x={i * 182} y={20} width={156} height={56} rx="4"
+                className={i === 1 || i === 4 ? "dg-caja dg-caja--on" : "dg-caja"} />
+          <text x={i * 182 + 78} y={s[i] ? 41 : 48} className="dg-t">{n}</text>
+          {s[i] && <text x={i * 182 + 78} y={58} className="dg-s">{s[i]}</text>}
+          {i < p.length - 1 && (
+            <path d={`M${i * 182 + 156} 48 L${(i + 1) * 182 - 5} 48`} className="dg-l" markerEnd="url(#c)" />
           )}
         </g>
       ))}
-      <defs>
-        <marker id="f3" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M0 0 L8 4 L0 8 z" className="d-punta" />
-        </marker>
-      </defs>
+      {punta("c")}
     </svg>
   );
 }
