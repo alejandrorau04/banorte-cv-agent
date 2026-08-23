@@ -3,26 +3,30 @@
    numeración de referencia. Sin lenguaje promocional: solo hechos y medidas. */
 
 :root {
-  color-scheme: dark;
-  --fondo:  #0a0b0d;
-  --sup:    #101215;
-  --linea:  #1e2126;
-  --regla:  #2b3038;
-  --tinta:  #e9ebee;
-  --med:    #969ca6;
-  --baja:   #5e656e;
-  --rojo:   #eb0029;      /* rojo institucional de referencia */
-  --rojo-d: #3d0a12;
-  --verde:  #35b981;
+  color-scheme: light;
+  /* Blanco, negro y rojo. El rojo se reserva para lo que debe destacar:
+     numeracion de seccion, cifras clave y el camino de coste cero. */
+  --fondo:  #ffffff;
+  --sup:    #f7f7f8;
+  --linea:  #e6e6e8;
+  --regla:  #c9c9cd;
+  --tinta:  #0b0b0c;
+  --med:    #56565c;
+  --baja:   #8a8a92;
+  --rojo:   #eb0029;
+  --rojo-d: #fdeaed;
+  --verde:  #0f7a4d;
   --serif:  "Source Serif 4", Georgia, serif;
   --sans:   "IBM Plex Sans", -apple-system, sans-serif;
   --mono:   "IBM Plex Mono", ui-monospace, Menlo, monospace;
   --u: 8px;
 }
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
-    --fondo: #fbfaf9; --sup: #ffffff; --linea: #e6e2dc; --regla: #cfc9c1;
-    --tinta: #101214; --med: #575d65; --baja: #8b9198; --rojo: #c2001f; --rojo-d: #f7e3e6;
+    color-scheme: dark;
+    --fondo: #0b0b0c; --sup: #131315; --linea: #232326; --regla: #3a3a3f;
+    --tinta: #f2f2f4; --med: #9b9ba2; --baja: #6b6b73;
+    --rojo: #ff3a56; --rojo-d: #331016; --verde: #35b981;
   }
 }
 *, *::before, *::after { box-sizing: border-box; }
@@ -144,3 +148,53 @@ a:hover { text-decoration-color: var(--rojo); }
 .pie { padding-top: calc(var(--u) * 4); display: flex; flex-wrap: wrap;
   justify-content: space-between; gap: calc(var(--u) * 2);
   font-family: var(--mono); font-size: .68rem; color: var(--baja); }
+
+/* ------------------------------------------------------------- ejemplo -- */
+/* Recorrido real de una pregunta: lo que mejor explica el sistema. */
+
+.ej { border: 1px solid var(--linea); border-radius: 4px; overflow: hidden; }
+.ej__paso { display: grid; grid-template-columns: 7.5rem 1fr; border-top: 1px solid var(--linea); }
+.ej__paso:first-child { border-top: 0; }
+@media (max-width: 44rem) { .ej__paso { grid-template-columns: 1fr; } }
+
+.ej__k {
+  background: var(--sup); padding: calc(var(--u) * 2); font-family: var(--mono);
+  font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--baja);
+  border-right: 1px solid var(--linea);
+}
+@media (max-width: 44rem) { .ej__k { border-right: 0; border-bottom: 1px solid var(--linea); } }
+.ej__v { padding: calc(var(--u) * 2); min-width: 0; }
+
+.ej__preg { font-size: 1rem; font-weight: 500; }
+.ej__hechos { display: grid; gap: 4px; font-family: var(--mono); font-size: .74rem; }
+.ej__h { display: grid; grid-template-columns: 3.4rem 1fr; gap: calc(var(--u) * 1.5); align-items: baseline; }
+.ej__sim { color: var(--baja); font-variant-numeric: tabular-nums; }
+.ej__h--top .ej__sim { color: var(--rojo); font-weight: 500; }
+.ej__h--top .ej__id { color: var(--tinta); }
+.ej__id { color: var(--med); }
+.ej__resp { font-size: .92rem; line-height: 1.55; }
+.ej__cita {
+  display: inline-block; margin-top: var(--u); font-size: .78rem; color: var(--med);
+}
+.ej__cita a { color: var(--rojo); }
+.ej__meta { margin-top: var(--u); font-family: var(--mono); font-size: .68rem; color: var(--baja); }
+
+/* --------------------------------------------------------------- enlaces -- */
+
+.verif { display: grid; gap: 1px; background: var(--linea); border: 1px solid var(--linea); border-radius: 4px; overflow: hidden; }
+.verif a {
+  background: var(--fondo); padding: calc(var(--u) * 1.75) calc(var(--u) * 2);
+  display: grid; grid-template-columns: 1fr auto; gap: var(--u); align-items: baseline;
+  text-decoration: none; transition: background 120ms;
+}
+.verif a:hover { background: var(--sup); }
+.verif b { font-weight: 500; font-size: .86rem; }
+.verif span { font-family: var(--mono); font-size: .68rem; color: var(--baja); }
+.verif em { display: block; font-style: normal; font-size: .76rem; color: var(--med); margin-top: 2px; }
+
+/* --------------------------------------------------------------- glosario -- */
+
+.glos { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: calc(var(--u) * 2.5); }
+.glos div { border-top: 1px solid var(--regla); padding-top: var(--u); }
+.glos dt { font-size: .84rem; font-weight: 600; }
+.glos dd { margin: 4px 0 0; font-size: .8rem; color: var(--med); line-height: 1.5; }

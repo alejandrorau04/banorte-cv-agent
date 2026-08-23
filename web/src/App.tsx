@@ -23,6 +23,17 @@ const N = ({ v, u, k, tono }: { v: string; u?: string; k: string; tono?: "r" | "
   </div>
 );
 
+const Paso = ({ k, children }: { k: string; children: ReactNode }) => (
+  <div className="ej__paso"><div className="ej__k">{k}</div><div className="ej__v">{children}</div></div>
+);
+
+const Verif = ({ href, t, d, m }: { href: string; t: string; d: string; m: string }) => (
+  <a href={href} target="_blank" rel="noreferrer">
+    <span><b>{t}</b><em>{d}</em></span>
+    <span>{m}</span>
+  </a>
+);
+
 const Marca = ({ k, v }: { k: string; v: string }) => (
   <div className="marca"><span className="marca__k">{k}</span><span className="marca__v">{v}</span></div>
 );
@@ -80,7 +91,64 @@ export default function App() {
           </p>
         </Sec>
 
-        <Sec n="02" t="Medición comparativa">
+        <Sec n="02" t="Recorrido de una pregunta real">
+          <p className="dice">
+            Un caso completo, con los valores exactos de una ejecución contra el endpoint
+            desplegado. Es la forma más directa de ver qué hace el sistema.
+          </p>
+          <div className="ej">
+            <Paso k="Pregunta">
+              <p className="ej__preg">¿Dónde trabaja actualmente?</p>
+            </Paso>
+            <Paso k="Recuperación">
+              <div className="ej__hechos">
+                <div className="ej__h ej__h--top">
+                  <span className="ej__sim">0.6929</span>
+                  <span className="ej__id">exp.globalconnect.role</span>
+                </div>
+                <div className="ej__h"><span className="ej__sim">0.6826</span><span className="ej__id">profile.headline</span></div>
+                <div className="ej__h"><span className="ej__sim">0.6628</span><span className="ej__id">exp.alcazar.role</span></div>
+                <div className="ej__h"><span className="ej__sim">0.6619</span><span className="ej__id">exp.wesco.role</span></div>
+                <div className="ej__h"><span className="ej__sim">0.6546</span><span className="ej__id">exp.guval.role</span></div>
+              </div>
+              <p className="ej__meta">
+                similitud máxima 0.6929 ≥ umbral 0.62 → hay evidencia suficiente, se invoca al modelo
+              </p>
+            </Paso>
+            <Paso k="Respuesta">
+              <p className="ej__resp">
+                Actualmente, Alejandro trabaja como Desarrollador Full Stack y Móvil en
+                GlobalConnect, en Cancún, Quintana Roo. Ocupa este puesto desde mayo de 2025.
+              </p>
+              <span className="ej__cita">
+                Fuentes:{" "}
+                <a href={`${REPO}/blob/main/data/corpus.yaml#L38-L49`} target="_blank" rel="noreferrer">
+                  Experiencia · GlobalConnect (may 2025 – actual)
+                </a>
+              </span>
+              <p className="ej__meta">557 tokens · 1 218 ms · cita verificada contra los hechos recuperados</p>
+            </Paso>
+            <Paso k="Contraste">
+              <p className="ej__preg">¿Cuál es la capital de Francia?</p>
+              <p className="ej__meta" style={{ marginTop: "4px" }}>
+                similitud máxima 0.523 &lt; umbral 0.62 → sin evidencia
+              </p>
+              <p className="ej__resp" style={{ marginTop: "calc(var(--u) * 1.5)" }}>
+                No encuentro información en el CV de Alejandro Rau para responder eso. Puedo
+                hablarte de su experiencia profesional, las empresas donde ha trabajado, sus
+                habilidades técnicas, su formación y sus proyectos destacados.
+              </p>
+              <p className="ej__meta">0 tokens · 494 ms · no se invocó al modelo</p>
+            </Paso>
+          </div>
+          <p className="dice" style={{ marginTop: "calc(var(--u) * 3)" }}>
+            La diferencia entre ambos casos es un solo número: <strong>0.6929 frente a
+            0.523</strong>. Por encima del umbral se responde citando la fuente; por debajo
+            se reconoce el límite sin gastar nada.
+          </p>
+        </Sec>
+
+        <Sec n="03" t="Medición comparativa">
           <p className="dice">
             Frente al enfoque directo —el que produce una implementación sin estas
             decisiones—, medido sobre el mismo conjunto de preguntas.
@@ -107,7 +175,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="03" t="Arquitectura">
+        <Sec n="04" t="Arquitectura">
           <p className="dice">
             Tres capas con las dependencias apuntando hacia el núcleo. El núcleo
             <strong> no conoce HTTP ni el proveedor de modelo</strong>: por eso los tests
@@ -124,7 +192,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="04" t="Pipeline RAG">
+        <Sec n="05" t="Pipeline RAG">
           <p className="dice">
             El CV no se indexa como documento troceado: se transforma en hechos atómicos
             con identificador estable, metadatos y texto paralelo en español e inglés.
@@ -146,7 +214,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="05" t="Control de alucinaciones">
+        <Sec n="06" t="Control de alucinaciones">
           <p className="dice">
             Cuatro controles que no dependen del modelo: son código que se ejecuta antes
             y después de invocarlo.
@@ -163,7 +231,7 @@ export default function App() {
           </ol>
         </Sec>
 
-        <Sec n="06" t="Consumo y latencia">
+        <Sec n="07" t="Consumo y latencia">
           <p className="dice">
             La abstención previa a la invocación elimina simultáneamente el riesgo de
             invención y el coste. <strong>Ambos efectos proceden del mismo mecanismo.</strong>
@@ -190,7 +258,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="07" t="Entrega continua">
+        <Sec n="08" t="Entrega continua">
           <p className="dice">
             Azure restringe la construcción de imágenes en suscripciones nuevas. La
             construcción se trasladó a GitHub Actions, conservando Azure como destino.
@@ -209,7 +277,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="08" t="Seguridad">
+        <Sec n="09" t="Seguridad">
           <p className="dice">
             Modelo de amenazas STRIDE documentado, con los riesgos aceptados explícitos y
             la distancia hasta un despliegue productivo.
@@ -237,7 +305,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="09" t="Defectos hallados">
+        <Sec n="10" t="Defectos hallados">
           <div className="serie">
             <N v="11" k="Defectos localizados en el propio sistema y corregidos" tono="r" />
             <N v="3" k="Veces que la cadena de respaldo falló pareciendo correcta en el código" />
@@ -258,7 +326,34 @@ export default function App() {
           </p>
         </Sec>
 
-        <Sec n="10" t="Límites">
+        <Sec n="11" t="Verificable">
+          <p className="dice">
+            Cada afirmación de este documento tiene su origen en el repositorio. Estos son
+            los enlaces directos.
+          </p>
+          <div className="verif">
+            <Verif href={`${REPO}/blob/main/data/corpus.yaml`}
+              t="El corpus completo" d="Los 61 hechos con sus identificadores, metadatos y texto bilingüe" m="corpus.yaml" />
+            <Verif href={`${REPO}/tree/main/docs/adr`}
+              t="Las 12 decisiones técnicas" d="Cada una con su contexto, la decisión y las alternativas descartadas" m="docs/adr/" />
+            <Verif href={`${REPO}/blob/main/eval/golden_set.yaml`}
+              t="El conjunto de evaluación" d="Los 32 casos, incluidos los adversariales y los de abstención" m="eval/golden_set.yaml" />
+            <Verif href={`${REPO}/blob/main/eval/results.json`}
+              t="Resultados de la última ejecución" d="Respuesta, citas, tokens y latencia de cada caso" m="eval/results.json" />
+            <Verif href={`${REPO}/blob/main/app/core/agent.py`}
+              t="El núcleo del agente" d="Compuerta de evidencia, verificación de citas y memoria conversacional" m="app/core/agent.py" />
+            <Verif href={`${REPO}/blob/main/docs/contract/openapi.json`}
+              t="El contrato anclado" d="Especificación Open Responses 2026-04-24 usada para verificar en CI" m="docs/contract/" />
+            <Verif href={`${REPO}/blob/main/docs/MODELO-AMENAZAS.md`}
+              t="Modelo de amenazas" d="STRIDE, con los riesgos aceptados explícitos" m="MODELO-AMENAZAS.md" />
+            <Verif href={`${REPO}/blob/main/docs/LIMITES-Y-COSTES.md`}
+              t="Límites y costes" d="Presupuesto de tokens, escalabilidad y distancia hasta producción" m="LIMITES-Y-COSTES.md" />
+            <Verif href={`${REPO}/actions`}
+              t="Ejecuciones del pipeline" d="Historial completo de calidad, construcción y despliegue" m="GitHub Actions" />
+          </div>
+        </Sec>
+
+        <Sec n="12" t="Límites">
           <div className="scroll-x">
             <table className="datos">
               <thead><tr><th>Aspecto</th><th>Estado</th></tr></thead>
@@ -271,6 +366,31 @@ export default function App() {
               </tbody>
             </table>
           </div>
+        </Sec>
+
+        <Sec n="13" t="Glosario">
+          <dl className="glos">
+            <div><dt>RAG</dt><dd>Recuperar información relevante y entregársela al modelo
+              para que responda solo con ella, en lugar de confiar en lo que «sabe».</dd></div>
+            <div><dt>Embedding</dt><dd>Conversión de un texto en una lista de números que
+              representa su significado. Textos parecidos producen listas parecidas.</dd></div>
+            <div><dt>Similitud coseno</dt><dd>Medida de cercanía entre dos de esas listas.
+              Un número entre 0 y 1: cuanto más alto, más relacionados están los textos.</dd></div>
+            <div><dt>IDF</dt><dd>Ponderación que da más peso a las palabras poco frecuentes.
+              Rescata nombres propios donde la similitud semántica no llega.</dd></div>
+            <div><dt>Grounding</dt><dd>Obligar al modelo a responder únicamente con la
+              información suministrada, sin recurrir a su conocimiento general.</dd></div>
+            <div><dt>Alucinación</dt><dd>Afirmación que el modelo genera sin respaldo en los
+              datos. En un agente de CV significa inventar experiencia.</dd></div>
+            <div><dt>Abstención</dt><dd>Reconocer que no hay evidencia suficiente y decirlo,
+              en lugar de improvisar una respuesta.</dd></div>
+            <div><dt>Contrato de API</dt><dd>Acuerdo sobre la forma exacta de las peticiones y
+              respuestas, que permite integrar dos sistemas sin coordinación previa.</dd></div>
+            <div><dt>SSE</dt><dd>Server-Sent Events. El servidor envía la respuesta por partes
+              conforme la produce, en lugar de esperar a tenerla completa.</dd></div>
+            <div><dt>CI/CD</dt><dd>Integración y entrega continuas. Cada cambio se prueba,
+              empaqueta y despliega automáticamente.</dd></div>
+          </dl>
         </Sec>
 
         <footer className="pie">
