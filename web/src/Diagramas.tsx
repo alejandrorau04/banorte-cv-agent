@@ -18,12 +18,7 @@ export function FlujoRAG() {
     { x: 740, t: "Verificar",  s: "citas" },
   ];
   return (
-    <svg viewBox="0 0 900 210" role="img" aria-labelledby="rag-t" className="dg">
-      <title id="rag-t">
-        Pipeline: pregunta, detección de idioma, recuperación híbrida, compuerta de
-        evidencia, generación restringida a los hechos y verificación de citas. Si la
-        evidencia no supera el umbral, se responde sin invocar al modelo.
-      </title>
+    <svg viewBox="0 0 900 210" role="img" aria-label="Recorrido de una pregunta: detección de idioma, recuperación híbrida, compuerta de evidencia, generación restringida a los hechos recuperados y verificación de citas. Dos caminos alternativos evitan el modelo por completo: las peticiones de datos de contacto y las preguntas sin evidencia suficiente, ambas con coste cero." className="dg">
       {p.map((n, i) => (
         <g key={i}>
           <rect x={n.x} y={74} width={128} height={54} rx="4"
@@ -52,11 +47,7 @@ export function Capas() {
     { y: 156, t: "Adaptadores", r: "app/adapters/", s: "puertos LLM y Embedder" },
   ];
   return (
-    <svg viewBox="0 0 560 250" role="img" aria-labelledby="cap-t" className="dg">
-      <title id="cap-t">
-        Tres capas con las dependencias apuntando hacia el núcleo, que no conoce HTTP
-        ni el proveedor de modelo.
-      </title>
+    <svg viewBox="0 0 560 250" role="img" aria-label="Tres capas: transporte, núcleo y adaptadores. Las dependencias apuntan hacia el núcleo, que no conoce ni HTTP ni el proveedor de modelo." className="dg">
       {c.map((n, i) => (
         <g key={i}>
           <rect x={0} y={n.y} width={470} height={62} rx="4"
@@ -79,11 +70,7 @@ export function Entrega() {
   const p = ["git push", "Calidad", "Imagen", "Azure", "Verificación"];
   const s = ["", "102 tests", "GHCR · SHA", "Container Apps", "estado real"];
   return (
-    <svg viewBox="0 0 900 96" role="img" aria-labelledby="cd-t" className="dg">
-      <title id="cd-t">
-        Cadena de entrega: push, puerta de calidad, imagen etiquetada por commit,
-        despliegue en Azure y verificación del estado real del contenedor.
-      </title>
+    <svg viewBox="0 0 900 96" role="img" aria-label="Cadena de entrega continua: un push dispara la puerta de calidad, la construcción y publicación de la imagen, el despliegue en Azure y la verificación del estado real del contenedor." className="dg">
       {p.map((n, i) => (
         <g key={i}>
           <rect x={i * 182} y={20} width={156} height={56} rx="4"
