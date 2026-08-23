@@ -29,7 +29,7 @@ const Sec = ({ n, t, children }: { n: string; t: string; children: ReactNode }) 
   <section className="sec" aria-labelledby={`s${n}`}>
     <div className="sec__ref">
       <span className="sec__n">§ {n}</span>
-      <h2 className="sec__t" id={`s${n}`}>{t}</h2>
+      <h2 className="sec__t" id={`s${n}`} tabIndex={-1}>{t}</h2>
     </div>
     <div className="sec__cuerpo">{children}</div>
   </section>
@@ -79,7 +79,39 @@ const Marca = ({ k, v }: { k: string; v: string }) => (
   <div className="marca"><span className="marca__k">{k}</span><span className="marca__v">{v}</span></div>
 );
 
+const REFS = ["s01","s02","s03","s04","s05","s06","s07","s08","s09","s10","s11","s12"];
+
+/** Avance por secciones con las flechas. Presentar exige pasos discretos donde
+ *  detenerse; el scroll continuo compite con quien habla. */
+function useTeclado() {
+  useEffect(() => {
+    const visible = () => {
+      const y = window.scrollY + window.innerHeight * 0.25;
+      let actual = 0;
+      REFS.forEach((id, i) => {
+        const n = document.getElementById(id);
+        if (n && n.getBoundingClientRect().top + window.scrollY <= y) actual = i;
+      });
+      return actual;
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const dentro = (e.target as HTMLElement)?.closest("input, textarea, select, [contenteditable]");
+      if (dentro) return;
+      const paso = e.key === "ArrowRight" || e.key === "PageDown" ? 1
+                 : e.key === "ArrowLeft" || e.key === "PageUp" ? -1 : 0;
+      if (!paso) return;
+      e.preventDefault();
+      const destino = REFS[Math.min(Math.max(visible() + paso, 0), REFS.length - 1)];
+      document.getElementById(destino)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+}
+
 export default function App() {
+  useTeclado();
   return (
     <>
       <a className="saltar" href="#s01">Saltar al contenido</a>

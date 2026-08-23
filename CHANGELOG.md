@@ -11,6 +11,34 @@ cliente pudiera notar es `MINOR` o `MAJOR`.
 
 ## [No publicado]
 
+### Corregido
+- **La compuerta de evidencia se podía saltar por completo.** Los hechos inyectados por
+  regla en consultas de agregación llevaban una similitud fingida de 1.0, y la compuerta
+  mide el máximo: cualquier pregunta con esa forma —incluida una fuera de dominio o un
+  intento de inyección— anulaba el control anti-alucinación. Ahora solo la similitud
+  medida cuenta como evidencia.
+- Detección de seguimiento: `it` coincidía con «IT», los demostrativos con preguntas
+  autónomas y `amplia` con el adjetivo común. Reescrita y ampliada a los interrogativos
+  sueltos («¿Por qué?»).
+- Un tipo de hecho desconocido cargaba sin error y provocaba HTTP 500 al citarlo. Ahora
+  se valida al cargar el corpus.
+- `prev_user` se acota igual que `prev_answer`: un turno previo largo desbordaba el
+  límite de entrada del proveedor.
+- CI comparaba cardinalidades donde el servidor compara conjuntos de claves. Ahora usa el
+  mismo predicado, y un índice parcial vuelve a fallar salvo excepción declarada.
+- `tsc --noEmit` sin `-b` comprobaba cero archivos; sustituido por el lint.
+- `cancel-in-progress` en el despliegue de la presentación podía dejarlo atascado.
+- Presentación: CSS de la navegación borrado por error, enlace «Integrar» a la sección
+  equivocada, indicador de avance invertido con el rebote de scroll.
+
+### Añadido
+- Navegación por teclado (← →) entre secciones de la presentación.
+- `/health` expone `embed_models` y `embed_models_incompletos`.
+- Variable `PERMITIR_INDICE_PARCIAL` para declarar explícitamente una degradación.
+
+### Eliminado
+- `web/src/index.css` y dos SVG sin referenciar, restos de la plantilla inicial.
+
 ## [1.1.0] — 2026-08-22
 
 ### Añadido

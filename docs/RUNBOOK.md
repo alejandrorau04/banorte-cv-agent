@@ -10,7 +10,7 @@ Servicio: **cv-agent** — endpoint Open Responses del agente de CV.
 | Imagen | `ghcr.io/alejandrorau04/cv-agent:latest` | Construida por GitHub Actions |
 | Runtime | Azure Container Apps `cv-agent` (grupo `rg-cv-agent`, `centralus`) | Endpoint HTTPS |
 | Modelo | Google AI Studio — `gemini-3.1-flash-lite`, respaldo `gemini-3.6-flash` | Generación |
-| Embeddings | `gemini-embedding-001`, 768 dim | Solo en build |
+| Embeddings | `gemini-embedding-001` y `gemini-embedding-2`, 768 dim | Índice por modelo; en build |
 
 ## Comprobación de salud
 
@@ -18,13 +18,33 @@ Servicio: **cv-agent** — endpoint Open Responses del agente de CV.
 curl -s "$BASE_URL/health"
 ```
 
-Respuesta sana: `status: ok`, `facts: 46`, `vectors_loaded: true`.
+Respuesta sana: `status: ok`, `facts: 61`, `vectors_loaded: true`, y **`embed_models` con
+todos los modelos declarados**.
 
-`vectors_loaded` siempre debe ser `true`. Si el índice falta, **el contenedor no arranca**:
-sin él no puede calibrarse la compuerta de abstención, y degradar en silencio comprometería
-la garantía anti-alucinación. Se midió que la señal léxica no separa dominio de no-dominio
-(una pregunta legítima puede puntuar 0.00 y una fuera de dominio 3.85), por lo que no existe
-umbral léxico defendible. Acción: `python scripts/build_index.py` y reconstruir la imagen.
+**Si ningún modelo tiene el índice completo, el contenedor no arranca.** Sin índice no puede
+calibrarse la compuerta de abstención, y degradar en silencio comprometería la garantía
+anti-alucinación. Se midió que la señal léxica no separa dominio de no-dominio (una pregunta
+legítima puede puntuar 0.00 y una fuera de dominio 3.85), por lo que no existe umbral léxico
+defendible.
+
+**`embed_models_incompletos`** lista los modelos cuyo índice no cubre el corpus entero. Un
+modelo así **no se usa**: un hecho sin vector nunca se recupera y el fallo sería silencioso.
+Si aparece algo ahí, la redundancia está reducida y hay que reconstruir:
+
+```bash
+python scripts/build_index.py      # incremental: solo calcula lo que falta
+```
+
+Cada modelo tiene su propio umbral calibrado, así que perder el primario **también cambia el
+umbral de abstención en uso**. Consultar `embed_models` para saber cuál está activo.
+
+El pipeline bloquea cualquier índice parcial. Para desplegar durante una incidencia de cuota
+hay que declarar la excepción de forma explícita y retirarla después:
+
+```bash
+gh variable set PERMITIR_INDICE_PARCIAL --body true    # durante la incidencia
+gh variable delete PERMITIR_INDICE_PARCIAL             # al reconstruir
+```
 
 ## Prueba funcional
 
@@ -65,7 +85,7 @@ Omitirlo deja hechos nuevos sin vector: no se recuperarán semánticamente.
 | HTTP 429 | Cuota del nivel gratuito agotada | Esperar la ventana de cuota; considerar tier de pago |
 | HTTP 503 `upstream_unavailable` | Ambos modelos fallaron | Revisar estado de Google AI Studio; el respaldo ya se intentó |
 | Latencia > 25 s | Pico del nivel gratuito | Presupuesto de tiempo lo corta; se degrada a error controlado |
-| Se abstiene de más | Umbral alto o índice ausente | Verificar `/health`; recalibrar `MIN_SCORE` con `eval/` |
+| Se abstiene de más | Umbral alto, o el primario caído y en uso el umbral del respaldo | Verificar `embed_models` en `/health`; recalibrar con `scripts/calibrar.py` |
 | Responde sin citas | El modelo omitió el formato | Verificar que la verificación no las eliminó por inválidas (revisar `metadata.retrieved`) |
 
 ## Logs

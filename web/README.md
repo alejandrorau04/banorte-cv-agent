@@ -18,9 +18,10 @@ suscripción.
   tales, con sus métricas verdaderas.
 - **Navegación por teclado** (← →) además del scroll: al exponer se necesitan pasos
   discretos donde detenerse, no depender del desplazamiento.
-- **Accesible:** enlace de salto, jerarquía de encabezados, `aria-current` en el índice,
-  `<title>` descriptivo en cada diagrama SVG, foco visible y respeto por
-  `prefers-reduced-motion`.
+- **Accesible:** enlace de salto que mueve el foco, jerarquía de encabezados,
+  `aria-label` descriptivo en cada diagrama SVG —en lugar de `<title>`, que el
+  navegador muestra además como tooltip y tapaba el propio diagrama—, foco visible
+  y respeto por `prefers-reduced-motion`.
 - **Tema claro y oscuro** mediante `prefers-color-scheme`.
 - **Diagramas en SVG inline**: se adaptan al tema, escalan sin perder nitidez y no añaden
   dependencias.
