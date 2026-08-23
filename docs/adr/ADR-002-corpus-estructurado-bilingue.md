@@ -45,6 +45,6 @@ reintroduce exactamente el problema de divergencia que originó este ADR.
 
 ## Estado del corpus
 
-46 hechos: 3 de perfil, 28 de experiencia, 10 de habilidades, 3 de formación y 2 de logros.
-Volumen total ≈ 3.700 tokens (≈ 1.860 por idioma), dato base para el análisis de
-consumo de tokens del ADR-005.
+61 hechos: 28 de experiencia, 11 de competencias, 7 de empresas, 5 de situación profesional, 3 de perfil, 3 de formación, 2 de logros, 1 de proyectos, 1 de trayectoria derivada.
+El corpus creció después con las descripciones de las empresas, la situación profesional
+y el propio proyecto (ADR-010 y ADR-013).

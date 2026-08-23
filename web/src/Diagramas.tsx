@@ -68,7 +68,7 @@ export function Capas() {
 
 export function Entrega() {
   const p = ["git push", "Calidad", "Imagen", "Azure", "Verificación"];
-  const s = ["", "102 tests", "GHCR · SHA", "Container Apps", "estado real"];
+  const s = ["", "122 tests", "GHCR · SHA", "Container Apps", "estado real"];
   return (
     <svg viewBox="0 0 900 96" role="img" aria-label="Cadena de entrega continua: un push dispara la puerta de calidad, la construcción y publicación de la imagen, el despliegue en Azure y la verificación del estado real del contenedor." className="dg">
       {p.map((n, i) => (
