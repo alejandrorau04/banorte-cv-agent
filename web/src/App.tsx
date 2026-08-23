@@ -415,31 +415,6 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="13" t="Glosario técnico">
-          <dl className="glos">
-            <div><dt>RAG</dt><dd>Recuperar información relevante y entregársela al modelo
-              para que responda solo con ella, en lugar de confiar en lo que «sabe».</dd></div>
-            <div><dt>Embedding</dt><dd>Conversión de un texto en una lista de números que
-              representa su significado. Textos parecidos producen listas parecidas.</dd></div>
-            <div><dt>Similitud coseno</dt><dd>Medida de cercanía entre dos de esas listas.
-              Un número entre 0 y 1: cuanto más alto, más relacionados están los textos.</dd></div>
-            <div><dt>IDF</dt><dd>Ponderación que da más peso a las palabras poco frecuentes.
-              Rescata nombres propios donde la similitud semántica no llega.</dd></div>
-            <div><dt>Grounding</dt><dd>Obligar al modelo a responder únicamente con la
-              información suministrada, sin recurrir a su conocimiento general.</dd></div>
-            <div><dt>Alucinación</dt><dd>Afirmación que el modelo genera sin respaldo en los
-              datos. En un agente de CV significa inventar experiencia.</dd></div>
-            <div><dt>Abstención</dt><dd>Reconocer que no hay evidencia suficiente y decirlo,
-              en lugar de improvisar una respuesta.</dd></div>
-            <div><dt>Contrato de API</dt><dd>Acuerdo sobre la forma exacta de las peticiones y
-              respuestas, que permite integrar dos sistemas sin coordinación previa.</dd></div>
-            <div><dt>SSE</dt><dd>Server-Sent Events. El servidor envía la respuesta por partes
-              conforme la produce, en lugar de esperar a tenerla completa.</dd></div>
-            <div><dt>CI/CD</dt><dd>Integración y entrega continuas. Cada cambio se prueba,
-              empaqueta y despliega automáticamente.</dd></div>
-          </dl>
-        </Sec>
-
         <section className="final">
           <p className="final__t">
             El mismo criterio que impide al agente afirmar lo que no puede respaldar
