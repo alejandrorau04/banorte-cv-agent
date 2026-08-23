@@ -59,18 +59,55 @@ export default function App() {
           <div className="ficha__c"><span className="ficha__k">Código</span><span className="ficha__v"><a href={REPO}>GitHub ↗</a></span></div>
         </div>
 
-        <Sec n="01" t="Resultados medidos">
+        <Sec n="01" t="Veracidad">
+          <p className="dice">
+            El conjunto de evaluación tiene 32 casos, de los cuales <strong>12 comprueban
+            lo que el agente NO debe responder</strong>: preguntas fuera de dominio,
+            vacíos del CV, peticiones de datos personales e intentos de inyección.
+          </p>
           <div className="serie">
-            <N v="32/32" k="Golden set. 12 de los casos evalúan lo que el agente no debe responder" tono="r" />
-            <N v="102" k="Tests automatizados, sin red ni credenciales" />
-            <N v="25" u="%" k="Consultas resueltas sin invocar al modelo" tono="v" />
+            <N v="0" k="Afirmaciones sin respaldo verificable en los 32 casos evaluados" tono="r" />
+            <N v="5/5" k="Intentos de inyección de prompt resistidos" tono="r" />
+            <N v="5/5" k="Preguntas fuera de dominio rechazadas sin invocar al modelo" tono="v" />
+            <N v="2/2" k="Peticiones de datos personales bloqueadas por política" tono="v" />
+            <N v="26/26" k="Respuestas consistentes ante formulaciones distintas" />
+            <N v="28/28" k="Entradas malformadas sin error de servidor" />
+          </div>
+          <p className="dice" style={{ marginTop: "calc(var(--u) * 4)" }}>
+            Toda cita emitida se contrasta contra los hechos recuperados antes de
+            responder. Una cita a un identificador inexistente se elimina del texto:
+            <strong> el respaldo de cada afirmación es comprobable, no declarado</strong>.
+          </p>
+        </Sec>
+
+        <Sec n="02" t="Medición comparativa">
+          <p className="dice">
+            Frente al enfoque directo —el que produce una implementación sin estas
+            decisiones—, medido sobre el mismo conjunto de preguntas.
+          </p>
+          <div className="scroll-x">
+            <table className="datos">
+              <thead><tr><th>Aspecto</th><th>Enfoque directo</th><th>Implementado</th></tr></thead>
+              <tbody>
+                <tr><td>Contexto enviado por consulta</td><td className="m">~1.860 tokens (corpus completo)</td><td className="v">~500 tokens (top-6)</td></tr>
+                <tr><td>Consultas que llegan al modelo</td><td className="m">100 %</td><td className="v">75 %</td></tr>
+                <tr><td>Tokens en una petición trivial</td><td className="m">247 (razonamiento incluido)</td><td className="v">56</td></tr>
+                <tr><td>Coste de una pregunta fuera de dominio</td><td className="m">~550 tokens</td><td className="v">0 tokens · &lt;500 ms</td></tr>
+                <tr><td>Coste por turno en conversación larga</td><td className="m">crece con cada turno</td><td className="v">constante</td></tr>
+                <tr><td>Latencia p95 tras corregir la cadena de respaldo</td><td className="m">31,9 s</td><td className="v">13,3 s</td></tr>
+                <tr><td>Peticiones correctas con concurrencia 10</td><td className="m">25 / 30</td><td className="v">30 / 30</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="serie" style={{ marginTop: "calc(var(--u) * 4)" }}>
             <N v="1.2" u="s" k="Latencia mediana" />
             <N v="660" k="Tokens de media por consulta" />
+            <N v="102" k="Tests automatizados, sin red ni credenciales" />
             <N v="61" k="Hechos en el corpus, bilingües y versionados" />
           </div>
         </Sec>
 
-        <Sec n="02" t="Arquitectura">
+        <Sec n="03" t="Arquitectura">
           <p className="dice">
             Tres capas con las dependencias apuntando hacia el núcleo. El núcleo
             <strong> no conoce HTTP ni el proveedor de modelo</strong>: por eso los tests
@@ -87,7 +124,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="03" t="Pipeline RAG">
+        <Sec n="04" t="Pipeline RAG">
           <p className="dice">
             El CV no se indexa como documento troceado: se transforma en hechos atómicos
             con identificador estable, metadatos y texto paralelo en español e inglés.
@@ -109,7 +146,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="04" t="Control de alucinaciones">
+        <Sec n="05" t="Control de alucinaciones">
           <p className="dice">
             Cuatro controles que no dependen del modelo: son código que se ejecuta antes
             y después de invocarlo.
@@ -126,7 +163,7 @@ export default function App() {
           </ol>
         </Sec>
 
-        <Sec n="05" t="Consumo y latencia">
+        <Sec n="06" t="Consumo y latencia">
           <p className="dice">
             La abstención previa a la invocación elimina simultáneamente el riesgo de
             invención y el coste. <strong>Ambos efectos proceden del mismo mecanismo.</strong>
@@ -153,7 +190,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="06" t="Entrega continua">
+        <Sec n="07" t="Entrega continua">
           <p className="dice">
             Azure restringe la construcción de imágenes en suscripciones nuevas. La
             construcción se trasladó a GitHub Actions, conservando Azure como destino.
@@ -172,7 +209,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="07" t="Seguridad">
+        <Sec n="08" t="Seguridad">
           <p className="dice">
             Modelo de amenazas STRIDE documentado, con los riesgos aceptados explícitos y
             la distancia hasta un despliegue productivo.
@@ -200,23 +237,28 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="08" t="Verificación">
+        <Sec n="09" t="Defectos hallados">
           <div className="serie">
-            <N v="32/32" k="Conjunto de evaluación" tono="r" />
-            <N v="26/26" k="Consistencia ante formulaciones distintas" />
-            <N v="28/28" k="Entradas hostiles sin error de servidor" />
-            <N v="30/30" k="Peticiones correctas con concurrencia 10" />
             <N v="11" k="Defectos localizados en el propio sistema y corregidos" tono="r" />
+            <N v="3" k="Veces que la cadena de respaldo falló pareciendo correcta en el código" />
+            <N v="2" k="Veces que el equivocado resultó ser el propio evaluador" />
+            <N v="11" k="Pruebas de regresión añadidas, una por defecto" tono="v" />
           </div>
           <p className="dice" style={{ marginTop: "calc(var(--u) * 4)" }}>
-            Ninguno de los once defectos se detectó leyendo el código: todos surgieron de
-            medir. Detección de idioma anulada por sus propias palabras vacías, compuerta
-            inoperante por normalizar el coseno, respaldo inalcanzable por presupuesto de
-            tiempo, índice parcial sin error visible. Cada uno tiene su prueba de regresión.
+            Ninguno se detectó leyendo el código: todos surgieron de medir. Detección de
+            idioma anulada por sus propias palabras vacías, compuerta inoperante por
+            normalizar el coseno, modelo de respaldo más lento que su propio tiempo
+            límite, índice parcial sin error visible.
+          </p>
+          <p className="dice">
+            En dos ocasiones el fallo estaba en el conjunto de evaluación, no en el
+            agente: prohibía la palabra «Harvard» en lugar de prohibir afirmarla, y daba
+            por correcta una fecha equivocada. <strong>Un evaluador mal diseñado lleva a
+            corregir un sistema que funciona.</strong>
           </p>
         </Sec>
 
-        <Sec n="09" t="Límites">
+        <Sec n="10" t="Límites">
           <div className="scroll-x">
             <table className="datos">
               <thead><tr><th>Aspecto</th><th>Estado</th></tr></thead>
