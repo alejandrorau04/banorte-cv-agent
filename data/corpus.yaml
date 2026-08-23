@@ -44,9 +44,11 @@ facts:
     start: "2025-05"
     end: null
     current: true
-    tags: [globalconnect, actual, saas, leads, react-native]
-    es: "Desde mayo de 2025 y hasta la fecha es Desarrollador Full Stack y Móvil en GlobalConnect, en Cancún, Quintana Roo. Es su puesto actual."
-    en: "Since May 2025 and to date he has been a Full Stack and Mobile Developer at GlobalConnect in Cancún, Quintana Roo. This is his current role."
+    tags: [globalconnect, actual, actualmente, ahora, hoy, empresa, empresa-actual,
+           trabaja, trabajo, trabajando, puesto, puesto-actual, saas, leads,
+           react-native, current, currently, now, company, works, working, job]
+    es: "Empresa actual: GlobalConnect. Desde mayo de 2025 y hasta la fecha, Alejandro trabaja ahí como Desarrollador Full Stack y Móvil, en Cancún, Quintana Roo. Es su puesto y su empresa actuales."
+    en: "Current company: GlobalConnect. Since May 2025 and to date, Alejandro works there as a Full Stack and Mobile Developer in Cancún, Quintana Roo. This is his current role and current employer."
 
   - id: exp.globalconnect.saas
     type: experience
@@ -486,7 +488,9 @@ facts:
 
   - id: intent.disponibilidad
     type: intent
-    tags: [disponibilidad, cdmx, reubicacion, hibrido, mudanza, incorporacion, viajar]
+    tags: [disponibilidad, disponible, cdmx, reubicacion, reubicarse, hibrido,
+           mudanza, mudarse, incorporacion, incorporarse, viajar, relocation,
+           available, availability, start-date]
     es: "Alejandro está disponible para trabajar en Ciudad de México, incluyendo modalidad híbrida y la reubicación que el puesto requiera. Su disponibilidad de incorporación es inmediata."
     en: "Alejandro is available to work in Mexico City, including hybrid arrangements and any relocation the role requires. He is available to start immediately."
 

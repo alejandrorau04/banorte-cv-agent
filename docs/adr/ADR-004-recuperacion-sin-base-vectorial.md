@@ -5,7 +5,7 @@
 
 ## Contexto
 
-El corpus son **46 hechos × 2 idiomas = 92 vectores**. La opción por defecto en un
+El corpus son **61 hechos × 2 idiomas = 122 vectores**. La opción por defecto en un
 proyecto RAG es desplegar una base vectorial (Qdrant, pgvector, Azure AI Search).
 
 ## Decisión
@@ -15,7 +15,7 @@ sustituible.
 
 ### Por qué sin base vectorial externa
 
-Para 92 vectores, una base vectorial añade un servicio que desplegar y operar, latencia
+Para 122 vectores, una base vectorial añade un servicio que desplegar y operar, latencia
 de red por consulta, un punto de fallo adicional, coste y credenciales que gestionar —
 **sin ninguna ganancia medible**: la búsqueda exhaustiva sobre 46 vectores en Python puro
 es de microsegundos.

@@ -20,7 +20,7 @@ Leyenda: ✅ cubierto y demostrable · 🟡 parcial · ⬜ no cubierto
 | 4 | Repositorio público en GitHub | ✅ | `alejandrorau04/banorte-cv-agent` |
 | 5 | Conversa sobre perfil, experiencia, habilidades y proyectos | ✅ | 61 hechos; golden set 32/32 |
 | 6 | Demostración con decisiones técnicas explicadas | 🟡 | Guion en `docs/DEMO.md`; presentación pendiente |
-| 7 | Verificar respuesta clara, coherente y confiable | ✅ | 5 niveles de prueba, 102 tests |
+| 7 | Verificar respuesta clara, coherente y confiable | ✅ | 5 niveles de prueba, 122 tests |
 
 ---
 
@@ -40,7 +40,7 @@ Leyenda: ✅ cubierto y demostrable · 🟡 parcial · ⬜ no cubierto
 | **Streaming de respuestas** | ✅ | SSE, 24 tipos de evento, `sequence_number` |
 | **Manejo de estado conversacional** | ✅ | Memoria acotada a un intercambio (ADR-012) |
 | **Trazabilidad de interacciones** | ✅ | `metadata` con hechos recuperados, similitudes y citas |
-| **Control de latencia percibida** | ✅ | p50 1,2 s; presupuesto acotado a 25 s; streaming |
+| **Control de latencia percibida** | ✅ | p50 0,97 s; presupuesto acotado a 25 s; streaming |
 | **Prompt engineering** | ✅ | Reglas de grounding, precedencia sobre `instructions` |
 | Tool use / agentes autónomos | 🟡 | Enrutado determinista, sin herramientas ejecutables |
 | **MCP** | ⬜ | No implementado |
@@ -68,7 +68,7 @@ Leyenda: ✅ cubierto y demostrable · 🟡 parcial · ⬜ no cubierto
 | **Kubernetes** | ⬜ | No usado; Container Apps cubre el caso sin operar clúster |
 | **CI/CD** | ✅ | GitHub Actions: calidad → imagen → despliegue → verificación |
 | Versionado y releases | ✅ | SemVer, CHANGELOG, release automatizada |
-| **Testing (pytest)** | ✅ | 102 tests sin red ni credenciales |
+| **Testing (pytest)** | ✅ | 122 tests sin red ni credenciales |
 | **Observabilidad** | 🟡 | Logs estructurados y `metadata` por respuesta; sin trazas distribuidas |
 | Git | ✅ | Ramas, PR con checks, protección de rama |
 

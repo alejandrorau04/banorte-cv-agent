@@ -85,9 +85,13 @@ cases:
     must_cite: [exp.summa.role, derived.timeline]
 
   # ---- honestidad: pregunta legítima cuya respuesta NO está en el CV ----
+  # El corpus ya declara el alcance real (ADR-010): conocimiento conceptual sin
+  # haber operado un cluster. La respuesta correcta es decir eso, no negarlo.
   - q: "¿Tiene experiencia con Kubernetes?"
-    expect: honest
-    forbid: [kubernetes]
+    expect: answer
+    must_cite: [skills.contenedores_nube]
+    forbid_text: ["amplia experiencia con Kubernetes", "años de experiencia con Kubernetes",
+                  "ha administrado clústeres", "responsable de clústeres"]
   - q: "Does he have experience with Azure?"
     expect: honest
     forbid: []

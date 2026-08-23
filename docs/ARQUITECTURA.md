@@ -44,8 +44,8 @@ flowchart TB
     end
 
     subgraph IM["Imagen de contenedor"]
-      C[("corpus.yaml<br/>47 hechos es/en")]
-      IX[("corpus.index.json<br/>94 vectores · 768 dim")]
+      C[("corpus.yaml<br/>61 hechos es/en")]
+      IX[("corpus.index.json<br/>122 vectores · 768 dim")]
     end
 
     GH["GitHub Actions<br/><i>tests + build</i>"]
@@ -122,7 +122,7 @@ flowchart TB
 
 **Por qué importa esta separación**, en términos concretos y verificables:
 
-- El núcleo se prueba **sin levantar servidor y sin red**: 65 tests en 0,3 s.
+- El núcleo se prueba **sin levantar servidor y sin red**: 122 tests en 0,3 s.
 - Migrar a Azure OpenAI es implementar dos métodos y cambiar una variable de entorno.
   No se toca una línea del núcleo.
 - Cambiar el transporte (WebSocket, gRPC, una cola) no afecta a la lógica del agente.
@@ -150,7 +150,7 @@ sequenceDiagram
         A->>R: buscar(pregunta, idioma)
         R->>G: embedding de la consulta
         G-->>R: vector 768d
-        R->>R: coseno + IDF sobre 94 vectores
+        R->>R: coseno + IDF sobre 122 vectores
         R-->>A: top-6 con similitud cruda
 
         alt similitud máxima < 0.62
@@ -212,7 +212,7 @@ asume el coste de que el primer carácter tarde más.
 
 ```mermaid
 flowchart LR
-    D["git push a main"] --> T["Actions: 65 tests<br/>+ conformidad OpenAPI<br/>+ ausencia de PII"]
+    D["git push a main"] --> T["Actions: 122 tests<br/>+ conformidad OpenAPI<br/>+ ausencia de PII"]
     T -->|"verde"| B["docker build"]
     B --> G[("GHCR<br/>tag = SHA del commit")]
     G --> A["az containerapp update"]

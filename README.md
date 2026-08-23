@@ -66,9 +66,10 @@ deriva de esa distinción.
 | Consistencia ante 26 formulaciones distintas | **26/26** |
 | Entradas malformadas sin error de servidor | **28/28** |
 | Peticiones correctas con concurrencia 10 | **30/30** |
-| Tests automatizados, sin red ni credenciales | **102** |
+| Tests automatizados, sin red ni credenciales | **122** |
 | Consultas resueltas sin invocar al modelo | **25 %** |
-| Latencia p50 · tokens medios por consulta | **1,2 s · 660** |
+| Latencia p50 · p95 | **0,97 s · 1,49 s** |
+| Tokens medios por consulta | **677** |
 
 ---
 
@@ -104,7 +105,7 @@ cp .env.example .env                        # rellenar GEMINI_API_KEY y AGENT_AP
 ### Verificación
 
 ```bash
-pytest -q                                        # 102 tests, sin red ni credenciales
+pytest -q                                        # 122 tests, sin red ni credenciales
 python eval/run_eval.py                          # golden set: 32 casos
 python eval/consistencia.py                      # 26 formulaciones de 5 intenciones
 AGENT_URL=... python scripts/robustez.py         # 28 entradas hostiles
@@ -175,7 +176,7 @@ data/           corpus.yaml (61 hechos bilingües) + índice de embeddings versi
 docs/           12 ADRs, arquitectura, RAG, pruebas, seguridad, límites, runbook
 eval/           golden set (32 casos), consistencia (26 formulaciones), resultados
 scripts/        construcción del índice, calibración del umbral, robustez y carga
-tests/          102 tests, sin red ni credenciales
+tests/          122 tests, sin red ni credenciales
 web/            presentación en React + TypeScript (GitHub Pages)
 .github/        pipelines de CI/CD, release y presentación
 ```

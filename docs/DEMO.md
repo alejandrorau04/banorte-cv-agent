@@ -82,11 +82,11 @@ Mostrar el test corriendo en verde.
 ## 4 · Arquitectura y las decisiones de omisión — 2 min
 
 Diagrama C4 de componentes. Señalar que **las dependencias apuntan hacia adentro**: el
-núcleo no conoce ni HTTP ni Gemini, por eso 65 tests corren en 0,3 segundos sin red.
+núcleo no conoce ni HTTP ni Gemini, por eso 122 tests corren en 0,3 segundos sin red.
 
 Las dos decisiones que suelen sorprender:
 
-> «**No uso base vectorial.** Son 94 vectores. Qdrant o pgvector añadirían un servicio
+> «**No uso base vectorial.** Son 122 vectores. Qdrant o pgvector añadirían un servicio
 > que operar, latencia de red y un punto de fallo, sin ganancia medible. La recuperación
 > está detrás de una interfaz: si el corpus creciera, sustituirla es implementar una
 > clase. Saber cuándo *no* usar una tecnología también es criterio técnico.»
@@ -105,7 +105,7 @@ Las dos decisiones que suelen sorprender:
 
 | Nivel | Resultado |
 |---|---|
-| 65 tests, sin red ni credenciales | Verde en CI en cada push |
+| 122 tests, sin red ni credenciales | Verde en CI en cada push |
 | Golden set, 32 casos | 32/32 — **12 miden lo que NO debe responder** |
 | Consistencia, 26 formulaciones | 26/26 — erratas, mayúsculas, jerga, inglés |
 | 28 entradas hostiles | Sin errores 5xx |
@@ -161,7 +161,7 @@ Cierre:
 
 | Pregunta | Respuesta |
 |---|---|
-| ¿Por qué no una base vectorial? | 94 vectores; coste operativo sin ganancia. Está tras una interfaz sustituible |
+| ¿Por qué no una base vectorial? | 122 vectores; coste operativo sin ganancia. Está tras una interfaz sustituible |
 | ¿Por qué Gemini y no Azure OpenAI? | Disponibilidad inmediata y nivel gratuito. El proveedor está tras un puerto: migrar es implementar dos métodos |
 | ¿Cómo evitas alucinaciones? | Cuatro controles; el central es no invocar al modelo sin evidencia. Umbral calibrado, no elegido |
 | ¿Cómo mides que funciona? | Golden set con criterio explícito de corrección; 12 de 32 casos miden lo que no debe responder |

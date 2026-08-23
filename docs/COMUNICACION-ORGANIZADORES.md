@@ -55,7 +55,7 @@ en lugar de prohibir afirmarla, y un agente no puede negar «Harvard» sin escri
 
 ### 5. Decisiones de omisión, tan justificadas como las de inclusión
 
-- **Sin base vectorial.** 92 vectores no justifican Qdrant ni pgvector. Detrás de una
+- **Sin base vectorial.** 122 vectores no justifican Qdrant ni pgvector. Detrás de una
   interfaz, sustituible. Saber cuándo no usar una tecnología es criterio técnico.
 - **Sin datos de contacto en el corpus.** Endpoint público + repositorio abierto: el
   agente no puede revelar lo que no tiene. Verificado en CI.

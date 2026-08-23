@@ -241,15 +241,15 @@ export default function App() {
                 <tr><td>Tokens en una petición trivial</td><td className="m">247 (razonamiento incluido)</td><td className="v">56</td></tr>
                 <tr><td>Coste de una pregunta fuera de dominio</td><td className="m">~550 tokens</td><td className="v">0 tokens · &lt;500 ms</td></tr>
                 <tr><td>Coste por turno en conversación larga</td><td className="m">crece con cada turno</td><td className="v">constante</td></tr>
-                <tr><td>Latencia p95 tras corregir la cadena de respaldo</td><td className="m">31,9 s</td><td className="v">13,3 s</td></tr>
+                <tr><td>Latencia p95 tras corregir la cadena de respaldo</td><td className="m">31,9 s</td><td className="v">1,49 s</td></tr>
                 <tr><td>Peticiones correctas con concurrencia 10</td><td className="m">25 / 30</td><td className="v">30 / 30</td></tr>
               </tbody>
             </table>
           </div>
           <div className="serie" style={{ marginTop: "calc(var(--u) * 4)" }}>
-            <N v="1.2" u="s" k="Latencia mediana" />
-            <N v="660" k="Tokens de media por consulta" />
-            <N v="102" k="Tests automatizados, sin red ni credenciales" />
+            <N v="0.97" u="s" k="Latencia mediana" />
+            <N v="677" k="Tokens de media por consulta" />
+            <N v="122" k="Tests automatizados, sin red ni credenciales" />
             <N v="61" k="Hechos en el corpus, bilingües y versionados" />
           </div>
         </Sec>
@@ -319,7 +319,7 @@ export default function App() {
             <table className="datos">
               <thead><tr><th>Palanca</th><th>Efecto medido</th></tr></thead>
               <tbody>
-                <tr><td>Abstención previa a la invocación</td><td className="v">0 tokens · 22 % de las consultas</td></tr>
+                <tr><td>Abstención previa a la invocación</td><td className="v">0 tokens · 25 % de las consultas</td></tr>
                 <tr><td>thinkingLevel: minimal</td><td className="v">−77 % de tokens de razonamiento</td></tr>
                 <tr><td>Recuperación top-6 frente al corpus completo</td><td className="m">~500 frente a ~1.860 tokens</td></tr>
                 <tr><td>Memoria de un intercambio</td><td className="v">coste constante por turno</td></tr>
@@ -347,7 +347,7 @@ export default function App() {
             <table className="datos">
               <thead><tr><th>Etapa</th><th>Contenido</th></tr></thead>
               <tbody>
-                <tr><td>Calidad</td><td>102 tests · conformidad contra el OpenAPI oficial · corpus sin datos personales · cobertura del índice</td></tr>
+                <tr><td>Calidad</td><td>122 tests · conformidad contra el OpenAPI oficial · corpus sin datos personales · cobertura del índice</td></tr>
                 <tr><td>Imagen</td><td>Publicada en GHCR, etiquetada con el SHA del commit</td></tr>
                 <tr><td>Despliegue</td><td>Service principal acotado al grupo de recursos</td></tr>
                 <tr><td>Verificación</td><td>Comprueba el estado real del contenedor, no solo el código HTTP</td></tr>
@@ -456,7 +456,7 @@ export default function App() {
           <div className="final__d">
             <div><b>Servicio</b><span>Azure Container Apps · v1.1.0</span></div>
             <div><b>Contrato</b><span>Open Responses 2026-04-24</span></div>
-            <div><b>Evidencia</b><span>102 tests · 32 casos · 12 ADRs</span></div>
+            <div><b>Evidencia</b><span>122 tests · 32 casos · 12 ADRs</span></div>
             <div><b>Código</b><span><a href={REPO}>github.com ↗</a></span></div>
           </div>
         </section>

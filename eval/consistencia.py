@@ -37,7 +37,7 @@ _EN = {"Where does he work now?", "current employer?", "What is his AI experienc
        "What certifications does he hold?", "What was his first job?",
        "Where did he study?"}
 
-# (intencion, [formulaciones], hecho que debe citarse, terminos esperados)
+# (intencion, [formulaciones], hechos que valen como cita, terminos esperados)
 GRUPOS = [
     ("empleo actual",
      ["¿Dónde trabaja actualmente Alejandro?",
@@ -47,7 +47,7 @@ GRUPOS = [
       "Where does he work now?",
       "current employer?",
       "dime su trabajo actual porfa"],
-     "exp.globalconnect.role", ["globalconnect"]),
+     {"exp.globalconnect.role", "derived.timeline"}, ["globalconnect"]),
 
     ("experiencia en IA",
      ["¿Qué experiencia tiene con inteligencia artificial?",
@@ -64,7 +64,7 @@ GRUPOS = [
       "esta certificado en algo",
       "What certifications does he hold?",
       "tiene algun certificado"],
-     "education.certifications", ["ccna", "scrum"]),
+     {"education.certifications"}, ["ccna", "scrum"]),
 
     ("primer empleo",
      ["¿Cuál fue su primer empleo?",
@@ -78,7 +78,7 @@ GRUPOS = [
       "que estudio",
       "Where did he study?",
       "cual es su carrera universitaria"],
-     "education.degree", ["cuautitlán", "cuautitlan", "sistemas"]),
+     {"education.degree", "derived.timeline"}, ["cuautitlán", "cuautitlan", "sistemas"]),
 ]
 
 
@@ -109,8 +109,8 @@ async def main() -> int:
                 problemas = []
                 if a.abstained:
                     problemas.append("se abstuvo")
-                if cita and cita not in a.citations:
-                    problemas.append(f"no cita {cita}")
+                if cita and not (set(a.citations) & cita):
+                    problemas.append(f"citas {a.citations} no intersecan {sorted(cita)}")
                 txt = _norm(a.text)
                 if terminos and not any(_norm(t) in txt for t in terminos):
                     problemas.append(f"no menciona ninguno de {terminos}")

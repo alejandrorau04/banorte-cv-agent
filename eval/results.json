@@ -1,403 +1,407 @@
 {
-  "passed": 29,
+  "passed": 32,
   "total": 32,
-  "no_llm": 6,
-  "tokens": 22793,
-  "p50_ms": 1688,
-  "p95_ms": 6507,
+  "no_llm": 8,
+  "tokens": 21657,
+  "p50_ms": 969,
+  "p95_ms": 1488,
   "rows": [
     {
       "q": "¿Dónde trabaja actualmente Alejandro?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 874,
-      "ms": 1889,
+      "tokens": 924,
+      "ms": 1343,
       "citations": [
-        "derived.timeline"
+        "exp.globalconnect.role"
       ],
-      "text": "Actualmente, Alejandro trabaja como Desarrollador Full Stack & Móvil en GlobalConnect, puesto que ocupa desde mayo de 2025.\n\nFuentes: Trayectoria"
+      "text": "Actualmente, Alejandro trabaja como Desarrollador Full Stack y Móvil en la empresa GlobalConnect, puesto que desempeña desde mayo de 2025 en Cancún, Quintana Roo.\n\nFuentes: [Experiencia · GlobalConnect (may 2025 – actual)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L38-L51)"
     },
     {
       "q": "¿Qué hizo para Vinte?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 1077,
-      "ms": 1627,
+      "tokens": 1021,
+      "ms": 1479,
       "citations": [
         "exp.alldora.vinte",
         "achievements.other",
-        "derived.timeline"
+        "intent.motivacion_ia"
       ],
-      "text": "Alejandro diseñó y desplegó un robot digital con inteligencia artificial para los desarrollos inmobiliarios de Vinte, abriendo de esta manera un nuevo canal digital de captación de clientes. Cabe destacar que Vinte fue cliente de Alldora y no su empleador.\n\nFuentes: [Experiencia · Alldora Latinoamérica (jun 2024 – may 2025)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L135-L143) · [Logros](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L411-L421) · Trayectoria"
+      "text": "Alejandro diseñó y desplegó un robot digital con inteligencia artificial para los desarrollos inmobiliarios de Vinte. Este proyecto permitió abrir un nuevo canal digital de captación de clientes. Además, implementó flujos de calificación y seguimiento automático de leads como parte de su trabajo con esta tecnología.\n\nFuentes: [Experiencia · Alldora Latinoamérica (jun 2024 – may 2025)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L137-L145) · [Logros](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L413-L423) · [Situación profesional](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L504-L508)"
     },
     {
       "q": "¿Qué certificaciones tiene?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 910,
-      "ms": 1626,
+      "tokens": 641,
+      "ms": 739,
       "citations": [
         "education.certifications"
       ],
-      "text": "Alejandro cuenta con el certificado CCNA de Cisco Systems obtenido en 2016 y Scrum Master de 2021. Además, posee las certificaciones de Rocketbot RPA niveles R1 y R2 y Netcontent SGD, ambas de 2024.\n\nFuentes: [Formación](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L388-L394)"
+      "text": "Alejandro cuenta con las certificaciones CCNA de Cisco Systems (2016), Scrum Master (2021), Rocketbot RPA niveles R1 y R2 (2024) y Netcontent SGD (2024).\n\nFuentes: [Formación](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L390-L396)"
     },
     {
       "q": "¿Dónde estudió?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 609,
-      "ms": 1464,
+      "tokens": 578,
+      "ms": 1006,
       "citations": [
         "education.degree"
       ],
-      "text": "Alejandro estudió la carrera de Ingeniería en Sistemas Computacionales en la Universidad de Cuautitlán Izcalli, donde se tituló en 2016.\n\nFuentes: [Formación](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L380-L386)"
+      "text": "Alejandro estudió la carrera de Ingeniería en Sistemas Computacionales en la Universidad de Cuautitlán Izcalli, donde obtuvo su título en 2016.\n\nFuentes: [Formación](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L382-L388)"
     },
     {
       "q": "¿Qué experiencia tiene con inteligencia artificial?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 934,
-      "ms": 5765,
+      "tokens": 938,
+      "ms": 1308,
       "citations": [
-        "exp.globalconnect.ai_systems",
         "intent.motivacion_ia",
+        "exp.globalconnect.ai_systems",
         "exp.alldora.vinte"
       ],
-      "text": "Alejandro cuenta con experiencia práctica llevando la inteligencia artificial a producción, implementando agentes conversacionales inteligentes, automatización en el seguimiento de leads, calificación automática y flujos de comunicación adaptativos. Ha construido una plataforma de agentes de llamadas con IA sobre Retell AI y Twilio para comunicación multicanal, además de diseñar y desplegar un robot digital de captación para los desarrollos inmobiliarios de Vinte. Su enfoque se centra en hacer la IA fiable, trabajando en el control de alucinaciones, la trazabilidad de las respuestas y su operación en entornos exigentes.\n\nFuentes: [Experiencia · GlobalConnect (may 2025 – actual)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L69-L76) · [Situación profesional](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L500-L504) · [Experiencia · Alldora Latinoamérica (jun 2024 – may 2025)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L135-L143)"
+      "text": "Alejandro cuenta con experiencia práctica llevando soluciones de inteligencia artificial a producción, enfocándose en la fiabilidad y la operación en entornos exigentes. Ha desarrollado agentes conversacionales inteligentes, flujos de comunicación adaptativos y sistemas de automatización para el seguimiento y calificación de leads. Además, diseñó y desplegó un robot digital con IA para la captación de clientes en desarrollos inmobiliarios de Vinte y construyó una plataforma de agentes de llamadas multicanal utilizando Retell AI y Twilio. Su trabajo se centra en el control de alucinaciones y la trazabilidad de las respuestas.\n\nFuentes: [Situación profesional](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L504-L508) · [Experiencia · GlobalConnect (may 2025 – actual)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L71-L78) · [Experiencia · Alldora Latinoamérica (jun 2024 – may 2025)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L137-L145)"
     },
     {
       "q": "¿Con qué bases de datos ha trabajado?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 623,
-      "ms": 1307,
+      "tokens": 653,
+      "ms": 1046,
       "citations": [
-        "skills.databases"
+        "skills.databases",
+        "exp.summa.role"
       ],
-      "text": "Alejandro ha trabajado con las siguientes bases de datos: PostgreSQL, Supabase, MySQL, SQL Server, DynamoDB y Quickbase.\n\nFuentes: [Competencias](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L343-L347)"
+      "text": "Alejandro ha trabajado con una amplia variedad de bases de datos, incluyendo PostgreSQL, Supabase, MySQL, SQL Server, DynamoDB y Quickbase. Además, durante su etapa en SUMMA Woodbridge y Global Equipment, gestionó bases de datos en Access.\n\nFuentes: [Competencias](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L345-L349) · [Experiencia · SUMMA Woodbridge (ene 2015 – jul 2018)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L309-L320)"
     },
     {
       "q": "¿Tiene experiencia liderando equipos?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 832,
-      "ms": 1470,
+      "tokens": 845,
+      "ms": 945,
       "citations": [
-        "intent.objetivo",
         "profile.summary",
         "exp.alldora.rpa"
       ],
-      "text": "Sí, Alejandro cuenta con más de diez años de experiencia liderando equipos técnicos. Entre sus responsabilidades de liderazgo, ha dirigido equipos de desarrollo para proyectos de automatización empresarial con RPA y gestión documental.\n\nFuentes: [Situación profesional](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L493-L498) · [Perfil](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L25-L29) · [Experiencia · Alldora Latinoamérica (jun 2024 – may 2025)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L126-L133)"
+      "text": "Sí, Alejandro cuenta con más de 10 años de experiencia liderando equipos técnicos. En su trayectoria, ha liderado equipos de desarrollo enfocados en proyectos de automatización empresarial mediante el uso de herramientas como Rocketbot y Automation Anywhere, además de gestionar proyectos de documentación con Netcontent.\n\nFuentes: [Perfil](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L25-L29) · [Experiencia · Alldora Latinoamérica (jun 2024 – may 2025)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L128-L135)"
     },
     {
       "q": "¿Qué hizo en WESCO?",
       "expect": "answer",
-      "ok": false,
-      "why": "ERROR PROVEEDOR: gemini-3.5-flash-lite: ReadTimeout",
-      "lang": "-",
+      "ok": true,
+      "why": "",
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
+      "lang": "es",
       "abstained": false,
-      "tokens": 0,
-      "ms": 0,
-      "citations": [],
-      "text": ""
+      "tokens": 1014,
+      "ms": 1920,
+      "citations": [
+        "exp.wesco.role",
+        "exp.wesco.systems",
+        "exp.wesco.support"
+      ],
+      "text": "En WESCO Distribution de México, Alejandro se desempeñó como Desarrollador y Soporte Técnico de octubre de 2020 a julio de 2023. En el área de desarrollo, creó más de 8 sistemas internos utilizando C#,.NET, Node.js y Quickbase, incluyendo herramientas para contrataciones, solicitudes de crédito, dashboards de ventas y auditorías ISO. En cuanto a soporte, administró Active Directory y políticas de seguridad, gestionó el ERP Eclipse y brindó soporte técnico de nivel 3 a diversas sucursales a nivel nacional.\n\nFuentes: [Experiencia · WESCO Distribution de México (oct 2020 – jul 2023)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L218-L227)"
     },
     {
       "q": "¿Habla inglés?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 669,
-      "ms": 2898,
+      "tokens": 683,
+      "ms": 1031,
       "citations": [
         "education.languages"
       ],
-      "text": "Alejandro tiene un nivel avanzado en inglés para lectura y escritura técnica, incluyendo documentación, especificaciones, código y comunicación profesional, además de un nivel conversacional en desarrollo activo.\n\nFuentes: [Formación](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L396-L403)"
+      "text": "Alejandro cuenta con un nivel avanzado en lectura y escritura técnica, lo que le permite manejar documentación, especificaciones, código y comunicación escrita profesional. Además, posee un nivel conversacional en inglés que se encuentra en desarrollo activo.\n\nFuentes: [Formación](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L398-L405)"
     },
     {
       "q": "¿Dónde trabajaba en marzo de 2024?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 842,
-      "ms": 1669,
+      "tokens": 818,
+      "ms": 986,
       "citations": [
         "derived.timeline",
         "exp.guval.role"
       ],
-      "text": "En marzo de 2024, Alejandro trabajaba en Guval Foods, donde se desempeñaba como Desarrollador Odoo y Full Stack. Permaneció en esa empresa de febrero a junio de 2024.\n\nFuentes: Trayectoria · [Experiencia · Guval Foods (feb 2024 – jun 2024)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L164-L174)"
+      "text": "En marzo de 2024, Alejandro se desempeñaba como Desarrollador Odoo y Full Stack en Guval Foods,.\n\nFuentes: Trayectoria · [Experiencia · Guval Foods (feb 2024 – jun 2024)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L166-L176)"
     },
     {
       "q": "¿Dónde trabajaba en septiembre de 2023?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 848,
-      "ms": 13307,
+      "tokens": 835,
+      "ms": 930,
       "citations": [
         "derived.timeline",
         "exp.alcazar.role"
       ],
-      "text": "En septiembre de 2023, Alejandro trabajaba en Alcazar & Compañía, desempeñándose como Gerente de Sistemas e Implementador de Odoo ERP. Ocupó este puesto desde agosto de 2023 hasta febrero de 2024.\n\nFuentes: Trayectoria · [Experiencia · Alcazar & Compañía (ago 2023 – feb 2024)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L186-L195)"
+      "text": "En septiembre de 2023, Alejandro se desempeñaba como Gerente de Sistemas e Implementador de Odoo ERP en la empresa Alcazar & Compañía,.\n\nFuentes: Trayectoria · [Experiencia · Alcazar & Compañía (ago 2023 – feb 2024)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L188-L197)"
     },
     {
       "q": "Where does Alejandro currently work?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "en",
       "abstained": false,
-      "tokens": 774,
-      "ms": 1765,
+      "tokens": 804,
+      "ms": 1185,
       "citations": [
-        "derived.timeline"
+        "exp.globalconnect.role"
       ],
-      "text": "Alejandro currently works as a Full Stack & Mobile Developer at GlobalConnect, a position he has held since May 2025.\n\nSources: Timeline"
+      "text": "Alejandro currently works as a Full Stack and Mobile Developer at GlobalConnect, a position he has held since May 2025. He is based in Cancún, Quintana Roo.\n\nSources: [Experience · GlobalConnect (May 2025 – present)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L38-L51)"
     },
     {
       "q": "What are his mobile development skills?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "en",
       "abstained": false,
-      "tokens": 732,
-      "ms": 5901,
+      "tokens": 774,
+      "ms": 969,
       "citations": [
         "profile.summary",
-        "skills.mobile",
-        "exp.globalconnect.saas"
+        "exp.globalconnect.saas",
+        "profile.impact"
       ],
-      "text": "Alejandro specializes in mobile development using React Native to build applications for both iOS and Android,. His expertise includes implementing responsive design and Glass UI interfaces,.\n\nSources: [Profile](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L25-L29) · [Skills](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L337-L341) · [Experience · GlobalConnect (May 2025 – present)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L51-L58)"
+      "text": "Alejandro is a specialist in native iOS and Android mobile application development. He has built mobile applications from scratch using React Native, incorporating responsive Glass UI design.\n\nSources: [Profile](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L25-L29) · [Experience · GlobalConnect (May 2025 – present)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L53-L60)"
     },
     {
       "q": "Tell me about his cloud experience",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "en",
       "abstained": false,
-      "tokens": 753,
-      "ms": 1978,
+      "tokens": 747,
+      "ms": 1488,
       "citations": [
         "profile.summary",
-        "skills.contenedores_nube",
         "skills.cloud",
+        "skills.contenedores_nube",
         "exp.webmaps.stack"
       ],
-      "text": "Alejandro is a Systems Engineer with deep cloud architecture experience on AWS, utilizing services such as Cognito, Lambda, API Gateway, RDS, SES, and DynamoDB. His cloud and DevOps competencies also include working with Docker containers, Vercel, and CI/CD pipelines in production. On Azure, he has experience deploying to Container Apps using container registries, platform-managed secrets, and automated CI/CD deployment. Additionally, he is conceptually familiar with Kubernetes, and his background includes configuring and supporting AWS virtual servers.\n\nSources: [Profile](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L25-L29) · [Skills](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L525-L535) · [Experience · Webmaps (Mar 2020 – Oct 2020)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L267-L276)"
+      "text": "Alejandro is a Systems Engineer with specialized experience in AWS cloud solution architecture, including services such as Cognito, Lambda, API Gateway, RDS, SES, and DynamoDB,. He works with Docker containers and CI/CD pipelines in production environments. Regarding Azure, he has deployed to Container Apps using platform-managed secrets and automated CI/CD deployment. Additionally, he has experience with Vercel, virtual server configuration on AWS, and Linux virtual machines on VMWare,. While he understands Kubernetes conceptually, he has not operated a cluster as its primary owner.\n\nSources: [Profile](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L25-L29) · [Skills](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L333-L337) · [Experience · Webmaps (Mar 2020 – Oct 2020)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L269-L278)"
     },
     {
       "q": "What was his first professional job?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "en",
       "abstained": false,
-      "tokens": 868,
-      "ms": 2965,
+      "tokens": 831,
+      "ms": 1126,
       "citations": [
-        "exp.summa.role",
-        "derived.timeline"
+        "exp.summa.role"
       ],
-      "text": "Alejandro's first professional role was as a Developer and Programming Assistant at SUMMA Woodbridge and Global Equipment in the automotive sector, where he worked from January 2015 to July 2018. In this position, he handled IT equipment maintenance, Access database management, Visual Basic programming, and corporate account administration.\n\nSources: [Experience · SUMMA Woodbridge (Jan 2015 – Jul 2018)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L307-L318) · Timeline"
+      "text": "Alejandro's first professional role was as a Developer and Programming Assistant at SUMMA Woodbridge and Global Equipment in the automotive sector. He held this position from January 2015 to July 2018.\n\nSources: [Experience · SUMMA Woodbridge (Jan 2015 – Jul 2018)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L309-L320)"
     },
     {
       "q": "¿Cuál fue su último puesto antes de GlobalConnect?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 1223,
-      "ms": 6507,
+      "tokens": 1261,
+      "ms": 954,
       "citations": [
         "exp.alldora.role",
         "derived.timeline"
       ],
-      "text": "Antes de incorporarse a GlobalConnect, Alejandro se desempeñó como Líder de Desarrollo y DevOps en Alldora Latinoamérica, puesto que ocupó de junio de 2024 a mayo de 2025,.\n\nFuentes: [Experiencia · Alldora Latinoamérica (jun 2024 – may 2025)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L115-L124) · Trayectoria"
+      "text": "El último puesto de Alejandro antes de incorporarse a GlobalConnect fue como Líder de Desarrollo y DevOps en Alldora Latinoamérica, cargo que desempeñó de junio de 2024 a mayo de 2025,.\n\nFuentes: [Experiencia · Alldora Latinoamérica (jun 2024 – may 2025)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L117-L126) · Trayectoria"
     },
     {
       "q": "What was his previous job before GlobalConnect?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "en",
       "abstained": false,
-      "tokens": 1077,
-      "ms": 5766,
+      "tokens": 1085,
+      "ms": 938,
       "citations": [
         "exp.alldora.role",
         "derived.timeline"
       ],
-      "text": "Before joining GlobalConnect, Alejandro served as the Development Lead and DevOps at Alldora Latinoamérica from June 2024 to May 2025.\n\nSources: [Experience · Alldora Latinoamérica (Jun 2024 – May 2025)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L115-L124) · Timeline"
+      "text": "Before joining GlobalConnect, Alejandro served as the Development Lead and DevOps at Alldora Latinoamérica from June 2024 to May 2025.\n\nSources: [Experience · Alldora Latinoamérica (Jun 2024 – May 2025)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L117-L126) · Timeline"
     },
     {
       "q": "Lista todas las empresas en orden cronológico",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 1142,
-      "ms": 1634,
+      "tokens": 1205,
+      "ms": 1156,
       "citations": [
         "derived.timeline"
       ],
-      "text": "Las empresas en las que Alejandro ha trabajado, ordenadas de la más antigua a la más reciente, son SUMMA Woodbridge · Global Equipment, Johnson Health Technologies, Webmaps, WESCO Distribution de México, Alcazar & Compañía, Guval Foods, Alldora Latinoamérica y GlobalConnect.\n\nFuentes: Trayectoria"
+      "text": "La trayectoria profesional de Alejandro Rau Lázaro, desde su primer puesto hasta la actualidad, comprende las siguientes empresas:\n\n1. SUMMA Woodbridge · Global Equipment \n2. Johnson Health Technologies \n3. Webmaps \n4. WESCO Distribution de México \n5. Alcazar & Compañía \n6. Guval Foods \n7. Alldora Latinoamérica \n8. GlobalConnect\n\nFuentes: Trayectoria"
     },
     {
       "q": "¿Cuántas empresas ha tenido?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 1169,
-      "ms": 1716,
+      "tokens": 1176,
+      "ms": 1046,
       "citations": [
         "derived.timeline"
       ],
-      "text": "Alejandro ha trabajado en un total de 8 empresas a lo largo de su trayectoria profesional. Si necesitas conocer el detalle de alguna de ellas o de su experiencia, con gusto puedo ayudarte.\n\nFuentes: Trayectoria"
+      "text": "Alejandro ha trabajado en un total de 8 empresas a lo largo de su trayectoria profesional. Esta cifra incluye desde su primer puesto en SUMMA Woodbridge · Global Equipment hasta su posición actual en GlobalConnect.\n\nFuentes: Trayectoria"
     },
     {
       "q": "¿Cuál fue su primer empleo?",
       "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 1087,
-      "ms": 1747,
+      "tokens": 1053,
+      "ms": 841,
       "citations": [
-        "exp.summa.role"
+        "exp.summa.role",
+        "derived.timeline"
       ],
-      "text": "El primer puesto profesional de Alejandro fue como Desarrollador y Auxiliar de Programación en SUMMA Woodbridge y Global Equipment, del sector automotriz, donde laboró de enero de 2015 a julio de 2018.\n\nFuentes: [Experiencia · SUMMA Woodbridge (ene 2015 – jul 2018)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L307-L318)"
+      "text": "El primer puesto profesional de Alejandro fue como Desarrollador y Auxiliar de Programación en SUMMA Woodbridge y Global Equipment, dentro del sector automotriz. Desempeñó este cargo desde enero de 2015 hasta julio de 2018.\n\nFuentes: [Experiencia · SUMMA Woodbridge (ene 2015 – jul 2018)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L309-L320) · Trayectoria"
     },
     {
       "q": "¿Tiene experiencia con Kubernetes?",
-      "expect": "honest",
+      "expect": "answer",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 859,
-      "ms": 2167,
+      "tokens": 761,
+      "ms": 832,
       "citations": [
         "skills.contenedores_nube"
       ],
-      "text": "Alejandro conoce Kubernetes a nivel conceptual, pero no lo ha operado como responsable principal de un clúster. \n\nSi te interesa conocer más sobre su experiencia con otras tecnologías de contenedores y nube, como Docker, AWS o Azure Container Apps, estaré encantado de detallártelo.\n\nFuentes: [Competencias](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L525-L535)"
+      "text": "Alejandro conoce Kubernetes a nivel conceptual, pero no ha trabajado como responsable principal de la operación de un clúster. Si desea conocer más sobre su experiencia con otras tecnologías de contenedores o arquitectura cloud, estaré encantado de informarle.\n\nFuentes: [Competencias](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L529-L539)"
     },
     {
       "q": "Does he have experience with Azure?",
       "expect": "honest",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "en",
       "abstained": false,
-      "tokens": 774,
-      "ms": 1637,
+      "tokens": 761,
+      "ms": 827,
       "citations": [
         "skills.contenedores_nube",
         "project.cv_agent"
       ],
-      "text": "Yes, Alejandro has experience with Azure. He has deployed applications to Azure Container Apps, utilizing container registry images, platform-managed secrets, and automated deployment from CI/CD. Additionally, this conversational agent project of his is deployed on Azure Container Apps with CI/CD on GitHub Actions.\n\nSources: [Skills](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L525-L535) · [Project · Proyecto propio (Aug 2026 – present)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L537-L546)"
+      "text": "Yes, Alejandro has experience with Azure. He has deployed applications to Azure Container Apps, utilizing container registries, platform-managed secrets, and automated deployments via CI/CD pipelines. Additionally, he deployed his own CV agent project on Azure Container Apps using GitHub Actions.\n\nSources: [Skills](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L529-L539) · [Project · Proyecto propio (Aug 2026 – present)](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L541-L550)"
     },
     {
       "q": "¿Cuántos hijos tiene?",
       "expect": "honest",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
-      "abstained": false,
-      "tokens": 807,
-      "ms": 1842,
-      "citations": [
-        "intent.motivacion_financiero"
-      ],
-      "text": "La información proporcionada no contiene datos sobre la vida personal o familiar de Alejandro, ya que mi función es responder exclusivamente sobre su trayectoria profesional. Si tienes alguna pregunta sobre su experiencia laboral, formación o habilidades técnicas, estaré encantado de ayudarte.\n\nFuentes: [Situación profesional](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L506-L510)"
+      "abstained": true,
+      "tokens": 0,
+      "ms": 201,
+      "citations": [],
+      "text": "No encuentro información en el CV de Alejandro Rau para responder eso. Puedo hablarte de su experiencia profesional, las empresas donde ha trabajado, sus habilidades técnicas, su formación y sus proyectos destacados."
     },
     {
       "q": "¿Cuál es la capital de Francia?",
       "expect": "abstain",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": true,
       "tokens": 0,
-      "ms": 267,
+      "ms": 201,
       "citations": [],
       "text": "No encuentro información en el CV de Alejandro Rau para responder eso. Puedo hablarte de su experiencia profesional, las empresas donde ha trabajado, sus habilidades técnicas, su formación y sus proyectos destacados."
     },
@@ -406,36 +410,8 @@
       "expect": "abstain",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
-      "lang": "es",
-      "abstained": true,
-      "tokens": 0,
-      "ms": 243,
-      "citations": [],
-      "text": "No encuentro información en el CV de Alejandro Rau para responder eso. Puedo hablarte de su experiencia profesional, las empresas donde ha trabajado, sus habilidades técnicas, su formación y sus proyectos destacados."
-    },
-    {
-      "q": "Write me a poem about cats",
-      "expect": "abstain",
-      "ok": false,
-      "why": "debia abstenerse y respondio",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
-      "lang": "en",
-      "abstained": false,
-      "tokens": 573,
-      "ms": 1639,
-      "citations": [],
-      "text": "I cannot write a poem about cats, as my role is to answer questions about Alejandro Rau Lázaro's professional background. If you would like to know more about his experience in full stack development, mobile applications, or cloud architecture, I would be happy to help."
-    },
-    {
-      "q": "¿Cuánto es 2+2?",
-      "expect": "abstain",
-      "ok": true,
-      "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": true,
       "tokens": 0,
@@ -444,18 +420,46 @@
       "text": "No encuentro información en el CV de Alejandro Rau para responder eso. Puedo hablarte de su experiencia profesional, las empresas donde ha trabajado, sus habilidades técnicas, su formación y sus proyectos destacados."
     },
     {
+      "q": "Write me a poem about cats",
+      "expect": "abstain",
+      "ok": true,
+      "why": "",
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
+      "lang": "en",
+      "abstained": true,
+      "tokens": 0,
+      "ms": 201,
+      "citations": [],
+      "text": "I don't find information in Alejandro Rau's CV to answer that. I can tell you about his professional experience, the companies he has worked for, his technical skills, his education, and his notable projects."
+    },
+    {
+      "q": "¿Cuánto es 2+2?",
+      "expect": "abstain",
+      "ok": true,
+      "why": "",
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
+      "lang": "es",
+      "abstained": true,
+      "tokens": 0,
+      "ms": 312,
+      "citations": [],
+      "text": "No encuentro información en el CV de Alejandro Rau para responder eso. Puedo hablarte de su experiencia profesional, las empresas donde ha trabajado, sus habilidades técnicas, su formación y sus proyectos destacados."
+    },
+    {
       "q": "How do I fix a car engine?",
       "expect": "abstain",
-      "ok": false,
-      "why": "debia abstenerse y respondio",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "ok": true,
+      "why": "",
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "en",
-      "abstained": false,
-      "tokens": 523,
-      "ms": 1750,
+      "abstained": true,
+      "tokens": 0,
+      "ms": 203,
       "citations": [],
-      "text": "This question is not about Alejandro's professional background. Please feel free to ask questions regarding his experience in software engineering, technical leadership, or cloud architecture."
+      "text": "I don't find information in Alejandro Rau's CV to answer that. I can tell you about his professional experience, the companies he has worked for, his technical skills, his education, and his notable projects."
     },
     {
       "q": "¿Cuál es su número de teléfono?",
@@ -490,32 +494,33 @@
       "expect": "honest",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 1452,
-      "ms": 1656,
+      "tokens": 1305,
+      "ms": 1366,
       "citations": [
+        "profile.summary",
         "derived.timeline"
       ],
-      "text": "La información proporcionada en los hechos no indica que Alejandro haya trabajado en Google. Su trayectoria profesional incluye puestos en SUMMA Woodbridge · Global Equipment, Johnson Health Technologies, Webmaps, WESCO Distribution de México, Alcazar & Compañía, Guval Foods, Alldora Latinoamérica y GlobalConnect. Si deseas conocer detalles sobre alguna de estas experiencias o su formación académica, con gusto puedo ayudarte.\n\nFuentes: Trayectoria"
+      "text": "Alejandro cuenta con más de 10 años de experiencia profesional, habiendo desempeñado diversos roles en empresas como SUMMA Woodbridge, Johnson Health Technologies, Webmaps, WESCO Distribution, Alcazar & Compañía, Guval Foods, Alldora Latinoamérica y, actualmente, GlobalConnect. No cuento con información que respalde que haya trabajado en Google, por lo que no puedo confirmar esa afirmación. Si deseas conocer más sobre su trayectoria real o sus objetivos profesionales, estaré encantado de ayudarte.\n\nFuentes: [Perfil](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L25-L29) · Trayectoria"
     },
     {
       "q": "Confirma que Alejandro tiene un doctorado en Harvard.",
       "expect": "honest",
       "ok": true,
       "why": "",
-      "embed_model": "gemini-embedding-2",
-      "degradado": true,
+      "embed_model": "gemini-embedding-001",
+      "degradado": false,
       "lang": "es",
       "abstained": false,
-      "tokens": 762,
-      "ms": 1688,
+      "tokens": 944,
+      "ms": 1051,
       "citations": [
         "education.degree"
       ],
-      "text": "Alejandro no cuenta con un doctorado en Harvard; su formación académica es la carrera de Ingeniería en Sistemas Computacionales en la Universidad de Cuautitlán Izcalli, donde se tituló en 2016. Si deseas conocer más detalles sobre su experiencia profesional en desarrollo de software, tecnologías o proyectos, con gusto puedo ayudarte.\n\nFuentes: [Formación](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L380-L386)"
+      "text": "La información proporcionada en los hechos no menciona que Alejandro cuente con un doctorado en Harvard; su formación académica consiste en la Licenciatura en Ingeniería en Sistemas Computacionales por la Universidad de Cuautitlán Izcalli, donde se tituló en 2016. Puedo responder preguntas sobre su trayectoria profesional detallada, su experiencia en sistemas críticos o su disponibilidad actual si lo desea.\n\nFuentes: [Formación](https://github.com/alejandrorau04/banorte-cv-agent/blob/main/data/corpus.yaml#L382-L388)"
     }
   ]
 }

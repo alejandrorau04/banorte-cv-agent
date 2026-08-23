@@ -24,7 +24,7 @@ sea ejecutable por cualquiera, incluido un evaluador.
 ## Nivel 1 — Pruebas automatizadas (57)
 
 ```bash
-pytest -q          # 65 passed
+pytest -q          # 122 passed
 ```
 
 | Archivo | Casos | Cubre |
@@ -62,10 +62,10 @@ solo de preguntas fáciles no probaría la propiedad que más importa aquí.
 
 | Métrica | Valor |
 |---|---|
-| Aciertos | **26 / 26 (100 %)** |
-| Consultas que no invocan al LLM | 8 / 26 (30,8 %) |
-| Tokens totales | 10.911 (media 420/consulta) |
-| Latencia p50 / p95 | 1.229 ms / 13.284 ms |
+| Aciertos | **32 / 32 (100 %)** |
+| Consultas que no invocan al LLM | 8 / 32 (25 %) |
+| Tokens totales | 21.657 (media 677/consulta) |
+| Latencia p50 / p95 | 969 ms / 1.488 ms |
 
 ### Recorrido feliz — ejemplo verificado
 
@@ -74,7 +74,7 @@ solo de preguntas fáciles no probaría la propiedad que más importa aquí.
 **Respuesta:** menciona GlobalConnect, Cancún y mayo de 2025, citando
 `[exp.globalconnect.role]`.
 **Verificación:** la cita existe entre los hechos recuperados → se conserva.
-**Coste:** 557 tokens, 1,2 s.
+**Coste:** 557 tokens, 1,0 s.
 
 ### Casos límite verificados
 
@@ -246,7 +246,7 @@ pero sí enumera qué demuestra criterio de nivel Senior. Correspondencia con lo
 | Controlar respuestas no respaldadas por el CV | Cuatro controles en capas, umbral calibrado con datos (ADR-003) |
 | Integración clara y mantenible | Puertos y adaptadores; el núcleo desconoce HTTP y proveedor |
 | Errores, observabilidad, seguridad y operación | Errores tipados, logs estructurados, modelo STRIDE, runbook |
-| Cómo validar y detectar regresiones | 65 tests y golden set de 32 casos; un test por cada defecto hallado |
+| Cómo validar y detectar regresiones | 122 tests y golden set de 32 casos; un test por cada defecto hallado |
 | Casos sobre experiencia, habilidades y proyectos | 20 casos `answer` |
 | Preguntas sin respuesta en el CV, verificando que no invente | 5 casos `honest` y 5 `abstain` |
 | Comprobación de citas y fragmentos recuperados | Verificación de citas + `metadata.retrieved` con similitudes |
@@ -256,7 +256,7 @@ pero sí enumera qué demuestra criterio de nivel Senior. Correspondencia con lo
 También señala: *«no es necesario añadir tecnologías complejas solo para hacer la
 solución más grande; una arquitectura sencilla, bien justificada y operable puede
 demostrar más madurez que una plataforma sobredimensionada»*. Es exactamente el
-razonamiento del ADR-004, que justifica no desplegar base vectorial para 94 vectores.
+razonamiento del ADR-004, que justifica no desplegar base vectorial para 122 vectores.
 
 ## Cronología
 

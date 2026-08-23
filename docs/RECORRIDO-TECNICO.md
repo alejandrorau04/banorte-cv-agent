@@ -103,7 +103,7 @@ Ausencias deliberadas:
 
 | No se usa | Por qué |
 |---|---|
-| `numpy` | La similitud coseno se implementa en Python puro. Con 94 vectores el rendimiento es irrelevante y se elimina una dependencia con compilación nativa |
+| `numpy` | La similitud coseno se implementa en Python puro. Con 122 vectores el rendimiento es irrelevante y se elimina una dependencia con compilación nativa |
 | `langchain` / `llamaindex` | Ocultarían exactamente las decisiones que el reto pide explicar. El pipeline RAG son ~150 líneas legibles |
 | SDK de Google | `httpx` directo: menos superficie, control total de timeouts y reintentos |
 | Base de datos | El estado es de solo lectura y cabe en memoria |
@@ -161,8 +161,8 @@ la Dirección de IA e Innovación de Banorte, a coste casi nulo.
 │       ├── base.py                 puertos: LLM, Embedder
 │       └── gemini.py               implementación de Google
 ├── data/
-│   ├── corpus.yaml                 46 hechos bilingües  ← FUENTE DE VERDAD
-│   └── corpus.index.json           94 vectores de 768 dim (versionado)
+│   ├── corpus.yaml                 61 hechos bilingües  ← FUENTE DE VERDAD
+│   └── corpus.index.json           122 vectores de 768 dim (versionado)
 ├── docs/
 │   ├── contract/openapi.json       contrato oficial anclado
 │   ├── adr/                        8 decisiones documentadas
@@ -174,7 +174,7 @@ la Dirección de IA e Innovación de Banorte, a coste casi nulo.
 ├── scripts/
 │   ├── build_index.py              calcula los embeddings (en build)
 │   └── robustez.py                 28 entradas hostiles + carga
-├── tests/                          65 tests, sin red ni credenciales
+├── tests/                          122 tests, sin red ni credenciales
 ├── .github/workflows/ci.yml        tests → imagen → GHCR
 ├── Dockerfile
 ├── requirements.txt
@@ -248,7 +248,7 @@ Se recorren en orden de dependencia: de dentro hacia fuera.
 
 ## 5.1 `data/corpus.yaml` — la fuente de verdad
 
-46 hechos atómicos. Cada uno:
+61 hechos atómicos. Cada uno:
 
 ```yaml
 - id: exp.alldora.vinte        # ESTABLE: cambiarlo rompe citas y golden set
@@ -502,7 +502,7 @@ familiaridad con pipelines CI/CD; ahora es demostrable, no declarativo.
 
 ```
 git push a main
-  └─> 65 tests (sin red)
+  └─> 122 tests (sin red)
   └─> verificación de los 31 campos CONTRA EL OPENAPI OFICIAL descargado
   └─> verificación de ausencia de PII en el corpus
   └─> docker build
@@ -571,7 +571,7 @@ Y dos hallazgos sobre el propio sistema de evaluación:
 1. **La ambigüedad se investiga, no se asume.** El contrato existía y era público.
 2. **Un modelo que no se invoca no puede alucinar.** La abstención previa es el control
    más eficaz, y además el más barato.
-3. **Saber cuándo NO usar una tecnología es criterio técnico.** 94 vectores no justifican
+3. **Saber cuándo NO usar una tecnología es criterio técnico.** 122 vectores no justifican
    una base vectorial.
 4. **Las preguntas estructuradas se responden con datos estructurados.** El orden
    cronológico lo calcula `sorted()`, no el modelo.

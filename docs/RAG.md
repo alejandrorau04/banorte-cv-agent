@@ -38,7 +38,7 @@ flowchart TB
 ## 0 · El corpus: hechos, no documentos
 
 Lo habitual en RAG es trocear un documento en fragmentos de N caracteres. **Aquí no se
-hace.** El CV se transforma en `data/corpus.yaml`: 46 hechos atómicos escritos a mano,
+hace.** El CV se transforma en `data/corpus.yaml`: 61 hechos atómicos escritos a mano,
 cada uno con identificador estable, metadatos y texto paralelo en español e inglés.
 
 ```yaml
@@ -115,7 +115,7 @@ distintas quedan próximas.
   Distinguirlos mejora la recuperación de forma apreciable: una pregunta y una
   afirmación tienen forma distinta aunque hablen de lo mismo.
 
-Los 94 vectores del corpus se calculan **en tiempo de construcción**
+Los 122 vectores del corpus se calculan **en tiempo de construcción**
 (`scripts/build_index.py`) y se versionan en git. Consecuencias: construir la imagen no
 requiere credenciales, arrancar el contenedor no llama al proveedor, y en runtime solo
 se embebe la pregunta.
@@ -134,7 +134,7 @@ la coincidencia literal es la señal más fuerte.
 término que aparece en un solo hecho pesa mucho más que uno que aparece en veinte.
 Justo lo que se necesita para los nombres propios.
 
-**Por qué no hay base vectorial.** 47 hechos × 2 idiomas = 94 vectores. Qdrant o pgvector
+**Por qué no hay base vectorial.** 61 hechos × 2 idiomas = 122 vectores. Qdrant o pgvector
 añadirían un servicio que desplegar, latencia de red y un punto de fallo, sin ganancia
 medible: la búsqueda exhaustiva sobre 47 vectores en Python puro es de microsegundos.
 La recuperación vive tras una interfaz, así que sustituirla es implementar una clase

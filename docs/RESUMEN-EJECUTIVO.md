@@ -36,14 +36,14 @@ implementa cuatro controles que **no dependen de la buena voluntad del modelo**.
 | Consistencia ante 26 formulaciones distintas | **26/26** |
 | Entradas hostiles y malformadas | **28/28 sin errores 5xx** |
 | Carga, concurrencia 10 | **30/30 correctas** |
-| Pruebas automatizadas | **65**, sin red ni credenciales |
-| Latencia p50 / p95 | 1,2 s / 13,3 s |
+| Pruebas automatizadas | **122**, sin red ni credenciales |
+| Latencia p50 / p95 | 0,97 s / 1,49 s |
 | Consultas que **no** invocan al modelo | 25 % |
 | Reducción de consumo de tokens | **−54 %** |
 
 ## Decisiones que definen la solución
 
-**Sin base vectorial.** 94 vectores no justifican desplegar Qdrant ni pgvector: añadirían
+**Sin base vectorial.** 122 vectores no justifican desplegar Qdrant ni pgvector: añadirían
 infraestructura, latencia y un punto de fallo sin ganancia medible. La recuperación vive
 tras una interfaz sustituible.
 
@@ -59,7 +59,7 @@ cronológico lo calcula el código a partir de los metadatos, no el modelo.
 
 ## Coste operativo
 
-Modelo y embeddings en nivel gratuito. Consumo medio **416 tokens por consulta**, y cero
+Modelo y embeddings en nivel gratuito. Consumo medio **677 tokens por consulta**, y cero
 en el 25 % de los casos. La infraestructura es un único contenedor de 0,5 vCPU.
 
 ## Trazabilidad y seguridad
