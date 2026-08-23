@@ -84,6 +84,23 @@ cases:
     expect: answer
     must_cite: [exp.summa.role, derived.timeline]
 
+  # ---- duraciones: aritmetica de fechas, no inferencia del modelo ----
+  # El agente respondia WESCO (33 meses) a "¿en que puesto estuvo mas tiempo?"
+  # cuando la respuesta es SUMMA (42). Restar fechas es trabajo de codigo.
+  - q: "¿Cuál fue el puesto en el que más tiempo estuvo?"
+    expect: answer
+    must_cite: [derived.duraciones, exp.summa.role]
+    forbid_text: ["WESCO", "Johnson", "GlobalConnect"]
+  - q: "¿Cuánto tiempo estuvo en WESCO?"
+    expect: answer
+    must_cite: [derived.duraciones, exp.wesco.role]
+  - q: "¿Cuál fue el puesto más corto?"
+    expect: answer
+    must_cite: [derived.duraciones, exp.guval.role]
+  - q: "How long was he at Johnson Health?"
+    expect: answer
+    must_cite: [derived.duraciones, exp.johnson.role]
+
   # ---- honestidad: pregunta legítima cuya respuesta NO está en el CV ----
   # El corpus ya declara el alcance real (ADR-010): conocimiento conceptual sin
   # haber operado un cluster. La respuesta correcta es decir eso, no negarlo.

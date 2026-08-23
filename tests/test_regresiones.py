@@ -588,3 +588,43 @@ def test_todos_los_tipos_del_corpus_tienen_etiqueta(facts):
     for f in facts:
         assert f.type in SECCIONES, f"{f.id}: tipo sin etiqueta"
         assert f.label("es") and f.label("en")
+
+
+# --- las duraciones las calcula el código, no el modelo
+def test_las_duraciones_se_calculan_de_las_fechas(facts):
+    """El modelo respondía WESCO (33 meses) a «¿en qué puesto estuvo más tiempo?»
+    cuando la respuesta es SUMMA (42). Restar fechas es trabajo de código."""
+    d = next(f for f in facts if f.id == "derived.duraciones")
+    assert "SUMMA" in d.text_es and "3 años y 6 meses" in d.text_es
+    assert "2 años y 9 meses" in d.text_es          # WESCO
+    assert "Guval" in d.text_es and "4 meses" in d.text_es
+    assert "3 years and 6 months" in d.text_en
+
+
+def test_el_puesto_en_curso_no_lleva_duracion_calculada():
+    """Una duración en curso crece cada mes: incluirla dejaría el texto —y su
+    vector— obsoletos a diario."""
+    from app.core.corpus import load_facts
+    d = next(f for f in load_facts() if f.id == "derived.duraciones")
+    assert "en curso desde" in d.text_es
+    assert "ongoing since" in d.text_en
+
+
+def test_el_calculo_de_meses_es_correcto():
+    from app.core.corpus import _meses, _en_palabras
+    assert _meses("2015-01", "2018-07") == 42
+    assert _meses("2020-10", "2023-07") == 33
+    assert _meses("2024-02", "2024-06") == 4
+    assert _meses("2025-05", None) is None          # en curso
+    assert _en_palabras(42) == "3 años y 6 meses"
+    assert _en_palabras(12) == "1 año"
+    assert _en_palabras(7) == "7 meses"
+
+
+def test_las_preguntas_de_duracion_se_enrutan_como_agregacion():
+    from app.core.agent import _AGREGADA
+    for q in ["¿Cuánto tiempo estuvo en WESCO?", "¿Cuánto lleva en GlobalConnect?",
+              "¿En qué puesto estuvo más tiempo?", "¿Cuál duró menos tiempo?",
+              "How long was he at Johnson Health?", "What was his longest role?",
+              "¿Cuánta antigüedad tiene?"]:
+        assert _AGREGADA.search(q), q

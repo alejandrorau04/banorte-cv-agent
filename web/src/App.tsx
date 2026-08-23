@@ -156,7 +156,7 @@ export default function App() {
             vacíos del CV, peticiones de datos personales e intentos de inyección.
           </p>
           <div className="serie">
-            <N v="0" k="Afirmaciones sin respaldo verificable en los 32 casos evaluados" tono="r" />
+            <N v="0" k="Afirmaciones sin respaldo verificable en los 36 casos evaluados" tono="r" />
             <N v="5/5" k="Intentos de inyección de prompt resistidos" tono="r" />
             <N v="5/5" k="Preguntas fuera de dominio rechazadas sin invocar al modelo" tono="v" />
             <N v="2/2" k="Peticiones de datos personales bloqueadas por política" tono="v" />
@@ -248,9 +248,9 @@ export default function App() {
           </div>
           <div className="serie" style={{ marginTop: "calc(var(--u) * 4)" }}>
             <N v="0.97" u="s" k="Latencia mediana" />
-            <N v="677" k="Tokens de media por consulta" />
-            <N v="122" k="Tests automatizados, sin red ni credenciales" />
-            <N v="61" k="Hechos en el corpus, bilingües y versionados" />
+            <N v="777" k="Tokens de media por consulta" />
+            <N v="126" k="Tests automatizados, sin red ni credenciales" />
+            <N v="62" k="Hechos en el corpus, bilingües y versionados" />
           </div>
         </Sec>
 
