@@ -7,13 +7,28 @@ expuesto como servicio compatible con la especificación abierta
 
 **Reto IA Banorte · Agosto 2026**
 
+### ▶ Demostración de la solución
+
+**https://alejandrorau04.github.io/banorte-cv-agent/**
+
+Documento técnico interactivo con las decisiones tomadas para **diseñar, integrar,
+desplegar y operar** el agente. Cada afirmación enlaza a su origen en este repositorio.
+
+| El reto pide explicar cómo… | Dónde se responde |
+|---|---|
+| **Diseñar** | [Arquitectura](docs/ARQUITECTURA.md) · [Pipeline RAG](docs/RAG.md) · [12 ADRs](docs/adr/) — cada decisión con sus alternativas descartadas |
+| **Integrar** | [ADR-001 · Contrato Open Responses](docs/adr/ADR-001-contrato-open-responses.md) — cómo se localizó la especificación, su asimetría y los supuestos de integración |
+| **Desplegar** | [ADR-007 · Azure y construcción en GitHub Actions](docs/adr/ADR-007-despliegue-y-construccion-de-imagen.md) · [pipeline CI/CD](.github/workflows/ci.yml) |
+| **Operar** | [RUNBOOK](docs/RUNBOOK.md) · [LIMITES-Y-COSTES](docs/LIMITES-Y-COSTES.md) · [MODELO-AMENAZAS](docs/MODELO-AMENAZAS.md) |
+| **Verificar que responde de forma confiable** | [PLAN-DE-PRUEBAS](docs/PLAN-DE-PRUEBAS.md) · [golden set](eval/golden_set.yaml) · [resultados](eval/results.json) |
+
 ---
 
 ## Acceso rápido
 
 | | |
 |---|---|
-| **Presentación técnica** | **https://alejandrorau04.github.io/banorte-cv-agent/** |
+| **Demostración** | **https://alejandrorau04.github.io/banorte-cv-agent/** |
 | **Endpoint** | `POST /v1/responses` · [estado del servicio](https://cv-agent.bravesky-2e199aa3.centralus.azurecontainerapps.io/health) |
 | **Pipelines** | [GitHub Actions](../../actions) · [releases](../../releases) |
 | **Decisiones técnicas** | [12 ADRs](docs/adr/) |

@@ -81,6 +81,13 @@ export default function App() {
           </div>
         </header>
 
+        <nav className="verbos" aria-label="Contenido por área">
+          <a href="#s04"><span>Diseñar</span> Arquitectura · RAG · 12 decisiones</a>
+          <a href="#s05"><span>Integrar</span> Contrato Open Responses · streaming · estado</a>
+          <a href="#s08"><span>Desplegar</span> Azure · contenedor · CI/CD</a>
+          <a href="#s09"><span>Operar</span> Seguridad · coste · límites · diagnóstico</a>
+        </nav>
+
         <div className="ficha">
           <div className="ficha__c"><span className="ficha__k">Versión</span><span className="ficha__v mono">1.1.0</span></div>
           <div className="ficha__c"><span className="ficha__k">Contrato</span><span className="ficha__v mono">Open Responses 2026-04-24</span></div>
