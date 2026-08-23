@@ -164,9 +164,14 @@ Una entrada de 1 000 000 de caracteres devuelve `429` correctamente tipado, no u
 | Medición | Antes del limitador | Después |
 |---|---|---|
 | Códigos | 25×`200`, **5×`429`** | **30×`200`** |
-| Duración | 15,3 s | 24,1 s |
-| p50 / p95 / máx | 2,47 / 9,18 / 15,33 s | 3,43 / 8,06 / 19,22 s |
+| Duración | 15,3 s | 8,6 s |
+| p50 / p95 / máx | 2,47 / 9,18 / 15,33 s | 2,62 / 3,74 / 3,99 s |
 | Respuestas 5xx | 0 | 0 |
+
+Medición del 2026-08-23 con cuota fresca. Repetida inmediatamente después de una sesión
+intensiva de evaluaciones baja a 28–29 de 30, con los fallos emitidos como `429` o `503`
+**tipados** conforme al contrato. Es el límite acumulado del nivel gratuito, no del
+servicio.
 
 Los `429` procedían del límite de cuota del nivel gratuito al lanzar diez llamadas
 simultáneas. Se añadió un limitador a 3 llamadas concurrentes con cola de hasta 6 s:

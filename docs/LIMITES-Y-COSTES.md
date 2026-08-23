@@ -69,6 +69,17 @@ reporta explícitamente cuántos casos corrieron en modo degradado.
 
 ## 3. Escalabilidad
 
+### Comportamiento bajo ráfaga (medido 2026-08-23)
+
+| Condición | Resultado |
+|---|---|
+| 30 peticiones, concurrencia 10, cuota fresca | **30/30 correctas** · p50 2,6 s · p95 3,7 s · 3,5 req/s |
+| La misma ráfaga inmediatamente después de uso intensivo | 28–29/30, con `429` o `503` **tipados** |
+
+El segundo caso es la cuota acumulada del nivel gratuito, no un defecto del servicio: los
+fallos salen con el formato de error del contrato, nunca como caída. Con cuota de pago
+desaparece.
+
 ### Lo que ya escala
 
 - **Servicio sin estado.** No persiste conversaciones: toda la memoria llega en la
