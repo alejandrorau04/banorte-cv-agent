@@ -56,3 +56,29 @@ def test_error_tiene_la_forma_del_contrato():
     assert set(e) == {"message", "type", "code"}
     assert e["type"] in {"server_error", "invalid_request", "not_found",
                          "model_error", "too_many_requests"}
+
+
+def test_la_tarjeta_a2a_trae_los_campos_obligatorios():
+    """A2A v0.3.0 exige diez campos; v1.0.0 anade otros. Se emiten ambos
+    conjuntos porque un cliente ignora los que no conoce."""
+    from app.api.agentcard import agent_card
+    c = agent_card("https://ejemplo.test")
+    for campo in ("protocolVersion", "name", "description", "url",
+                  "preferredTransport", "version", "capabilities",
+                  "defaultInputModes", "defaultOutputModes", "skills"):
+        assert campo in c, f"falta {campo}"
+    assert c["url"].startswith("https://")
+    assert c["capabilities"]["streaming"] is True
+    assert c["skills"], "sin habilidades declaradas"
+    for s in c["skills"]:
+        assert {"id", "name", "description", "tags"} <= set(s)
+        assert s["tags"] and s["examples"]
+
+
+def test_la_tarjeta_no_expone_datos_de_contacto():
+    """Mismo criterio que el corpus: la tarjeta es publica y sin autenticacion."""
+    import json
+    import re
+    from app.api.agentcard import agent_card
+    texto = json.dumps(agent_card("https://ejemplo.test"), ensure_ascii=False)
+    assert not re.search(r"[\w.+-]+@[\w-]+\.\w+|\b\d{2}\s?\d{4}\s?\d{4}\b", texto)

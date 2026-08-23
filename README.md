@@ -83,6 +83,11 @@ curl -X POST "$BASE_URL/v1/responses" \
 
 Streaming SSE con `"stream": true`. Estado del servicio en `GET /health`.
 
+El agente es además **descubrible por clientes A2A**: expone su tarjeta en
+`GET /.well-known/agent-card.json`, lo que permite dar de alta el agente en la plataforma
+del reto con un clic en lugar de rellenar el formulario a mano
+([ADR-013](docs/adr/ADR-013-tarjeta-de-agente-a2a.md)).
+
 Cada respuesta incluye en `metadata` la trazabilidad completa: idioma detectado, si hubo
 grounding, hechos recuperados con su similitud, citas verificadas, modelos que atendieron
 la petición y latencia.
@@ -158,6 +163,7 @@ descargado** y la ausencia de datos personales en el corpus.
 | [010](docs/adr/ADR-010-informacion-aportada-y-verificada.md) | Información fuera del CV: verificación antes de incorporarla |
 | [011](docs/adr/ADR-011-redundancia-de-embeddings.md) | Índice multi-modelo: eliminar el punto único de fallo |
 | [012](docs/adr/ADR-012-memoria-conversacional-acotada.md) | Memoria conversacional acotada a un intercambio |
+| [013](docs/adr/ADR-013-tarjeta-de-agente-a2a.md) | Tarjeta de agente A2A para descubrimiento |
 
 ---
 

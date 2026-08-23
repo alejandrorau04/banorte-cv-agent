@@ -17,6 +17,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from app import config
 from app.adapters.base import ProviderError
 from app.adapters.gemini import GeminiLLM, MultiEmbedder
+from app.api.agentcard import agent_card
 from app.api.openresponses import (SPEC_VERSION, build_response, error_body,
                                    extract_question, extract_turns)
 from app.api.sse import chunk_text, stream_answer
@@ -108,6 +109,16 @@ async def unhandled(_: Request, exc: Exception) -> JSONResponse:
     log.exception('"error no controlado: %s"', type(exc).__name__)
     return JSONResponse(status_code=500, content=error_body(
         "Unexpected server error.", "server_error", "internal_error"))
+
+
+@app.get("/.well-known/agent-card.json")
+async def tarjeta_agente(request: Request) -> JSONResponse:
+    """Descubrimiento A2A. Sin autenticacion a proposito: una tarjeta que exige
+    credenciales para ser leida no puede cumplir su funcion, y no revela nada
+    que el repositorio publico no diga ya."""
+    base = str(request.base_url).rstrip("/")
+    return JSONResponse(content=agent_card(base),
+                        media_type="application/a2a+json")
 
 
 @app.get("/health")
