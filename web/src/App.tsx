@@ -72,8 +72,9 @@ export default function App() {
             <div>
               <h1>Agente de CV<br />Alejandro Rau Lázaro</h1>
               <p className="cab__sub">
-                Servicio conversacional bilingüe compatible con la especificación abierta
-                Open&nbsp;Responses, desplegado en Azure Container Apps.
+                Servicio conversacional bilingüe con recuperación aumentada sobre corpus
+                verificado. Compatible con la especificación abierta Open&nbsp;Responses y
+                desplegado en Azure Container Apps.
               </p>
             </div>
             <Logotipo />
@@ -89,7 +90,7 @@ export default function App() {
           <div className="ficha__c"><span className="ficha__k">Código</span><span className="ficha__v"><a href={REPO}>GitHub ↗</a></span></div>
         </div>
 
-        <Sec n="01" t="Veracidad">
+        <Sec n="01" t="Fiabilidad de las respuestas">
           <p className="dice">
             El conjunto de evaluación tiene 32 casos, de los cuales <strong>12 comprueban
             lo que el agente NO debe responder</strong>: preguntas fuera de dominio,
@@ -110,7 +111,7 @@ export default function App() {
           </p>
         </Sec>
 
-        <Sec n="02" t="Recorrido de una pregunta real">
+        <Sec n="02" t="Trazabilidad: anatomía de una consulta">
           <p className="dice">
             Un caso completo, con los valores exactos de una ejecución contra el endpoint
             desplegado. Es la forma más directa de ver qué hace el sistema.
@@ -167,7 +168,7 @@ export default function App() {
           </p>
         </Sec>
 
-        <Sec n="03" t="Medición comparativa">
+        <Sec n="03" t="Comparativa frente al enfoque estándar">
           <p className="dice">
             Frente al enfoque directo —el que produce una implementación sin estas
             decisiones—, medido sobre el mismo conjunto de preguntas.
@@ -194,7 +195,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="04" t="Arquitectura">
+        <Sec n="04" t="Arquitectura del servicio">
           <p className="dice">
             Tres capas con las dependencias apuntando hacia el núcleo. El núcleo
             <strong> no conoce HTTP ni el proveedor de modelo</strong>: por eso los tests
@@ -211,7 +212,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="05" t="Pipeline RAG">
+        <Sec n="05" t="Recuperación aumentada (RAG)">
           <p className="dice">
             El CV no se indexa como documento troceado: se transforma en hechos atómicos
             con identificador estable, metadatos y texto paralelo en español e inglés.
@@ -250,7 +251,7 @@ export default function App() {
           </ol>
         </Sec>
 
-        <Sec n="07" t="Consumo y latencia">
+        <Sec n="07" t="Eficiencia: consumo de tokens y latencia">
           <p className="dice">
             La abstención previa a la invocación elimina simultáneamente el riesgo de
             invención y el coste. <strong>Ambos efectos proceden del mismo mecanismo.</strong>
@@ -277,7 +278,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="08" t="Entrega continua">
+        <Sec n="08" t="Integración y entrega continua (CI/CD)">
           <p className="dice">
             Azure restringe la construcción de imágenes en suscripciones nuevas. La
             construcción se trasladó a GitHub Actions, conservando Azure como destino.
@@ -296,7 +297,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="09" t="Seguridad">
+        <Sec n="09" t="Seguridad y cumplimiento">
           <p className="dice">
             Modelo de amenazas STRIDE documentado, con los riesgos aceptados explícitos y
             la distancia hasta un despliegue productivo.
@@ -324,7 +325,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="10" t="Defectos hallados">
+        <Sec n="10" t="Aseguramiento de calidad: defectos corregidos">
           <div className="serie">
             <N v="11" k="Defectos localizados en el propio sistema y corregidos" tono="r" />
             <N v="3" k="Veces que la cadena de respaldo falló pareciendo correcta en el código" />
@@ -345,7 +346,7 @@ export default function App() {
           </p>
         </Sec>
 
-        <Sec n="11" t="Verificable">
+        <Sec n="11" t="Evidencia y verificación independiente">
           <p className="dice">
             Cada afirmación de este documento tiene su origen en el repositorio. Estos son
             los enlaces directos.
@@ -372,7 +373,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="12" t="Límites">
+        <Sec n="12" t="Límites conocidos y riesgos aceptados">
           <div className="scroll-x">
             <table className="datos">
               <thead><tr><th>Aspecto</th><th>Estado</th></tr></thead>
@@ -387,7 +388,7 @@ export default function App() {
           </div>
         </Sec>
 
-        <Sec n="13" t="Glosario">
+        <Sec n="13" t="Glosario técnico">
           <dl className="glos">
             <div><dt>RAG</dt><dd>Recuperar información relevante y entregársela al modelo
               para que responda solo con ella, en lugar de confiar en lo que «sabe».</dd></div>
