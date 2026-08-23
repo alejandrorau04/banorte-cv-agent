@@ -13,7 +13,7 @@ cases:
   # ---- en dominio, español ----
   - q: "¿Dónde trabaja actualmente Alejandro?"
     expect: answer
-    must_cite: [exp.globalconnect.role]
+    must_cite: [exp.globalconnect.role, derived.timeline]
   - q: "¿Qué hizo para Vinte?"
     expect: answer
     must_cite: [exp.alldora.vinte, achievements.other]
@@ -54,7 +54,7 @@ cases:
   # ---- en dominio, inglés ----
   - q: "Where does Alejandro currently work?"
     expect: answer
-    must_cite: [exp.globalconnect.role]
+    must_cite: [exp.globalconnect.role, derived.timeline]
   - q: "What are his mobile development skills?"
     expect: answer
     must_cite: [skills.mobile, exp.globalconnect.mobile, exp.globalconnect.saas, profile.summary]

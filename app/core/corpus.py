@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 import yaml
 from app.config import CORPUS_PATH
-from app.core.models import Fact
+from app.core.models import SECCIONES, Fact
 
 # El corpus no debe contener datos de contacto (ADR-006). Se verifica al cargar
 # para que no puedan reintroducirse por descuido en una edición futura.
@@ -60,8 +60,16 @@ def load_facts() -> list[Fact]:
         if _PII.search(es) or _PII.search(en):
             raise CorpusError(f"{fid}: contiene datos de contacto (ADR-006)")
 
+        # `type` alimenta la etiqueta legible de la fuente. Un valor no previsto
+        # cargaba sin error y reventaba al responder, como HTTP 500 y solo para
+        # las preguntas que citaran ese hecho. Se valida aqui: falla al arrancar.
+        tipo = it.get("type", "other")
+        if tipo not in SECCIONES:
+            raise CorpusError(
+                f"{fid}: tipo '{tipo}' desconocido. Validos: {sorted(SECCIONES)}")
+
         facts.append(Fact(
-            id=fid, type=it.get("type", "other"),
+            id=fid, type=tipo,
             text_es=es.strip(), text_en=en.strip(),
             tags=tuple(it.get("tags") or []),
             org=it.get("org"), title=it.get("title"),

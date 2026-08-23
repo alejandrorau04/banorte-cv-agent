@@ -85,7 +85,7 @@ class CVAgent:
         # tokens de LLM, solo un embedding de texto algo mas largo.
         prev_user, prev_answer = _ultimo_intercambio(history)
         seguimiento = bool(prev_user) and _es_seguimiento(q)
-        consulta = f"{prev_user} {q}" if seguimiento else q
+        consulta = f"{prev_user[:_CTX_MAX]} {q}" if seguimiento else q
 
         retrieved, embed_model = await self._r.search(consulta, lang)
 
@@ -103,9 +103,13 @@ class CVAgent:
         # Ese modo degradado existe solo para pruebas unitarias: en produccion el
         # arranque falla si falta el indice (ver app/main.py). La red de seguridad
         # restante es el prompt, que redirige con elegancia.
-        best = max((r.semantic for r in retrieved), default=0.0)
+        # Solo cuenta como evidencia lo recuperado por similitud. Los hechos
+        # inyectados por regla no la aportan: si lo hicieran, bastaria con que
+        # una pregunta pareciese de agregacion para saltarse la compuerta.
+        medidos = [r for r in retrieved if not r.inyectado]
+        best = max((r.semantic for r in medidos), default=0.0)
         floor = config.MIN_SCORE_BY_MODEL.get(embed_model or "", config.MIN_SCORE)
-        if self._r.has_vectors and embed_model and (not retrieved or best < floor):
+        if self._r.has_vectors and embed_model and (not medidos or best < floor):
             return done(Answer(text=prompts.ABSTAIN[lang], lang=lang,
                                retrieved=retrieved, abstained=True,
                                embed_model=embed_model,
@@ -128,11 +132,26 @@ class CVAgent:
 
 # Marcas de pregunta dependiente del contexto previo.
 _SEGUIMIENTO = re.compile(
-    r"\b(ahi|all[ií]|ah[ií]|eso|esa|ese|esos|esas|esta|este|"
-    r"y\s+(qu[eé]|cu[aá]l|c[oó]mo|cu[aá]nto|d[oó]nde|cu[aá]ndo|por)|"
-    r"m[aá]s\s+(detalle|informaci[oó]n|sobre)|cu[eé]ntame\s+m[aá]s|amplia|"
-    r"there|that|those|it|and\s+(what|which|how|when|where|why)|"
-    r"more\s+(detail|about|info)|tell\s+me\s+more|elaborate)\b", re.I)
+    # Inicio de cadena, espacio o puntuacion de apertura: "¿más detalle?" empieza
+    # por el signo, no por espacio.
+    r"(?:^\W*|\s)(?:"
+    # Deicticos que solo tienen sentido con un turno previo.
+    r"ah[ií]|all[ií]|"
+    r"(?:de|en|con|por|para|sobre|a)\s+(?:eso|esa|ese|esos|esas|ello)|"
+    r"(?:eso|ello)\s*[?.,]?\s*$|"
+    # Peticiones de ampliacion.
+    r"cu[eé]ntame\s+m[aá]s|dime\s+m[aá]s|algo\s+m[aá]s|m[aá]s\s+detalle|"
+    # `amplia` sin acento es el adjetivo comun; solo el imperativo cuenta.
+    r"ampl[ií]a(?:lo|melo)|ampl[ií]e|amplía\b|"
+    r"elabora|prof[uú]ndiza|contin[uú]a|sigue\s*[?.,]?\s*$|"
+    r"tell\s+me\s+more|more\s+detail|elaborate|go\s+on|"
+    # Conjuncion inicial: "¿Y qué...?", "And what about...?"
+    r"^\W*(?:y|and)\b|"
+    # Interrogativo suelto: una pregunta de una sola palabra solo tiene sentido
+    # referida al turno anterior.
+    r"^\W*(?:por\s+qu[eé]|cu[aá]ndo|d[oó]nde|qui[eé]n|c[oó]mo|cu[aá]nto|"
+    r"why|when|where|who|how|which)\s*[?¿.!]*\s*$"
+    r")", re.I)
 
 # Preguntas muy cortas que ADEMAS empiezan por conjuncion: "¿y?", "y luego?".
 _CONJUNCION = re.compile(r"^\W*(y|and)\b", re.I)
@@ -182,7 +201,7 @@ def _build_user_prompt(question: str, retrieved: list[Retrieved], lang: Lang,
         cab = ("TURNO ANTERIOR (solo para resolver referencias como «ahí» o «eso»)"
                if lang == "es" else
                "PREVIOUS TURN (only to resolve references such as 'there' or 'that')")
-        ctx = f"{cab}\nUsuario: {prev_user}"
+        ctx = f"{cab}\nUsuario: {prev_user[:_CTX_MAX]}"
         if prev_answer:
             corte = prev_answer.split("\n\nFuentes:")[0].split("\n\nSources:")[0]
             ctx += f"\nAgente: {corte[:_CTX_MAX]}"

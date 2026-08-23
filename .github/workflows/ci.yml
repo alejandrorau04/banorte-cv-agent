@@ -72,27 +72,38 @@ jobs:
           print(f"corpus valido: {len(f)} hechos, sin datos de contacto")
           PY
 
-      - name: El índice cubre todos los modelos declarados
+      - name: Cobertura del índice de embeddings
+        env:
+          # Un indice parcial deja hechos invisibles y desactiva la redundancia.
+          # Que eso pase debe ser una DECISION explicita, no el estado por
+          # defecto: se marca esta variable mientras dure la incidencia y se
+          # retira al reconstruir. Ver ADR-011.
+          PERMITIR_INDICE_PARCIAL: ${{ vars.PERMITIR_INDICE_PARCIAL }}
         run: |
           python - <<'PY'
-          import json, sys; sys.path.insert(0, ".")
-          from app import config
+          import os, sys
+          sys.path.insert(0, ".")
           from app.core.corpus import load_facts
-          d = json.load(open("data/corpus.index.json"))
-          need = len(load_facts()) * 2
-          completos = 0
-          for m in config.EMBED_MODELS:
-              n = len((d.get("by_model") or {}).get(m) or {})
-              if n >= need:
-                  completos += 1
-                  print(f"  {m}: {n}/{need}  OK")
-              else:
-                  # Un indice parcial deja hechos invisibles: no se usa en runtime.
-                  print(f"::warning::{m} tiene el indice INCOMPLETO ({n}/{need}); "
-                        f"no se usara hasta reconstruirlo")
-          print(f"modelos utilizables: {completos}/{len(config.EMBED_MODELS)}")
-          if completos == 0:
-              sys.exit("ERROR: ningun modelo tiene el indice completo")
+          from app.core.retrieval import HybridRetriever
+
+          # Se usa EXACTAMENTE el predicado que aplica el servidor en runtime.
+          # Antes se comparaban cardinalidades aqui y conjuntos de claves alli:
+          # un indice con claves obsoletas pasaba el filtro y el contenedor no
+          # arrancaba, despues de que CI lo declarase completo.
+          r = HybridRetriever.from_index(load_facts())
+          completos, parciales = r.indexed_models, r.partial_models
+          for m in completos:
+              print(f"  {m}: completo")
+          for m, n in parciales.items():
+              print(f"::warning::{m} tiene el índice INCOMPLETO (faltan {n} vectores); "
+                    f"no se usará hasta reconstruirlo con scripts/build_index.py")
+          print(f"modelos utilizables: {len(completos)}")
+
+          if not completos:
+              sys.exit("ERROR: ningún modelo tiene el índice completo")
+          if parciales and os.getenv("PERMITIR_INDICE_PARCIAL", "").lower() != "true":
+              sys.exit("ERROR: hay modelos con el índice incompleto. Reconstruir, o "
+                       "declarar la excepción con la variable PERMITIR_INDICE_PARCIAL")
           PY
 
   # ----------------------------------------------------------------- imagen --
@@ -155,13 +166,15 @@ jobs:
               --query properties.configuration.ingress.fqdn -o tsv)" >> $GITHUB_ENV
 
       - name: Verificar el despliegue
+        env:
+          PERMITIR_INDICE_PARCIAL: ${{ vars.PERMITIR_INDICE_PARCIAL }}
         run: |
           echo "esperando a https://$FQDN/health"
           for i in $(seq 1 40); do
             if curl -sf "https://$FQDN/health" -o /tmp/h.json; then
               cat /tmp/h.json | python -m json.tool
               python - <<'PY'
-          import json, sys
+          import json, os, sys
           h = json.load(open("/tmp/h.json"))
 
           # Se distingue entre NO SERVIR y SERVIR DEGRADADO. Bloquear el
@@ -172,7 +185,11 @@ jobs:
           if h.get("status") != "ok":     fallos.append("status != ok")
           if not h.get("vectors_loaded"): fallos.append("indice de embeddings ausente")
           if h.get("facts", 0) < 50:      fallos.append(f"solo {h.get('facts')} hechos")
-          if not h.get("embed_models"):   fallos.append("ningun modelo de embedding utilizable")
+          if not h.get("embed_models"): fallos.append("ningun modelo de embedding utilizable")
+          # La redundancia solo puede faltar si alguien lo declaro; si no, falla.
+          if h.get("embed_models_incompletos") and \
+             os.getenv("PERMITIR_INDICE_PARCIAL", "").lower() != "true":
+              fallos.append("redundancia de embeddings incompleta sin excepcion declarada")
 
           parciales = h.get("embed_models_incompletos") or {}
           if parciales:

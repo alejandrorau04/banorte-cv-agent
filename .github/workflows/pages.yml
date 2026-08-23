@@ -20,7 +20,10 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  # Nunca se cancela un despliegue en curso: `deploy-pages` crea el despliegue
+  # via API y lo sondea; abortarlo a medias lo deja atascado y el siguiente
+  # falla. Mismo criterio que ci.yml.
+  cancel-in-progress: false
 
 jobs:
   construir:
@@ -38,8 +41,9 @@ jobs:
           cache-dependency-path: web/package-lock.json
 
       - run: npm ci
-      - name: Comprobación de tipos
-        run: npx tsc --noEmit
+      # `tsc --noEmit` sin `-b` no sigue las referencias de proyecto: comprobaba
+      # CERO archivos y siempre pasaba. `npm run build` ya ejecuta `tsc -b`.
+      - run: npm run lint
       - run: npm run build
 
       - uses: actions/configure-pages@v5

@@ -11,7 +11,7 @@ function Avance() {
   useEffect(() => {
     const calc = () => {
       const alto = document.documentElement.scrollHeight - window.innerHeight;
-      setP(alto > 0 ? Math.min(window.scrollY / alto, 1) : 0);
+      setP(alto > 0 ? Math.min(Math.max(window.scrollY / alto, 0), 1) : 0);
     };
     calc();
     window.addEventListener("scroll", calc, { passive: true });
@@ -102,10 +102,10 @@ export default function App() {
         </header>
 
         <nav className="verbos" aria-label="Contenido por área">
-          <a href="#s04"><span>Diseñar</span> Arquitectura · RAG · 12 decisiones</a>
-          <a href="#s05"><span>Integrar</span> Contrato Open Responses · streaming · estado</a>
-          <a href="#s08"><span>Desplegar</span> Azure · contenedor · CI/CD</a>
-          <a href="#s09"><span>Operar</span> Seguridad · coste · límites · diagnóstico</a>
+          <a href="#s04"><span>Diseñar</span> Pipeline RAG · controles · 12 decisiones</a>
+          <a href="#s03"><span>Integrar</span> Contrato Open Responses · capas · adaptadores</a>
+          <a href="#s07"><span>Desplegar</span> Azure · contenedor · CI/CD</a>
+          <a href="#s08"><span>Operar</span> Seguridad · coste · límites</a>
         </nav>
 
         <div className="ficha">

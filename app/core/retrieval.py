@@ -158,17 +158,23 @@ class HybridRetriever:
         """Antepone la linea de tiempo derivada y los hechos de puesto.
 
         Garantiza que una pregunta de agregacion vea TODOS los empleos, no solo
-        los mas parecidos a la consulta. Con 46 hechos el coste es asumible:
-        ~9 hechos adicionales frente a un error factual.
+        los mas parecidos a la consulta.
+
+        Los hechos anadidos se marcan `inyectado=True` y con similitud 0: NO son
+        evidencia, porque su similitud no se midio contra la consulta. Fingir un
+        1.0 anulaba la compuerta de abstencion -- cualquier pregunta que
+        pareciese de agregacion, incluida una fuera de dominio o un intento de
+        inyeccion, saltaba el control anti-alucinacion por completo.
         """
         tl = self.facts.get("derived.timeline")
         if tl is None:
             return retrieved
         ya = {r.fact.id for r in retrieved}
-        extra = [Retrieved(fact=tl, score=1.0, semantic=1.0)] if tl.id not in ya else []
+        extra = ([Retrieved(fact=tl, score=1.0, semantic=0.0, inyectado=True)]
+                 if tl.id not in ya else [])
         for f in self.facts.values():
             if f.title and f.id not in ya and f.id != tl.id:
-                extra.append(Retrieved(fact=f, score=0.99, semantic=0.99))
+                extra.append(Retrieved(fact=f, score=0.99, semantic=0.0, inyectado=True))
         return extra + retrieved
 
     async def search(self, query: str, lang: Lang,

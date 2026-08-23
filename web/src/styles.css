@@ -61,10 +61,6 @@ a:hover { text-decoration-color: var(--rojo); }
 .cab__marca { display: flex; align-items: center; gap: calc(var(--u) * 1.5); }
 .cab__marca img { height: 30px; width: auto; max-width: 180px; display: block; object-fit: contain; }
 @media (prefers-color-scheme: dark) { .cab__marca img { filter: brightness(0) invert(1); } }
-.cab__hueco {
-  font-family: var(--mono); font-size: .6rem; color: var(--baja); border: 1px dashed var(--regla);
-  padding: 6px 10px; line-height: 1.3; text-align: center;
-}
 
 .ficha {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
@@ -193,6 +189,25 @@ a:hover { text-decoration-color: var(--rojo); }
 .verif span { font-family: var(--mono); font-size: .68rem; color: var(--baja); }
 .verif em { display: block; font-style: normal; font-size: .76rem; color: var(--med); margin-top: 2px; }
 
+/* Los cuatro verbos del enunciado del reto. */
+.verbos {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 1px; background: var(--linea); border-bottom: 1px solid var(--linea);
+}
+.verbos a {
+  background: var(--fondo); padding: calc(var(--u) * 2) calc(var(--u) * 2) calc(var(--u) * 2) 0;
+  text-decoration: none; font-size: .76rem; color: var(--med); line-height: 1.4;
+  transition: color 120ms;
+}
+.verbos a:hover { color: var(--tinta); }
+.verbos span {
+  display: block; font-family: var(--mono); font-size: .62rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--rojo); margin-bottom: 4px;
+}
+
+/* Enlaces del cuerpo: subrayado fino. */
+.dice a, .ej__cita a { text-decoration-thickness: 1px; }
+
 /* ═══════════════════════════════════════════════════════════ acabado ═══ */
 
 /* Indicador de avance. Un filete de 2px en el borde superior: informa sin
@@ -212,8 +227,8 @@ a:hover { text-decoration-color: var(--rojo); }
 
 /* Ritmo vertical: las cifras usan cifras tabulares y un interletrado mas
    cerrado, que es como se componen los datos en tipografia editorial. */
-.n__v, .cifra__v { letter-spacing: -.03em; }
-.datos td.m, .datos td.v, .ej__sim { font-feature-settings: "tnum" 1, "zero" 1; }
+.n__v { letter-spacing: -.03em; }
+.datos td.m, .datos td.v, .ej__sim { font-feature-settings: "tnum" 1; }
 
 /* Enlaces del cuerpo: subrayado fino que se aviva al pasar. */
 

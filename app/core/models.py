@@ -32,7 +32,7 @@ class Fact:
         maquina; una persona necesita «Experiencia · GlobalConnect (may 2025 –
         actual)». Se construye desde los metadatos que ya existen.
         """
-        seccion = _SECCION[self.type][0 if lang == "es" else 1]
+        seccion = SECCIONES[self.type][0 if lang == "es" else 1]
         partes = [seccion]
         if self.org:
             partes.append(self.org.split("·")[0].strip())
@@ -41,7 +41,7 @@ class Fact:
         return f"{etiqueta} ({rango})" if rango else etiqueta
 
 
-_SECCION = {
+SECCIONES = {
     "profile": ("Perfil", "Profile"),
     "experience": ("Experiencia", "Experience"),
     "skills": ("Competencias", "Skills"),
@@ -78,8 +78,11 @@ def _rango(start: str | None, end: str | None, lang: Lang) -> str:
 @dataclass(frozen=True)
 class Retrieved:
     fact: Fact
-    score: float          # puntuacion combinada, para ORDENAR
+    score: float           # puntuacion combinada, para ORDENAR
     semantic: float = 0.0  # coseno crudo, para DECIDIR si hay evidencia
+    # Hechos anadidos por una regla (linea de tiempo, puestos) en vez de por
+    # similitud. NO cuentan como evidencia: su similitud no fue medida.
+    inyectado: bool = False
 
 
 @dataclass
