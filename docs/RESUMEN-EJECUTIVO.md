@@ -32,12 +32,12 @@ implementa cuatro controles que **no dependen de la buena voluntad del modelo**.
 
 | Métrica | Valor |
 |---|---|
-| Golden set (32 casos, 12 de ellos sobre lo que **no** debe responder) | **32/32** |
+| Golden set (32 casos, 12 de ellos sobre lo que **no** debe responder) | **36/36** |
 | Consistencia ante 26 formulaciones distintas | **26/26** |
 | Entradas hostiles y malformadas | **28/28 sin errores 5xx** |
 | Carga, concurrencia 10 | **30/30 correctas** |
-| Pruebas automatizadas | **122**, sin red ni credenciales |
-| Latencia p50 / p95 | 0,97 s / 1,49 s |
+| Pruebas automatizadas | **126**, sin red ni credenciales |
+| Latencia p50 / p95 | 0,97 s / 2,09 s |
 | Consultas que **no** invocan al modelo | 25 % |
 | Reducción de consumo de tokens | **−54 %** |
 
@@ -59,7 +59,7 @@ cronológico lo calcula el código a partir de los metadatos, no el modelo.
 
 ## Coste operativo
 
-Modelo y embeddings en nivel gratuito. Consumo medio **677 tokens por consulta**, y cero
+Modelo y embeddings en nivel gratuito. Consumo medio **777 tokens por consulta**, y cero
 en el 25 % de los casos. La infraestructura es un único contenedor de 0,5 vCPU.
 
 ## Trazabilidad y seguridad

@@ -24,7 +24,7 @@ sea ejecutable por cualquiera, incluido un evaluador.
 ## Nivel 1 — Pruebas automatizadas (57)
 
 ```bash
-pytest -q          # 122 passed
+pytest -q          # 126 passed
 ```
 
 | Archivo | Casos | Cubre |
@@ -62,10 +62,10 @@ solo de preguntas fáciles no probaría la propiedad que más importa aquí.
 
 | Métrica | Valor |
 |---|---|
-| Aciertos | **32 / 32 (100 %)** |
-| Consultas que no invocan al LLM | 8 / 32 (25 %) |
-| Tokens totales | 21.657 (media 677/consulta) |
-| Latencia p50 / p95 | 969 ms / 1.488 ms |
+| Aciertos | **36 / 36 (100 %)** |
+| Consultas que no invocan al LLM | 8 / 36 (22 %) |
+| Tokens totales | 27.978 (media 777/consulta) |
+| Latencia p50 / p95 | 973 ms / 2.090 ms |
 
 ### Recorrido feliz — ejemplo verificado
 

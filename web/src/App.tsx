@@ -237,11 +237,11 @@ export default function App() {
               <thead><tr><th>Aspecto</th><th>Enfoque directo</th><th>Implementado</th></tr></thead>
               <tbody>
                 <tr><td>Contexto enviado por consulta</td><td className="m">~1.860 tokens (corpus completo)</td><td className="v">~500 tokens (top-6)</td></tr>
-                <tr><td>Consultas que llegan al modelo</td><td className="m">100 %</td><td className="v">75 %</td></tr>
+                <tr><td>Consultas que llegan al modelo</td><td className="m">100 %</td><td className="v">78 %</td></tr>
                 <tr><td>Tokens en una petición trivial</td><td className="m">247 (razonamiento incluido)</td><td className="v">56</td></tr>
                 <tr><td>Coste de una pregunta fuera de dominio</td><td className="m">~550 tokens</td><td className="v">0 tokens · &lt;500 ms</td></tr>
                 <tr><td>Coste por turno en conversación larga</td><td className="m">crece con cada turno</td><td className="v">constante</td></tr>
-                <tr><td>Latencia p95 tras corregir la cadena de respaldo</td><td className="m">31,9 s</td><td className="v">1,49 s</td></tr>
+                <tr><td>Latencia p95 tras corregir la cadena de respaldo</td><td className="m">31,9 s</td><td className="v">2,09 s</td></tr>
                 <tr><td>Peticiones correctas con concurrencia 10</td><td className="m">25 / 30</td><td className="v">30 / 30</td></tr>
               </tbody>
             </table>
@@ -319,7 +319,7 @@ export default function App() {
             <table className="datos">
               <thead><tr><th>Palanca</th><th>Efecto medido</th></tr></thead>
               <tbody>
-                <tr><td>Abstención previa a la invocación</td><td className="v">0 tokens · 25 % de las consultas</td></tr>
+                <tr><td>Abstención previa a la invocación</td><td className="v">0 tokens · 22 % de las consultas</td></tr>
                 <tr><td>thinkingLevel: minimal</td><td className="v">−77 % de tokens de razonamiento</td></tr>
                 <tr><td>Recuperación top-6 frente al corpus completo</td><td className="m">~500 frente a ~1.860 tokens</td></tr>
                 <tr><td>Memoria de un intercambio</td><td className="v">coste constante por turno</td></tr>

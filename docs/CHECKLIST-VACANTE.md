@@ -18,9 +18,9 @@ Leyenda: ✅ cubierto y demostrable · 🟡 parcial · ⬜ no cubierto
 | 2 | Compatible con **Open Responses** | ✅ | Spec `2026-04-24` anclada; 31/31 campos verificados en CI |
 | 3 | Registrado y funcionando en la plataforma | ✅ | Alta en Parley y conversación probada |
 | 4 | Repositorio público en GitHub | ✅ | `alejandrorau04/banorte-cv-agent` |
-| 5 | Conversa sobre perfil, experiencia, habilidades y proyectos | ✅ | 61 hechos; golden set 32/32 |
+| 5 | Conversa sobre perfil, experiencia, habilidades y proyectos | ✅ | 62 hechos; golden set 36/36 |
 | 6 | Demostración con decisiones técnicas explicadas | 🟡 | Guion en `docs/DEMO.md`; presentación pendiente |
-| 7 | Verificar respuesta clara, coherente y confiable | ✅ | 5 niveles de prueba, 122 tests |
+| 7 | Verificar respuesta clara, coherente y confiable | ✅ | 5 niveles de prueba, 126 tests |
 
 ---
 
@@ -68,7 +68,7 @@ Leyenda: ✅ cubierto y demostrable · 🟡 parcial · ⬜ no cubierto
 | **Kubernetes** | ⬜ | No usado; Container Apps cubre el caso sin operar clúster |
 | **CI/CD** | ✅ | GitHub Actions: calidad → imagen → despliegue → verificación |
 | Versionado y releases | ✅ | SemVer, CHANGELOG, release automatizada |
-| **Testing (pytest)** | ✅ | 122 tests sin red ni credenciales |
+| **Testing (pytest)** | ✅ | 126 tests sin red ni credenciales |
 | **Observabilidad** | 🟡 | Logs estructurados y `metadata` por respuesta; sin trazas distribuidas |
 | Git | ✅ | Ramas, PR con checks, protección de rama |
 
