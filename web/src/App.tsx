@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Capas, Entrega, FlujoRAG } from "./Diagramas";
 
 const REPO = "https://github.com/alejandrorau04/banorte-cv-agent";
@@ -34,6 +34,28 @@ const Verif = ({ href, t, d, m }: { href: string; t: string; d: string; m: strin
   </a>
 );
 
+/** Logotipo institucional.
+ *
+ *  Se carga desde `web/public/banorte.svg` (o `.png`). Si el archivo no existe,
+ *  el bloque se oculta por completo: la presentacion nunca muestra una imagen
+ *  rota ni un hueco vacio. Uso nominativo -- referencia al reto, no marca de la
+ *  pagina -- con la autoria del documento indicada al pie.
+ */
+function Logotipo() {
+  const [estado, setEstado] = useState<"svg" | "png" | "ninguno">("svg");
+  if (estado === "ninguno") return null;
+  const src = `${import.meta.env.BASE_URL}banorte.${estado}`;
+  return (
+    <div className="cab__marca">
+      <img
+        src={src}
+        alt="Banorte"
+        onError={() => setEstado(estado === "svg" ? "png" : "ninguno")}
+      />
+    </div>
+  );
+}
+
 const Marca = ({ k, v }: { k: string; v: string }) => (
   <div className="marca"><span className="marca__k">{k}</span><span className="marca__v">{v}</span></div>
 );
@@ -54,10 +76,7 @@ export default function App() {
                 Open&nbsp;Responses, desplegado en Azure Container Apps.
               </p>
             </div>
-            <div className="cab__marca">
-              {/* Coloca aquí el logotipo oficial: web/public/banorte.svg */}
-              <span className="cab__hueco">logotipo<br />banorte.svg</span>
-            </div>
+            <Logotipo />
           </div>
         </header>
 

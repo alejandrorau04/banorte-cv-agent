@@ -59,7 +59,8 @@ a:hover { text-decoration-color: var(--rojo); }
 .cab h1 { font-family: var(--serif); font-size: clamp(2rem, 4.6vw, 3.2rem); line-height: 1.02; letter-spacing: -.02em; }
 .cab__sub { margin-top: var(--u); font-size: .95rem; color: var(--med); max-width: 46ch; }
 .cab__marca { display: flex; align-items: center; gap: calc(var(--u) * 1.5); }
-.cab__marca img { height: 28px; width: auto; display: block; }
+.cab__marca img { height: 30px; width: auto; max-width: 180px; display: block; object-fit: contain; }
+@media (prefers-color-scheme: dark) { .cab__marca img { filter: brightness(0) invert(1); } }
 .cab__hueco {
   font-family: var(--mono); font-size: .6rem; color: var(--baja); border: 1px dashed var(--regla);
   padding: 6px 10px; line-height: 1.3; text-align: center;
