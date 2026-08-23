@@ -216,3 +216,70 @@ a:hover { text-decoration-color: var(--rojo); }
   display: block; font-family: var(--mono); font-size: .62rem; letter-spacing: .14em;
   text-transform: uppercase; color: var(--rojo); margin-bottom: 4px;
 }
+
+/* ═══════════════════════════════════════════════════════════ acabado ═══ */
+
+/* Indicador de avance. Un filete de 2px en el borde superior: informa sin
+   competir con el contenido. */
+.avance {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px;
+  background: transparent; z-index: 50; pointer-events: none;
+}
+.avance__b { height: 100%; background: var(--rojo); transform-origin: 0 50%; }
+
+/* Portada: el filete rojo bajo el rotulo ancla la composicion. */
+.cab { position: relative; }
+.cab__id::after {
+  content: ""; display: block; width: 2.5rem; height: 2px;
+  background: var(--rojo); margin-top: calc(var(--u) * 1.5);
+}
+
+/* Ritmo vertical: las cifras usan cifras tabulares y un interletrado mas
+   cerrado, que es como se componen los datos en tipografia editorial. */
+.n__v, .cifra__v { letter-spacing: -.03em; }
+.datos td.m, .datos td.v, .ej__sim { font-feature-settings: "tnum" 1, "zero" 1; }
+
+/* Enlaces del cuerpo: subrayado fino que se aviva al pasar. */
+.dice a, .ej__cita a, .glos a { text-decoration-thickness: 1px; }
+
+/* Filas de tabla: realce muy leve al pasar, para seguir la linea con la vista
+   en tablas largas proyectadas en una sala. */
+.datos tbody tr { transition: background 120ms; }
+.datos tbody tr:hover { background: var(--sup); }
+
+/* Cierre del documento. */
+.final {
+  padding: calc(var(--u) * 8) 0 calc(var(--u) * 4);
+  border-top: 2px solid var(--tinta);
+}
+.final__t {
+  font-family: var(--serif); font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  line-height: 1.25; max-width: 34ch; letter-spacing: -.015em;
+}
+.final__t em { font-style: normal; color: var(--rojo); }
+.final__d {
+  margin-top: calc(var(--u) * 3); display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: calc(var(--u) * 2);
+}
+.final__d div { border-top: 1px solid var(--regla); padding-top: var(--u); }
+.final__d b { display: block; font-size: .8rem; font-weight: 600; }
+.final__d span { display: block; font-family: var(--mono); font-size: .68rem; color: var(--baja); margin-top: 2px; }
+
+/* ─────────────────────────────────────────────────────────── impresion ─── */
+/* Un director puede imprimirlo o exportarlo a PDF. Se compone para papel:
+   sin fondos oscuros, sin elementos fijos, y con las URL visibles. */
+@media print {
+  :root {
+    --fondo: #fff; --sup: #fff; --linea: #d8d8da; --regla: #9a9aa0;
+    --tinta: #000; --med: #333; --baja: #555; --rojo: #c8001f;
+  }
+  .avance, .verbos { display: none; }
+  body { font-size: 10.5pt; }
+  .doc { max-width: none; padding: 0; }
+  .sec { break-inside: avoid; page-break-inside: avoid; padding: 1.2rem 0; }
+  .sec__ref { position: static; }
+  h1 { font-size: 24pt; }
+  .dg { max-height: 7cm; }
+  .verif a::after { content: " (" attr(href) ")"; font-size: 7pt; color: #555; word-break: break-all; }
+  .cab { break-after: avoid; }
+}

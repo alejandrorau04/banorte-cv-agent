@@ -1,10 +1,29 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Capas, Entrega, FlujoRAG } from "./Diagramas";
 
 const REPO = "https://github.com/alejandrorau04/banorte-cv-agent";
 
 /* Sin lenguaje promocional: cada línea es un hecho, una medida o una decisión
    documentada. Las cifras proceden de ejecuciones reales del repositorio. */
+
+function Avance() {
+  const [p, setP] = useState(0);
+  useEffect(() => {
+    const calc = () => {
+      const alto = document.documentElement.scrollHeight - window.innerHeight;
+      setP(alto > 0 ? Math.min(window.scrollY / alto, 1) : 0);
+    };
+    calc();
+    window.addEventListener("scroll", calc, { passive: true });
+    window.addEventListener("resize", calc);
+    return () => { window.removeEventListener("scroll", calc); window.removeEventListener("resize", calc); };
+  }, []);
+  return (
+    <div className="avance" aria-hidden="true">
+      <div className="avance__b" style={{ transform: `scaleX(${p})` }} />
+    </div>
+  );
+}
 
 const Sec = ({ n, t, children }: { n: string; t: string; children: ReactNode }) => (
   <section className="sec" aria-labelledby={`s${n}`}>
@@ -64,6 +83,7 @@ export default function App() {
   return (
     <>
       <a className="saltar" href="#s01">Saltar al contenido</a>
+      <Avance />
       <div className="doc">
 
         <header className="cab">
@@ -419,6 +439,20 @@ export default function App() {
               empaqueta y despliega automáticamente.</dd></div>
           </dl>
         </Sec>
+
+        <section className="final">
+          <p className="final__t">
+            El mismo criterio que impide al agente afirmar lo que no puede respaldar
+            se aplicó a este documento: <em>cada cifra procede de una ejecución real
+            y enlaza a su origen</em>.
+          </p>
+          <div className="final__d">
+            <div><b>Servicio</b><span>Azure Container Apps · v1.1.0</span></div>
+            <div><b>Contrato</b><span>Open Responses 2026-04-24</span></div>
+            <div><b>Evidencia</b><span>102 tests · 32 casos · 12 ADRs</span></div>
+            <div><b>Código</b><span><a href={REPO}>github.com ↗</a></span></div>
+          </div>
+        </section>
 
         <footer className="pie">
           <span>Alejandro Rau Lázaro · Agosto 2026</span>
