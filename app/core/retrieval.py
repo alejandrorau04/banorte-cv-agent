@@ -166,14 +166,16 @@ class HybridRetriever:
         pareciese de agregacion, incluida una fuera de dominio o un intento de
         inyeccion, saltaba el control anti-alucinacion por completo.
         """
-        tl = self.facts.get("derived.timeline")
-        if tl is None:
+        derivados = [self.facts[i] for i in ("derived.timeline", "derived.duraciones")
+                     if i in self.facts]
+        if not derivados:
             return retrieved
         ya = {r.fact.id for r in retrieved}
-        extra = ([Retrieved(fact=tl, score=1.0, semantic=0.0, inyectado=True)]
-                 if tl.id not in ya else [])
+        extra = [Retrieved(fact=d, score=1.0, semantic=0.0, inyectado=True)
+                 for d in derivados if d.id not in ya]
+        ids_derivados = {d.id for d in derivados}
         for f in self.facts.values():
-            if f.title and f.id not in ya and f.id != tl.id:
+            if f.title and f.id not in ya and f.id not in ids_derivados:
                 extra.append(Retrieved(fact=f, score=0.99, semantic=0.0, inyectado=True))
         return extra + retrieved
 

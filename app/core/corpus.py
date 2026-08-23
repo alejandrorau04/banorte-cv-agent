@@ -79,6 +79,7 @@ def load_facts() -> list[Fact]:
             line_end=lineas.get(fid, (0, 0))[1],
         ))
     facts.append(_timeline(facts))
+    facts.append(_duraciones(facts))
     return facts
 
 
@@ -97,6 +98,79 @@ def _fecha(v: str | None, i: int) -> str:
         return ("la actualidad", "the present")[i]
     y, m = v.split("-")
     return f"{_MES[m][i]} de {y}" if i == 0 else f"{_MES[m][i]} {y}"
+
+
+def _meses(inicio: str, fin: str | None) -> int | None:
+    """Meses entre dos fechas `AAAA-MM`. `None` si el puesto sigue en curso."""
+    if not fin:
+        return None
+    ai, mi = (int(x) for x in inicio.split("-"))
+    af, mf = (int(x) for x in fin.split("-"))
+    return (af - ai) * 12 + (mf - mi)
+
+
+def _en_palabras(m: int) -> str:
+    a, r = divmod(m, 12)
+    if a and r:
+        return f"{a} año{'s' if a > 1 else ''} y {r} mes{'es' if r > 1 else ''}"
+    if a:
+        return f"{a} año{'s' if a > 1 else ''}"
+    return f"{r} mes{'es' if r > 1 else ''}"
+
+
+def _en_palabras_en(m: int) -> str:
+    a, r = divmod(m, 12)
+    if a and r:
+        return f"{a} year{'s' if a > 1 else ''} and {r} month{'s' if r > 1 else ''}"
+    if a:
+        return f"{a} year{'s' if a > 1 else ''}"
+    return f"{r} month{'s' if r > 1 else ''}"
+
+
+def _duraciones(facts: list[Fact]) -> Fact:
+    """Duracion de cada puesto, CALCULADA de los metadatos.
+
+    Motivo: el modelo hacia esta aritmetica mentalmente y se equivocaba. Ante
+    «¿en que puesto estuvo mas tiempo?» respondia WESCO (33 meses) cuando la
+    respuesta es SUMMA Woodbridge (42). Restar fechas es trabajo de codigo.
+
+    Solo se calculan duraciones CERRADAS. La del puesto en curso crece cada mes:
+    incluirla haria que el texto -- y por tanto su vector -- quedase obsoleto a
+    diario. Se expresa como «en curso desde», que es exacto y estable.
+    """
+    roles = sorted((f for f in facts if f.title and f.start),
+                   key=lambda f: f.start or "")
+    cerrados = [(f, _meses(f.start, f.end)) for f in roles if f.end]
+    curso = [f for f in roles if not f.end]
+
+    es = "; ".join(f"{f.org}: {_en_palabras(m)}" for f, m in cerrados)
+    en = "; ".join(f"{f.org}: {_en_palabras_en(m)}" for f, m in cerrados)
+    if curso:
+        es += "".join(f"; {f.org}: en curso desde {_fecha(f.start, 0)}" for f in curso)
+        en += "".join(f"; {f.org}: ongoing since {_fecha(f.start, 1)}" for f in curso)
+
+    largo = max(cerrados, key=lambda x: x[1])
+    corto = min(cerrados, key=lambda x: x[1])
+
+    return Fact(
+        id="derived.duraciones",
+        type="timeline",
+        text_es=(
+            f"Duración de cada puesto de Alejandro Rau Lázaro, calculada a partir de las "
+            f"fechas del CV: {es}. El puesto más largo fue {largo[0].org} con "
+            f"{_en_palabras(largo[1])}; el más corto, {corto[0].org} con "
+            f"{_en_palabras(corto[1])}. Su trayectoria profesional comenzó en "
+            f"{_fecha(roles[0].start, 0)}, con más de 10 años de experiencia acumulada."),
+        text_en=(
+            f"Duration of each of Alejandro Rau Lázaro's roles, computed from the CV dates: "
+            f"{en}. The longest role was {largo[0].org} at {_en_palabras_en(largo[1])}; "
+            f"the shortest, {corto[0].org} at {_en_palabras_en(corto[1])}. His professional "
+            f"career began in {_fecha(roles[0].start, 1)}, with over 10 years of "
+            f"accumulated experience."),
+        tags=("duracion", "duraciones", "cuanto", "tiempo", "meses", "anos", "años",
+              "mas-tiempo", "menos-tiempo", "permanencia", "antiguedad", "how-long",
+              "duration", "longest", "shortest", "tenure", "years", "time"),
+    )
 
 
 def _timeline(facts: list[Fact]) -> Fact:

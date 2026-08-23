@@ -38,7 +38,10 @@ _CITE_BLOCK = re.compile(r"\[([a-z0-9_.\-]+(?:\s*,\s*[a-z0-9_.\-]+)*)\]", re.I)
 _AGREGADA = re.compile(
     r"\b(todas?\s+(las\s+)?(sus\s+)?empresas?|lista|listado|enumera|"
     r"cronol[oó]gic\w*|orden\w*|trayectoria|historial|carrera\s+completa|"
-    r"cu[aá]nt\w+\s+(empresas?|trabajos?|puestos?|a[nñ]os)|"
+    r"cu[aá]nt\w+\s+(empresas?|trabajos?|puestos?|a[nñ]os|tiempo|meses)|"
+    r"cu[aá]nto\s+(tiempo|llev\w+|dur[oó])|"
+    r"m[aá]s\s+(tiempo|larg\w+)|menos\s+tiempo|permanenci\w+|antig[uü]edad|"
+    r"how\s+long|longest|shortest|tenure|"
     r"antes\s+de|anterior\w*|previo\w*|despu[eé]s\s+de|"
     r"primer\w*\s+(empleo|trabajo|puesto)|[uú]ltim\w*\s+(empleo|trabajo|puesto)|"
     r"resumen\s+de\s+su|"

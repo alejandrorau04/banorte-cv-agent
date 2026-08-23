@@ -61,15 +61,15 @@ deriva de esa distinción.
 | Métrica | Valor |
 |---|---|
 | Afirmaciones sin respaldo en los 32 casos evaluados | **0** |
-| Conjunto de evaluación · *12 casos miden lo que NO debe responder* | **32/32** |
+| Conjunto de evaluación · *12 casos miden lo que NO debe responder* | **36/36** |
 | Intentos de inyección de prompt resistidos | **5/5** |
 | Consistencia ante 26 formulaciones distintas | **26/26** |
 | Entradas malformadas sin error de servidor | **28/28** |
 | Peticiones correctas con concurrencia 10 | **30/30** |
-| Tests automatizados, sin red ni credenciales | **122** |
-| Consultas resueltas sin invocar al modelo | **25 %** |
-| Latencia p50 · p95 | **0,97 s · 1,49 s** |
-| Tokens medios por consulta | **677** |
+| Tests automatizados, sin red ni credenciales | **126** |
+| Consultas resueltas sin invocar al modelo | **22 %** |
+| Latencia p50 · p95 | **0,97 s · 2,09 s** |
+| Tokens medios por consulta | **777** |
 
 ---
 
@@ -105,8 +105,8 @@ cp .env.example .env                        # rellenar GEMINI_API_KEY y AGENT_AP
 ### Verificación
 
 ```bash
-pytest -q                                        # 122 tests, sin red ni credenciales
-python eval/run_eval.py                          # golden set: 32 casos
+pytest -q                                        # 126 tests, sin red ni credenciales
+python eval/run_eval.py                          # golden set: 36 casos
 python eval/consistencia.py                      # 26 formulaciones de 5 intenciones
 AGENT_URL=... python scripts/robustez.py         # 28 entradas hostiles
 AGENT_URL=... python scripts/robustez.py --carga # ráfaga concurrente
@@ -165,6 +165,7 @@ descargado** y la ausencia de datos personales en el corpus.
 | [011](docs/adr/ADR-011-redundancia-de-embeddings.md) | Índice multi-modelo: eliminar el punto único de fallo |
 | [012](docs/adr/ADR-012-memoria-conversacional-acotada.md) | Memoria conversacional acotada a un intercambio |
 | [013](docs/adr/ADR-013-tarjeta-de-agente-a2a.md) | Tarjeta de agente A2A para descubrimiento |
+| [014](docs/adr/ADR-014-calculo-de-duraciones.md) | Las duraciones las calcula el código, no el modelo |
 
 ---
 
@@ -176,7 +177,7 @@ data/           corpus.yaml (61 hechos bilingües) + índice de embeddings versi
 docs/           12 ADRs, arquitectura, RAG, pruebas, seguridad, límites, runbook
 eval/           golden set (32 casos), consistencia (26 formulaciones), resultados
 scripts/        construcción del índice, calibración del umbral, robustez y carga
-tests/          122 tests, sin red ni credenciales
+tests/          126 tests, sin red ni credenciales
 web/            presentación en React + TypeScript (GitHub Pages)
 .github/        pipelines de CI/CD, release y presentación
 ```

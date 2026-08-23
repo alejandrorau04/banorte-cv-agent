@@ -17,7 +17,7 @@ límites no están escritos no es operable.
 | Pregunta simple | ~550–700 | 1–2 s | 50 % |
 | Pregunta con seguimiento | ~900 | 1–2 s | — |
 | Consulta de agregación | ~1.200 | 2–3 s | 16 % |
-| **Media global** | **677** | 0,97 s (p50) | |
+| **Media global** | **777** | 0,97 s (p50) | |
 
 **Una de cada cuatro consultas no llega al modelo.** No es un efecto secundario: es la
 compuerta de evidencia, el mismo mecanismo que impide alucinar (ADR-003).
@@ -26,7 +26,7 @@ compuerta de evidencia, el mismo mecanismo que impide alucinar (ADR-003).
 
 | Palanca | Efecto medido |
 |---|---|
-| Abstención previa a la invocación | 0 tokens en el 25 % de las consultas |
+| Abstención previa a la invocación | 0 tokens en el 22 % de las consultas |
 | `thinkingLevel: minimal` | **−77 %** de tokens de razonamiento |
 | Recuperación top-6 en vez del corpus completo | ~500 tokens de entrada frente a ~1.860 |
 | Memoria de **un** intercambio, no la transcripción | Coste **constante** por turno |
