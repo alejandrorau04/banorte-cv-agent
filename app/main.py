@@ -111,13 +111,28 @@ async def unhandled(_: Request, exc: Exception) -> JSONResponse:
         "Unexpected server error.", "server_error", "internal_error"))
 
 
+def _base_publica(request: Request) -> str:
+    """URL publica del servicio, respetando el proxy de terminacion TLS.
+
+    Azure Container Apps termina el TLS y reenvia en claro, de modo que
+    `request.base_url` ve `http://`. Publicar esa URL en la tarjeta haria que un
+    cliente intentase llamar al agente sin cifrar. Se respeta la cabecera
+    `X-Forwarded-Proto` que el proxy anade.
+    """
+    proto = request.headers.get("x-forwarded-proto", "").split(",")[0].strip()
+    host = request.headers.get("x-forwarded-host", "").split(",")[0].strip() \
+        or request.headers.get("host", "").strip()
+    if proto and host:
+        return f"{proto}://{host}"
+    return str(request.base_url).rstrip("/")
+
+
 @app.get("/.well-known/agent-card.json")
 async def tarjeta_agente(request: Request) -> JSONResponse:
     """Descubrimiento A2A. Sin autenticacion a proposito: una tarjeta que exige
     credenciales para ser leida no puede cumplir su funcion, y no revela nada
     que el repositorio publico no diga ya."""
-    base = str(request.base_url).rstrip("/")
-    return JSONResponse(content=agent_card(base),
+    return JSONResponse(content=agent_card(_base_publica(request)),
                         media_type="application/a2a+json")
 
 

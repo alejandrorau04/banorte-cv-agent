@@ -82,3 +82,25 @@ def test_la_tarjeta_no_expone_datos_de_contacto():
     from app.api.agentcard import agent_card
     texto = json.dumps(agent_card("https://ejemplo.test"), ensure_ascii=False)
     assert not re.search(r"[\w.+-]+@[\w-]+\.\w+|\b\d{2}\s?\d{4}\s?\d{4}\b", texto)
+
+
+def test_la_tarjeta_respeta_el_proxy_de_tls():
+    """Azure termina el TLS y reenvía en claro: publicar la URL que ve el
+    servidor haría que el cliente llamase al agente sin cifrar."""
+    from types import SimpleNamespace
+    from app.main import _base_publica
+
+    detras_de_proxy = SimpleNamespace(
+        headers={"x-forwarded-proto": "https", "host": "cv-agent.azurecontainerapps.io"},
+        base_url="http://cv-agent.azurecontainerapps.io/")
+    assert _base_publica(detras_de_proxy) == "https://cv-agent.azurecontainerapps.io"
+
+    # Varios proxies encadenan valores separados por coma; vale el primero.
+    encadenado = SimpleNamespace(
+        headers={"x-forwarded-proto": "https,http", "x-forwarded-host": "publico.test"},
+        base_url="http://interno/")
+    assert _base_publica(encadenado) == "https://publico.test"
+
+    # En local, sin proxy, se usa lo que ve el servidor.
+    local = SimpleNamespace(headers={}, base_url="http://127.0.0.1:8000/")
+    assert _base_publica(local) == "http://127.0.0.1:8000"
