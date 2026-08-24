@@ -36,6 +36,31 @@ desplegar y operar** el agente. Cada afirmación enlaza a su origen en este repo
 
 ---
 
+## Lo que el enunciado no especificaba
+
+El reto pedía un endpoint «compatible con Open Responses» sin precisar versión ni campos.
+Se consultó al **agente Guía** del propio reto, cuya respuesta fue que *«la información
+disponible del reto no especifica esos detalles de compatibilidad»*, recomendando acudir a
+la documentación técnica.
+
+Así se hizo. Cada punto abierto se resolvió con una decisión razonada, no con una
+suposición:
+
+| Punto sin definir | Decisión y motivo |
+|---|---|
+| **Versión del contrato** | Open Responses `2026-04-24`, [anclada en el repositorio](docs/contract/) y verificada contra su esquema en CI. Al leerlo apareció que el contrato es **asimétrico**: el request no exige ningún campo, la respuesta exige **31** — la implementación intuitiva no es conforme ([ADR-001](docs/adr/ADR-001-contrato-open-responses.md)) |
+| **Si el streaming es obligatorio** | Implementado por SSE aunque la spec lo marca opcional: un chat sin streaming se percibe lento |
+| **Qué campos consume la plataforma** | Se emiten los 31 obligatorios. Un cliente anclado a una versión previa ignora los que no conoce |
+| **Formato de autenticación** | `Authorization: Bearer`, aceptando además cabeceras alternativas. Confirmado después por el formulario de alta |
+| **Manejo del estado conversacional** | Servicio sin estado, con transcripción reenviada por el cliente. Confirmado después por el formulario |
+| **Rúbrica y criterios de evaluación** | El Guía confirmó que no están publicados. Se optó por evaluación automatizada con criterio explícito de corrección ([plan de pruebas](docs/PLAN-DE-PRUEBAS.md)) |
+| **Arquitectura, modelo y nube** | Dejados abiertos a propósito por el enunciado. Las decisiones y sus alternativas descartadas están en los [14 ADRs](docs/adr/) |
+
+La tabla completa de supuestos con su mitigación y su verificación posterior está en el
+[ADR-001](docs/adr/ADR-001-contrato-open-responses.md#supuestos-y-su-verificación).
+
+---
+
 ## El problema
 
 Un agente de CV tiene un modo de fallo específico y grave: **afirmar experiencia
